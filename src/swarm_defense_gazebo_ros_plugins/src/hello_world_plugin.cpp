@@ -3,28 +3,30 @@
 
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/gazebo.hh>
+#include <gazebo_ros/node.hpp>
+#include <gazebo_ros/utils.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 namespace gazebo {
 class HelloWorldPlugin : public WorldPlugin
 {
   public:
-	rclcpp::Node ::SharedPtr ros2node;
+	gazebo_ros::Node::SharedPtr ros2node{nullptr};
 	/// Constructor
 	HelloWorldPlugin() : WorldPlugin()
 	{
-		if ( !rclcpp::ok() ) {
-			int argc = 0;
-			char** argv = NULL;
-			rclcpp::init(argc, argv);
-		}
-		ros2node = rclcpp::Node::make_shared("test_node");
+	}
 
-		RCLCPP_INFO(ros2node->get_logger(), "Hello World!");
+	~HelloWorldPlugin()
+	{
+		RCLCPP_INFO(ros2node->get_logger(), "desctructor");
+		ros2node.reset();
 	}
 
 	void Load(physics::WorldPtr _world, sdf::ElementPtr _sdf)
 	{
+		ros2node = gazebo_ros::Node::Get(_sdf);
+		RCLCPP_INFO(ros2node->get_logger(), "Hello World! from load");
 	}
 };
 
