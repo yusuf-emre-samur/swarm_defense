@@ -8,6 +8,8 @@
 #include <rclcpp/rclcpp.hpp>
 
 namespace swarm_defense {
+namespace gazebo_ros_plugins {
+
 class HelloWorldPlugin : public gazebo::WorldPlugin
 {
   public:
@@ -19,7 +21,7 @@ class HelloWorldPlugin : public gazebo::WorldPlugin
 
 	void Load(gazebo::physics::WorldPtr _world, sdf::ElementPtr _sdf);
 };
-
+} // namespace gazebo_ros_plugins
 } // namespace swarm_defense
 
 #endif

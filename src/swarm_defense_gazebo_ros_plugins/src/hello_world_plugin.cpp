@@ -6,6 +6,7 @@
 #include <swarm_defense_gazebo_ros_plugins/hello_world_plugin.hpp>
 
 namespace swarm_defense {
+namespace gazebo_ros_plugins {
 
 HelloWorldPlugin::HelloWorldPlugin() : gazebo::WorldPlugin()
 {
@@ -26,4 +27,5 @@ void HelloWorldPlugin::Load(gazebo::physics::WorldPtr _world,
 
 GZ_REGISTER_WORLD_PLUGIN(HelloWorldPlugin)
 
+} // namespace gazebo_ros_plugins
 } // namespace swarm_defense
