@@ -4,5 +4,10 @@
     ],
     "python.analysis.extraPaths": [
         "/opt/ros/galactic/lib/python3.8/site-packages"
-    ]
+    ],
+    "clang-format.executable": "clang-format-12",
+    "clang-format.assumeFilename": "${workspaceFolder}/.clang-format",
+    "files.associations": {
+        "*.ipp": "cpp"
+    }
 }
