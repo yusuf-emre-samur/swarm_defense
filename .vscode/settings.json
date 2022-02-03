@@ -8,6 +8,13 @@
     "clang-format.executable": "clang-format-12",
     "clang-format.assumeFilename": "${workspaceFolder}/.clang-format",
     "files.associations": {
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "any": "cpp",
+        "bitset": "cpp",
+        "memory": "cpp",
+        "random": "cpp",
+        "future": "cpp",
+        "optional": "cpp",
+        "type_traits": "cpp"
     }
 }
