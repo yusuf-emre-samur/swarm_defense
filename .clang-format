@@ -1,0 +1,33 @@
+---
+# We'll use defaults from the LLVM style, but with 4 columns indentation.
+BasedOnStyle: LLVM
+IndentWidth: 4
+TabWidth: 4
+UseTab: Always
+---
+Language: Cpp
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+AccessModifierOffset: -2
+AlignAfterOpenBracket: true
+AlignConsecutiveAssignments: false
+AlignOperands: true
+AllowAllConstructorInitializersOnNextLine: true
+AllowShortFunctionsOnASingleLine: false
+BraceWrapping:
+  AfterClass: true
+  AfterFunction: true
+  AfterNamespace: false
+  AfterObjCDeclaration: false
+  BeforeElse: false
+BreakBeforeBraces: Custom
+BreakConstructorInitializers: BeforeColon
+CompactNamespaces: false
+EmptyLineBeforeAccessModifier: Always
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeInheritanceColon: true
+SpacesInConditionalStatement: true
+Standard: c++20
+---
+
