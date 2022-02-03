@@ -38,6 +38,7 @@ endif()
 add_library(hello_world_plugin SHARED
   src/hello_world_plugin.cpp
 )
+target_include_directories(hello_world_plugin PUBLIC include)
 target_link_libraries(hello_world_plugin ${GAZEBO_LIBRARIES} ${rclcpp_LIBRARIES} )
 
 install(
