@@ -1,12 +1,5 @@
 # Setup
 
-## table of content
-- [versions](#versions)
-- [installation](#installation)
-- [dependencies](#dependencies)
-- [initial setup](#initial-setup)
-- [build](#build)
-
 # versions
 **OS**: Ubuntu 20.04.03 LTS <br>
 **g++**: (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0 <br>
@@ -16,7 +9,7 @@
 **Gazebo**: 11.10.0 <br>
 
 
-# installation
+# ROS2 and Gazebo installation
 install ROS-Base: https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html <br>
 install Gazebo: 
 ```sh
@@ -40,7 +33,7 @@ install rosdep
 sudo apt install -y python3-rosdep
 ```
 
-# initial setup
+# import and install dependencies
 clone dependencies:
 ```sh
 vcs import ./src < dependencies.repos
@@ -58,7 +51,7 @@ install dependencies
 rosdep install --from-paths src --ignore-src -r -y
 ```
 
-# build
+# first build
 ```sh
 source /opt/ros/galactic/setup.bash
 ```
@@ -70,10 +63,4 @@ colcon build --symlink-install
 # source
 ```sh
 source install/setup.bash
-```
-
-# pull git changes
-```sh
-vcs pull ./src < dependencies.repos
-
 ```
