@@ -12,13 +12,12 @@ find_package(gazebo REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 
-link_directories(${gazebo_dev_LIBRARY_DIRS})
+# link_directories(${gazebo_dev_LIBRARY_DIRS})
 
 # gazebo
 include_directories(${GAZEBO_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS})
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
-# list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
+list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -34,18 +33,24 @@ endif()
 
 
 
-# hello world
+# hello world plugin
 add_library(hello_world_plugin SHARED
   src/hello_world_plugin.cpp
 )
 target_include_directories(hello_world_plugin PUBLIC include)
-target_link_libraries(hello_world_plugin ${GAZEBO_LIBRARIES} ${rclcpp_LIBRARIES} )
-
+ament_target_dependencies(
+  hello_world_plugin
+  gazebo
+  rclcpp
+)
 install(
   TARGETS
   hello_world_plugin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
+
+
+
 
 ament_package()
