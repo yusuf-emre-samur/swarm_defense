@@ -31,10 +31,8 @@ def generate_launch_description():
         ]),
         launch_arguments={
             "world": PathJoinSubstitution([pkg_share, "worlds", LaunchConfiguration("world")]),
-            #             "init": "false",
-            #          "factory": "false",
-            #            "force_system": "false",
-            "verbose": "true"
+            "verbose": "true",
+            "pause": "true"
         }.items()
     )
     return LaunchDescription([
