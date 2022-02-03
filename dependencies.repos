@@ -1,0 +1,33 @@
+repositories:
+  # interfaces
+  common_interfaces:
+    type: git
+    url: git@github.com:ros2/common_interfaces.git
+    version: galactic
+
+  # geometry
+  geometry2:
+    type: git
+    url: git@github.com:ros2/geometry2.git
+    version: galactic
+  
+  # ros utils
+  rclcpp:
+    type: git
+    url: git@github.com:ros2/rclcpp.git
+    version: galactic
+  ros2_control:
+    type: git
+    url: git@github.com:ros-controls/ros2_control.git
+    version: galactic
+  control_msgs:
+    type: git
+    url: git@github.com:ros-controls/control_msgs.git
+    version: galactic-devel
+  
+  # gazebo
+  gazebo_ros_pkgs:
+    type: git
+    url: git@github.com:ros-simulation/gazebo_ros_pkgs.git
+    version: galactic
+  
