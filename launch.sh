@@ -1,1 +1,1 @@
-ros2 launch swarm_defense_simulation simulation.launch.py
+ros2 launch sd_simulation simulation.launch.py

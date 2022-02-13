@@ -1,5 +1,5 @@
-#ifndef SWARM_DEFENSE_GAZEBO_ROS_PLUGINS_HELLO_WORLD_HPP_
-#define SWARM_DEFENSE_GAZEBO_ROS_PLUGINS_HELLO_WORLD_HPP_
+#ifndef SD_GAZEBO_ROS_PLUGINS_HELLO_WORLD_HPP_
+#define SD_GAZEBO_ROS_PLUGINS_HELLO_WORLD_HPP_
 
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/gazebo.hh>
@@ -7,7 +7,7 @@
 #include <gazebo_ros/utils.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-namespace swarm_defense {
+namespace sd {
 namespace gazebo_ros_plugins {
 
 class HelloWorldPlugin : public gazebo::WorldPlugin
@@ -22,6 +22,6 @@ class HelloWorldPlugin : public gazebo::WorldPlugin
 	void Load(gazebo::physics::WorldPtr _world, sdf::ElementPtr _sdf);
 };
 } // namespace gazebo_ros_plugins
-} // namespace swarm_defense
+} // namespace sd
 
 #endif

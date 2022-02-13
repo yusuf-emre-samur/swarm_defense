@@ -9,7 +9,7 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     # package share
-    pkg_share = FindPackageShare("swarm_defense_simulation")
+    pkg_share = FindPackageShare("sd_simulation")
 
     # launch args
 

@@ -3,9 +3,9 @@
 #include <gazebo_ros/node.hpp>
 #include <gazebo_ros/utils.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <swarm_defense_gazebo_ros_plugins/hello_world_plugin.hpp>
+#include <sd_gazebo_ros_plugins/hello_world_plugin.hpp>
 
-namespace swarm_defense {
+namespace sd {
 namespace gazebo_ros_plugins {
 
 HelloWorldPlugin::HelloWorldPlugin() : gazebo::WorldPlugin()
@@ -28,4 +28,4 @@ void HelloWorldPlugin::Load(gazebo::physics::WorldPtr _world,
 GZ_REGISTER_WORLD_PLUGIN(HelloWorldPlugin)
 
 } // namespace gazebo_ros_plugins
-} // namespace swarm_defense
+} // namespace sd

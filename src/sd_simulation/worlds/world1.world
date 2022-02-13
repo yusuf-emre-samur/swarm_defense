@@ -13,6 +13,6 @@
             <uri>model://iris_with_standoffs</uri>
         </include>
 
-        <plugin name="a" filename="/home/yusuf/local/swarm_defense/install/swarm_defense_gazebo_ros_plugins/lib/libhello_world_plugin.so" />
+        <plugin name="a" filename="install/sd_gazebo_ros_plugins/lib/libhello_world_plugin.so" />
     </world>
 </sdf>
