@@ -48,31 +48,16 @@ ament_target_dependencies(
   gazebo
   rclcpp
 )
+
+
+
+
+
+
+
 install(
   TARGETS
   hello_world_plugin
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
-)
-
-# drone plugin
-add_library(sd_drone_plugin SHARED
-  src/sd_drone_plugin.cpp
-)
-# target_include_directories(sd_drone_plugin PUBLIC include)
-ament_target_dependencies(
-  sd_drone_plugin
-  gazebo
-  rclcpp
-  sd_interfaces
-  geometry_msgs
-  tf2_geometry_msgs
-  tf2
-)
-install(
-  TARGETS
-  sd_drone_plugin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
