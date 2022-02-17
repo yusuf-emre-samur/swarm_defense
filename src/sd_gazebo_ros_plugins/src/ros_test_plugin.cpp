@@ -64,9 +64,6 @@ void RosTestPlugin::OnUpdate()
 	msg.data = "Hello World ";
 	// publish
 	publisher_->publish(msg);
-
-	// Apply a small linear velocity to the model.
-	this->model_->SetLinearVel(ignition::math::Vector3d(0, 0, .3));
 }
 
 // called each time receiving message from topic
