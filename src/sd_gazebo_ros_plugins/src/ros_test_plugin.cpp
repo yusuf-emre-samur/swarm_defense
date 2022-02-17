@@ -8,7 +8,11 @@
 #include <ignition/math/Vector3.hh>
 // ros
 #include <gazebo_ros/node.hpp>
+#include <gazebo_ros/utils.hpp>
 #include <rclcpp/rclcpp.hpp>
+// other
+#include <memory>
+#include <string>
 
 namespace sd {
 namespace gazebo_ros_plugins {
@@ -28,26 +32,29 @@ void RosTestPlugin::Load(gazebo::physics::ModelPtr _parent,
 						 sdf::ElementPtr _sdf)
 {
 	// Store the pointer to the model
-	this->model = _parent;
+	this->model_ = _parent;
 
+	// ros node + qos
 	ros2node_ = gazebo_ros::Node::Get(_sdf, _parent);
 	const gazebo_ros::QoS& qos = ros2node_->get_qos();
 
+	// publisher
 	publisher_ = ros2node_->create_publisher<std_msgs::msg::String>(
 		"test_topic", qos.get_publisher_qos("test_topic", rclcpp::QoS(10)));
 
-	// timer_ = ros2node_->create_wall_timer(
-	// 	500ms, std::bind(&RosTestPlugin::timer_callback, ros2node_.get()));
+	// subscription
+	subscription_ = ros2node_->create_subscription<geometry_msgs::msg::Vector3>(
+		"test_topic2", qos.get_subscription_qos("test_topic2", rclcpp::QoS(1)),
+		std::bind(&RosTestPlugin::topic_callback, this, std::placeholders::_1));
 
 	RCLCPP_INFO(ros2node_->get_logger(), "Ros Test Plugin Load");
 
 	// Listen to the update event. This event is broadcast every
 	// simulation iteration.
-	this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
+	this->updateConnection_ = gazebo::event::Events::ConnectWorldUpdateBegin(
 		std::bind(&RosTestPlugin::OnUpdate, this));
 }
 
-// Called by the world update start event
 void RosTestPlugin::OnUpdate()
 {
 	auto msg = std_msgs::msg::String();
@@ -55,7 +62,14 @@ void RosTestPlugin::OnUpdate()
 	publisher_->publish(msg);
 
 	// Apply a small linear velocity to the model.
-	this->model->SetLinearVel(ignition::math::Vector3d(.3, 0, 0));
+	this->model_->SetLinearVel(ignition::math::Vector3d(.3, 0, 0));
+}
+
+// Called by the world update start event
+void RosTestPlugin::topic_callback(
+	const geometry_msgs::msg::Vector3::SharedPtr msg)
+{
+	RCLCPP_INFO(ros2node_->get_logger(), std::to_string(msg->x).c_str());
 }
 
 // Register this plugin with the simulator
