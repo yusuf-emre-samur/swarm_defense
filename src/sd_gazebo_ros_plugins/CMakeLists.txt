@@ -74,6 +74,19 @@ ament_target_dependencies(
 )
 
 
+# ros test plugin
+add_library(sd_drone_plugin SHARED
+  src/sd_drone_plugin.cpp
+)
+target_include_directories(sd_drone_plugin PUBLIC include)
+ament_target_dependencies(
+  sd_drone_plugin
+  gazebo_dev
+  gazebo_ros
+  rclcpp
+  geometry_msgs
+  std_msgs
+)
 
 
 
@@ -81,6 +94,7 @@ install(
   TARGETS
   hello_world_plugin
   ros_test_plugin
+  sd_drone_plugin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
