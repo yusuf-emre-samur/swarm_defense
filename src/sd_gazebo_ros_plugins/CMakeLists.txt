@@ -13,7 +13,6 @@ find_package(gazebo_dev REQUIRED)
 find_package(gazebo_ros REQUIRED)
 # rcl
 find_package(rclcpp REQUIRED)
-find_package(rcl REQUIRED)
 # tf2
 find_package(tf2 REQUIRED)
 # interfaces
@@ -57,7 +56,6 @@ ament_target_dependencies(
   gazebo_dev
   gazebo_ros
   rclcpp
-  rcl
 )
 
 
@@ -71,7 +69,6 @@ ament_target_dependencies(
   gazebo_dev
   gazebo_ros
   rclcpp
-  rcl
   geometry_msgs
   std_msgs
 )
