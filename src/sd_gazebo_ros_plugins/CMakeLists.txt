@@ -57,6 +57,7 @@ ament_target_dependencies(
   gazebo_dev
   gazebo_ros
   rclcpp
+  rcl
 )
 
 
