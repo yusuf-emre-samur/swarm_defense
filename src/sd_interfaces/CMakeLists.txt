@@ -25,15 +25,14 @@ if(BUILD_TESTING)
 endif()
 
 
-set(msg_files
-  "msg/Pose.msg"
-  "msg/MotorSpeed.msg"
-)
+# set(msg_files
 
-# msg folder
-rosidl_generate_interfaces(${PROJECT_NAME}
-  ${msg_files}
-)
+# )
+
+# # msg folder
+# rosidl_generate_interfaces(${PROJECT_NAME}
+#   ${msg_files}
+# )
 
 ament_export_dependencies(rosidl_default_runtime)
 
