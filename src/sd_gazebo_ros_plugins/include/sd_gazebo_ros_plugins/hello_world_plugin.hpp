@@ -13,13 +13,13 @@ namespace gazebo_ros_plugins {
 class HelloWorldPlugin : public gazebo::WorldPlugin
 {
   public:
-	gazebo_ros::Node::SharedPtr ros2node{nullptr};
-	/// Constructor
 	HelloWorldPlugin();
-
 	~HelloWorldPlugin();
 
 	void Load(gazebo::physics::WorldPtr _world, sdf::ElementPtr _sdf);
+
+  private:
+	gazebo_ros::Node::SharedPtr ros2node_;
 };
 } // namespace gazebo_ros_plugins
 } // namespace sd
