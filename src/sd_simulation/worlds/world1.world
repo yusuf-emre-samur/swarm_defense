@@ -13,9 +13,9 @@
             <include>
                 <uri>model://iris_with_standoffs</uri>
             </include>
-            <plugin name="ros_test" filename="install/sd_gazebo_ros_plugins/lib/libros_test_plugin.so" />
+            <plugin name="sd_drone_plugin" filename="install/sd_gazebo_ros_plugins/lib/libsd_drone_plugin.so" />
         </model>
 
-        <plugin name="a" filename="install/sd_gazebo_ros_plugins/lib/libhello_world_plugin.so" />
+        <plugin name="gazebo_world_plugin" filename="install/sd_gazebo_ros_plugins/lib/libhello_world_plugin.so" />
     </world>
 </sdf>
