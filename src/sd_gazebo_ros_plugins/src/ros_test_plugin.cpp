@@ -1,3 +1,6 @@
+// interface
+#include "sd_gazebo_ros_plugins/ros_test_plugin.hpp"
+// gazebo
 #include <functional>
 #include <gazebo/common/common.hh>
 #include <gazebo/gazebo.hh>
@@ -7,45 +10,56 @@
 #include <gazebo_ros/node.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-namespace gazebo {
-class RosTestPlugin : public ModelPlugin
+namespace sd {
+namespace gazebo_ros_plugins {
+
+using namespace std::chrono_literals;
+
+// Constructor
+RosTestPlugin::RosTestPlugin()
 {
-  public:
-	void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf)
-	{
-		// Store the pointer to the model
-		this->model = _parent;
+}
 
-		ros2node_ = gazebo_ros::Node::Get(_sdf, _parent);
+RosTestPlugin ::~RosTestPlugin()
+{
+}
 
-		RCLCPP_INFO(ros2node_->get_logger(), "Ros Test Plugin Load");
+void RosTestPlugin::Load(gazebo::physics::ModelPtr _parent,
+						 sdf::ElementPtr _sdf)
+{
+	// Store the pointer to the model
+	this->model = _parent;
 
-		// Listen to the update event. This event is broadcast every
-		// simulation iteration.
-		this->updateConnection = event::Events::ConnectWorldUpdateBegin(
-			std::bind(&RosTestPlugin::OnUpdate, this));
-	}
+	ros2node_ = gazebo_ros::Node::Get(_sdf, _parent);
+	const gazebo_ros::QoS& qos = ros2node_->get_qos();
 
-	// Called by the world update start event
+	publisher_ = ros2node_->create_publisher<std_msgs::msg::String>(
+		"test_topic", qos.get_publisher_qos("test_topic", rclcpp::QoS(10)));
 
-  public:
-	void OnUpdate()
-	{
-		RCLCPP_INFO(ros2node_->get_logger(), "Ros Test Plugin update");
-		// Apply a small linear velocity to the model.
-		this->model->SetLinearVel(ignition::math::Vector3d(.3, 0, 0));
-	}
+	// timer_ = ros2node_->create_wall_timer(
+	// 	500ms, std::bind(&RosTestPlugin::timer_callback, ros2node_.get()));
 
-	// Pointer to the model
+	RCLCPP_INFO(ros2node_->get_logger(), "Ros Test Plugin Load");
 
-  private:
-	physics::ModelPtr model;
-	event::ConnectionPtr updateConnection;
+	// Listen to the update event. This event is broadcast every
+	// simulation iteration.
+	this->updateConnection = gazebo::event::Events::ConnectWorldUpdateBegin(
+		std::bind(&RosTestPlugin::OnUpdate, this));
+}
 
-	// ros
-	gazebo_ros::Node::SharedPtr ros2node_;
-};
+// Called by the world update start event
+void RosTestPlugin::OnUpdate()
+{
+	auto msg = std_msgs::msg::String();
+	msg.data = "Hello World ";
+	publisher_->publish(msg);
+
+	// Apply a small linear velocity to the model.
+	this->model->SetLinearVel(ignition::math::Vector3d(.3, 0, 0));
+}
 
 // Register this plugin with the simulator
 GZ_REGISTER_MODEL_PLUGIN(RosTestPlugin)
-} // namespace gazebo
+
+} // namespace gazebo_ros_plugins
+} // namespace sd
