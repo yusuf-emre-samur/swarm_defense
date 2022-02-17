@@ -8,13 +8,17 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+# gazebo
 find_package(gazebo_dev REQUIRED)
 find_package(gazebo_ros REQUIRED)
+# rcl
 find_package(rclcpp REQUIRED)
 find_package(rcl REQUIRED)
-find_package(geometry_msgs REQUIRED)
+# tf2
 find_package(tf2 REQUIRED)
+# interfaces
 find_package(tf2_geometry_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(sd_interfaces REQUIRED)
 
 
