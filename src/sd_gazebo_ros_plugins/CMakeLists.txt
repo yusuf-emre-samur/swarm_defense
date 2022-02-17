@@ -8,21 +8,25 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(gazebo REQUIRED)
+find_package(gazebo_dev REQUIRED)
+find_package(gazebo_ros REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(std_msgs REQUIRED)
+find_package(rcl REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(sd_interfaces REQUIRED)
 
 
-# link_directories(${gazebo_dev_LIBRARY_DIRS})
+
 
 # gazebo
-include_directories(${GAZEBO_INCLUDE_DIRS})
-link_directories(${GAZEBO_LIBRARY_DIRS})
-list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
+# include_directories(${GAZEBO_INCLUDE_DIRS})
+link_directories(${gazebo_dev_LIBRARY_DIRS})
+# link_directories(${GAZEBO_LIBRARY_DIRS})
+# set(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
+
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -45,11 +49,24 @@ add_library(hello_world_plugin SHARED
 target_include_directories(hello_world_plugin PUBLIC include)
 ament_target_dependencies(
   hello_world_plugin
-  gazebo
+  gazebo_dev
+  gazebo_ros
   rclcpp
 )
 
 
+# ros test plugin
+add_library(ros_test_plugin SHARED
+  src/ros_test_plugin.cpp
+)
+target_include_directories(ros_test_plugin PUBLIC include)
+ament_target_dependencies(
+  ros_test_plugin
+  gazebo_dev
+  gazebo_ros
+  rclcpp
+  rcl
+)
 
 
 
@@ -58,6 +75,7 @@ ament_target_dependencies(
 install(
   TARGETS
   hello_world_plugin
+  ros_test_plugin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
