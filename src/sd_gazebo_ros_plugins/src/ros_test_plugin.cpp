@@ -47,32 +47,36 @@ void RosTestPlugin::Load(gazebo::physics::ModelPtr _parent,
 		"test_topic2", qos.get_subscription_qos("test_topic2", rclcpp::QoS(1)),
 		std::bind(&RosTestPlugin::topic_callback, this, std::placeholders::_1));
 
-	RCLCPP_INFO(ros2node_->get_logger(), "Ros Test Plugin Load");
-
 	// Listen to the update event. This event is broadcast every
 	// simulation iteration.
 	this->updateConnection_ = gazebo::event::Events::ConnectWorldUpdateBegin(
 		std::bind(&RosTestPlugin::OnUpdate, this));
+
+	// INFO
+	RCLCPP_INFO(ros2node_->get_logger(), "Loaded RosTestPlugin!");
 }
 
+// called each iteration of simulation
 void RosTestPlugin::OnUpdate()
 {
+	// create msg
 	auto msg = std_msgs::msg::String();
 	msg.data = "Hello World ";
+	// publish
 	publisher_->publish(msg);
 
 	// Apply a small linear velocity to the model.
-	this->model_->SetLinearVel(ignition::math::Vector3d(.3, 0, 0));
+	this->model_->SetLinearVel(ignition::math::Vector3d(0, 0, .3));
 }
 
-// Called by the world update start event
+// called each time receiving message from topic
 void RosTestPlugin::topic_callback(
 	const geometry_msgs::msg::Vector3::SharedPtr msg)
 {
 	RCLCPP_INFO(ros2node_->get_logger(), std::to_string(msg->x).c_str());
 }
 
-// Register this plugin with the simulator
+// Register this plugin
 GZ_REGISTER_MODEL_PLUGIN(RosTestPlugin)
 
 } // namespace gazebo_ros_plugins
