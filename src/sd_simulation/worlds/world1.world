@@ -13,7 +13,12 @@
             <include>
                 <uri>model://iris_with_standoffs</uri>
             </include>
-            <plugin name="sd_drone_plugin" filename="install/sd_gazebo_ros_plugins/lib/libsd_drone_plugin.so" />
+            <plugin name="sd_drone_plugin" filename="install/sd_gazebo_ros_plugins/lib/libsd_drone_plugin.so">
+                <rotor_0>rotor_0</rotor_0>
+                <rotor_1>rotor_1</rotor_1>
+                <rotor_2>rotor_2</rotor_2>
+                <rotor_3>rotor_4</rotor_3>
+            </plugin>
         </model>
 
         <plugin name="gazebo_world_plugin" filename="install/sd_gazebo_ros_plugins/lib/libhello_world_plugin.so" />
