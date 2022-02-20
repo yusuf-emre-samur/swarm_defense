@@ -37,6 +37,32 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 	ros2node_ = gazebo_ros::Node::Get(_sdf, _parent);
 	const gazebo_ros::QoS& qos = ros2node_->get_qos();
 
+	// params
+	if ( _sdf->HasElement("rotor_0") ) {
+		this->rotor_link_names_.push_back(
+			_sdf->GetElement("rotor_0")->Get<std::string>());
+	} else {
+		this->rotor_link_names_.push_back("rotor_0");
+	}
+	if ( _sdf->HasElement("rotor_1") ) {
+		this->rotor_link_names_.push_back(
+			_sdf->GetElement("rotor_1")->Get<std::string>());
+	} else {
+		this->rotor_link_names_.push_back("rotor_0");
+	}
+	if ( _sdf->HasElement("rotor_2") ) {
+		this->rotor_link_names_.push_back(
+			_sdf->GetElement("rotor_2")->Get<std::string>());
+	} else {
+		this->rotor_link_names_.push_back("rotor_0");
+	}
+	if ( _sdf->HasElement("rotor_3") ) {
+		this->rotor_link_names_.push_back(
+			_sdf->GetElement("rotor_3")->Get<std::string>());
+	} else {
+		this->rotor_link_names_.push_back("rotor_0");
+	}
+
 	// publisher
 	publisher_ = ros2node_->create_publisher<std_msgs::msg::String>(
 		"test_topic", qos.get_publisher_qos("test_topic", rclcpp::QoS(10)));
@@ -58,18 +84,41 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 // called each iteration of simulation
 void DronePlugin::OnUpdate()
 {
+	std::unique_lock<std::mutex> lock(this->pose_mtx_);
+	this->pose_ = this->model_->WorldPose();
+	lock.unlock();
+	this->updateThrust();
 	// create msg
 	auto msg = std_msgs::msg::String();
 	msg.data = "Hello World ";
 	// publish
-	publisher_->publish(msg);
+	this->publisher_->publish(msg);
 }
 
 // called each time receiving message from topic
 void DronePlugin::topic_callback(
 	const geometry_msgs::msg::Vector3::SharedPtr msg)
 {
-	RCLCPP_INFO(ros2node_->get_logger(), std::to_string(msg->x).c_str());
+	RCLCPP_INFO(this->ros2node_->get_logger(), std::to_string(msg->x).c_str());
+}
+
+void DronePlugin::updateThrust()
+{
+	for ( const std::string& rotor_link_name : this->rotor_link_names_ ) {
+		RCLCPP_INFO(this->ros2node_->get_logger(), rotor_link_name.c_str());
+	}
+}
+
+double DronePlugin::calculateThrust(const double& w)
+{
+	double thrust = rotor_thrust_coeff_ * w * w;
+	return thrust;
+}
+
+double DronePlugin::calculateTorque(const double& w)
+{
+	double torque = copysign(rotor_torque_coeff_ * w * w, w);
+	return torque;
 }
 
 // Register this plugin
