@@ -14,10 +14,11 @@
                 <uri>model://iris_with_standoffs</uri>
             </include>
             <plugin name="sd_drone_plugin" filename="install/sd_gazebo_ros_plugins/lib/libsd_drone_plugin.so">
-                <rotor_0>rotor_0</rotor_0>
-                <rotor_1>rotor_1</rotor_1>
-                <rotor_2>rotor_2</rotor_2>
-                <rotor_3>rotor_4</rotor_3>
+                <num_rotors>4</num_rotors>
+                <link_name_rotor_0>iris::rotor_0</link_name_rotor_0>
+                <link_name_rotor_1>iris::rotor_1</link_name_rotor_1>
+                <link_name_rotor_2>iris::rotor_2</link_name_rotor_2>
+                <link_name_rotor_3>iris::rotor_3</link_name_rotor_3>
             </plugin>
         </model>
 
