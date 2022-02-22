@@ -86,6 +86,7 @@ ament_target_dependencies(
   rclcpp
   geometry_msgs
   std_msgs
+  sd_interfaces
 )
 
 
