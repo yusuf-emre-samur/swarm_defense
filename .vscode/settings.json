@@ -2,9 +2,6 @@
     "python.autoComplete.extraPaths": [
         "/opt/ros/galactic/lib/python3.8/site-packages"
     ],
-    "python.analysis.extraPaths": [
-        "/opt/ros/galactic/lib/python3.8/site-packages"
-    ],
     "clang-format.executable": "clang-format-12",
     "clang-format.assumeFilename": "${workspaceFolder}/.clang-format",
     "files.associations": {
@@ -80,9 +77,12 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "*.idl": "cpp",
+        "geometry": "cpp"
     },
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
-    "editor.formatOnType": true
+    "editor.formatOnType": true,
+    "editor.wordWrap": "off"
 }
