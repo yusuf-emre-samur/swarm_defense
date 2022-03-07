@@ -35,7 +35,7 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 	// Store the pointer to the model
 	this->model_ = _parent;
 	// ros node + qos
-	ros2node_ = gazebo_ros::Node::Get(_sdf, _parent);
+	ros2node_ = gazebo_ros::Node::Get();
 	// const gazebo_ros::QoS& qos = ros2node_->get_qos();
 	// vars
 	this->rotor_thrust_coeff_ = 0.00025;
@@ -89,11 +89,11 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 			pose_pub_name, 10);
 
 	// subscription
-	subscription_ =
-		ros2node_->create_subscription<sd_interfaces::msg::RotorRPM>(
-			"test_topic2", 1,
-			std::bind(&DronePlugin::topic_callback, this,
-					  std::placeholders::_1));
+	// subscription_ =
+	// 	ros2node_->create_subscription<sd_interfaces::msg::RotorRPM>(
+	// 		"test_topic2", 1,
+	// 		std::bind(&DronePlugin::topic_callback, this,
+	// 				  std::placeholders::_1));
 
 	// Listen to the update event. This event is broadcast every
 	// simulation iteration.
@@ -102,6 +102,7 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 
 	// INFO
 	RCLCPP_INFO(ros2node_->get_logger(), "Loaded SD Drone Plugin!");
+	RCLCPP_INFO(ros2node_->get_logger(), this->model_->GetScopedName().c_str());
 }
 
 // called each iteration of simulation
