@@ -8,6 +8,18 @@ from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 import launch
 
+
+def flight_controller_node(i):
+    return Node(
+        package="sd_flight_controller",
+        executable="flight_controller",
+        name=f"sd_flight_controller_{i}",
+        parameters=[
+            {"drone_pose_topic": f"/sd_drone_{i}/pose"}
+        ]
+    )
+
+
 def generate_launch_description():
     # package share
     pkg_share = FindPackageShare("sd_simulation")
@@ -36,20 +48,14 @@ def generate_launch_description():
             "pause": "true"
         }.items()
     )
+    # create launch desc.
+    ld = LaunchDescription()
+    ld.add_action(world_launch_arg)
+    ld.add_action(gzserver)
 
-    sd_flight_controller = Node(
-        package="sd_flight_controller",
-        executable="flight_controller",
-        name="sd_flight_controller_1",
-        parameters=[
-            {"drone_pose_topic": "/sd_drone_1/pose"}
-        ]
-    )
+    # add flight controller for each drone
+    num_drones = 2
+    for i in range(1, num_drones+1):
+        ld.add_action(flight_controller_node(i))
 
-
-
-    return LaunchDescription([
-        world_launch_arg,
-        gzserver,
-        sd_flight_controller
-    ])
+    return ld
