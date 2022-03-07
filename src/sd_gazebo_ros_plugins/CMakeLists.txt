@@ -60,7 +60,7 @@ ament_target_dependencies(
 )
 
 
-# ros test plugin
+# sd test plugin
 add_library(ros_test_plugin SHARED
   src/ros_test_plugin.cpp
 )
@@ -75,7 +75,7 @@ ament_target_dependencies(
 )
 
 
-# ros test plugin
+# sd drone plugin
 add_library(sd_drone_plugin SHARED
   src/sd_drone_plugin.cpp
 )

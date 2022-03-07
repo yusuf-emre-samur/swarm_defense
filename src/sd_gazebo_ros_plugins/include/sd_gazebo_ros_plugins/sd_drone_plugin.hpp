@@ -1,7 +1,7 @@
 #ifndef SD_GAZEBO_ROS_PLUGINS_DRONE_PLUGIN_HPP_
 #define SD_GAZEBO_ROS_PLUGINS_DRONE_PLUGIN_HPP_
 // cpp
-#include <vector>
+#include <array>
 
 // gazebo
 #include <gazebo/common/Plugin.hh>
@@ -13,9 +13,9 @@
 #include <gazebo_ros/node.hpp>
 #include <rclcpp/rclcpp.hpp>
 // msgs
+#include <geometry_msgs/msg/pose_stamped.hpp>
 #include <sd_interfaces/msg/rotor_rpm.hpp>
 #include <sd_interfaces/msg/rpm.hpp>
-#include <sensor_msgs/msg/imu.hpp>
 #include <std_msgs/msg/string.hpp>
 
 namespace sd {
@@ -39,8 +39,8 @@ class DronePlugin : public gazebo::ModelPlugin
 	double calculateTorque(const double& w);
 	double rpm_to_rad_p_sec(const int& rpm);
 
-	// imu
-	void publish_imu_sensor();
+	// imu + gps = pose
+	void publish_pose();
 
   private:
 	// gazebo
@@ -48,18 +48,19 @@ class DronePlugin : public gazebo::ModelPlugin
 	gazebo::event::ConnectionPtr updateConnection_;
 	ignition::math::Pose3d pose_;
 	// imu sensor
-	gazebo::sensors::SensorPtr sensor_ptr_;
-	gazebo::sensors::ImuSensorPtr imu_sensor_ptr_;
-	rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_sensor_pub_;
+	gazebo::sensors::SensorPtr imu_sensor_;
+	gazebo::sensors::ImuSensorPtr imu_;
+	// pose pub
+	rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pose_pub_;
 
 	// ros
 	gazebo_ros::Node::SharedPtr ros2node_;
 	rclcpp::Subscription<sd_interfaces::msg::RotorRPM>::SharedPtr subscription_;
 
 	// params
-	uint num_rotors_;
-	std::vector<std::string> rotor_link_names_;
-	std::vector<int16_t> rotor_rpms_;
+	const uint num_rotors_ = 4;
+	std::array<std::string, 4> rotor_link_names_;
+	std::array<int16_t, 4> rotor_rpms_;
 	std::string imu_link_name_;
 	std::string imu_sensor_name_;
 

@@ -20,8 +20,6 @@
 namespace sd {
 namespace gazebo_ros_plugins {
 
-using namespace std::chrono_literals;
-
 // Constructor
 DronePlugin::DronePlugin()
 {
@@ -33,21 +31,16 @@ DronePlugin ::~DronePlugin()
 
 void DronePlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 {
+
 	// Store the pointer to the model
 	this->model_ = _parent;
 	// ros node + qos
 	ros2node_ = gazebo_ros::Node::Get(_sdf, _parent);
-	const gazebo_ros::QoS& qos = ros2node_->get_qos();
+	// const gazebo_ros::QoS& qos = ros2node_->get_qos();
 	// vars
 	this->rotor_thrust_coeff_ = 0.00025;
 	this->rotor_torque_coeff_ = 0.0000074;
 	// rotor params
-	// num rotors
-	if ( _sdf->HasElement("num_rotors") ) {
-		this->num_rotors_ = _sdf->GetElement("num_rotors")->Get<uint>();
-	} else {
-		gzthrow("Please provide number of rotors !");
-	}
 	// rotor link names
 	const std::string param_link_name_base = "link_name_rotor_";
 	std::string param_link_name;
@@ -55,9 +48,9 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 		// load link name
 		param_link_name = param_link_name_base + std::to_string(i);
 		if ( _sdf->HasElement(param_link_name) ) {
-			this->rotor_link_names_.push_back(
-				_sdf->GetElement(param_link_name)->Get<std::string>());
-			this->rotor_rpms_.push_back(0);
+			this->rotor_link_names_[i] =
+				_sdf->GetElement(param_link_name)->Get<std::string>();
+			this->rotor_rpms_[i] = 0;
 		} else {
 			gzthrow("Please provide link name of rotors !");
 		}
@@ -78,27 +71,27 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 		gzthrow("Please provide imu_sensor_name");
 	}
 	// imu raw sensor
-	this->sensor_ptr_ = gazebo::sensors::get_sensor(
+	this->imu_sensor_ = gazebo::sensors::get_sensor(
 		this->model_->GetWorld()->Name() +
 		"::" + this->model_->GetScopedName() + "::" + this->imu_link_name_ +
 		"::" + this->imu_sensor_name_);
 	// imu sensor
-	if ( this->sensor_ptr_.get() == nullptr ) {
+	if ( this->imu_sensor_.get() == nullptr ) {
 		gzthrow("Could not find imu sensor !");
 	} else {
-		this->imu_sensor_ptr_ =
-			std::dynamic_pointer_cast<gazebo::sensors::ImuSensor>(
-				this->sensor_ptr_);
+		this->imu_ = std::dynamic_pointer_cast<gazebo::sensors::ImuSensor>(
+			this->imu_sensor_);
 	}
-	// imu publisher
-	this->imu_sensor_pub_ = ros2node_->create_publisher<sensor_msgs::msg::Imu>(
-		"imu_sensor", qos.get_publisher_qos("imu_sensor", rclcpp::QoS(10)));
+	// pose publisher
+	const std::string pose_pub_name = this->model_->GetName() + "/pose";
+	this->pose_pub_ =
+		ros2node_->create_publisher<geometry_msgs::msg::PoseStamped>(
+			pose_pub_name, 10);
 
 	// subscription
 	subscription_ =
 		ros2node_->create_subscription<sd_interfaces::msg::RotorRPM>(
-			"test_topic2",
-			qos.get_subscription_qos("test_topic2", rclcpp::QoS(1)),
+			"test_topic2", 1,
 			std::bind(&DronePlugin::topic_callback, this,
 					  std::placeholders::_1));
 
@@ -108,40 +101,32 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 		std::bind(&DronePlugin::OnUpdate, this, std::placeholders::_1));
 
 	// INFO
-	RCLCPP_INFO(ros2node_->get_logger(), "Loaded DronePlugin!");
+	RCLCPP_INFO(ros2node_->get_logger(), "Loaded SD Drone Plugin!");
 }
 
 // called each iteration of simulation
 void DronePlugin::OnUpdate(const gazebo::common::UpdateInfo& _info)
 {
 	this->updateThrust();
-	this->publish_imu_sensor();
+	this->publish_pose();
 }
 
-void DronePlugin::publish_imu_sensor()
+void DronePlugin::publish_pose()
 {
-
-	sensor_msgs::msg::Imu msg;
+	geometry_msgs::msg::PoseStamped msg;
 	msg.header.stamp = ros2node_->now();
-	msg.header.frame_id = this->imu_sensor_ptr_->ScopedName();
+	msg.header.frame_id = this->imu_->ScopedName();
 
-	msg.orientation.x = this->imu_sensor_ptr_->Orientation().X();
-	msg.orientation.y = this->imu_sensor_ptr_->Orientation().Y();
-	msg.orientation.z = this->imu_sensor_ptr_->Orientation().Z();
-	msg.orientation.w = this->imu_sensor_ptr_->Orientation().W();
-	msg.orientation_covariance.fill(1);
+	msg.pose.orientation.x = this->imu_->Orientation().X();
+	msg.pose.orientation.y = this->imu_->Orientation().Y();
+	msg.pose.orientation.z = this->imu_->Orientation().Z();
+	msg.pose.orientation.w = this->imu_->Orientation().W();
 
-	msg.angular_velocity.x = this->imu_sensor_ptr_->AngularVelocity().X();
-	msg.angular_velocity.y = this->imu_sensor_ptr_->AngularVelocity().Y();
-	msg.angular_velocity.z = this->imu_sensor_ptr_->AngularVelocity().Z();
-	msg.angular_velocity_covariance.fill(1);
+	msg.pose.position.x = this->model_->WorldPose().X();
+	msg.pose.position.y = this->model_->WorldPose().Y();
+	msg.pose.position.z = this->model_->WorldPose().Z();
 
-	msg.linear_acceleration.x = this->imu_sensor_ptr_->LinearAcceleration().X();
-	msg.linear_acceleration.y = this->imu_sensor_ptr_->LinearAcceleration().Y();
-	msg.linear_acceleration.z = this->imu_sensor_ptr_->LinearAcceleration().Z();
-	msg.linear_acceleration_covariance.fill(1);
-
-	this->imu_sensor_pub_->publish(msg);
+	this->pose_pub_->publish(msg);
 }
 
 // called each time receiving message from topic
