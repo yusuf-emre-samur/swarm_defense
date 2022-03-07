@@ -102,7 +102,6 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 
 	// INFO
 	RCLCPP_INFO(ros2node_->get_logger(), "Loaded SD Drone Plugin!");
-	RCLCPP_INFO(ros2node_->get_logger(), this->model_->GetScopedName().c_str());
 }
 
 // called each iteration of simulation
