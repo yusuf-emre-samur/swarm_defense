@@ -9,21 +9,21 @@
             <uri>model://sun</uri>
         </include>
 
-        <model name="my_drone">
+        <model name="sd_drone_1">
             <include>
                 <uri>model://iris_with_standoffs</uri>
             </include>
-            <plugin name="sd_drone_plugin" filename="install/sd_gazebo_ros_plugins/lib/libsd_drone_plugin.so">
-                <num_rotors>4</num_rotors>
+            <plugin name="sd_gr_drone_plugin_1" filename="install/sd_gazebo_ros_plugins/lib/libsd_drone_plugin.so">
                 <link_name_rotor_0>iris::rotor_0</link_name_rotor_0>
                 <link_name_rotor_1>iris::rotor_1</link_name_rotor_1>
                 <link_name_rotor_2>iris::rotor_2</link_name_rotor_2>
                 <link_name_rotor_3>iris::rotor_3</link_name_rotor_3>
+
                 <imu_link_name>iris::iris/imu_link</imu_link_name>
                 <imu_sensor_name>imu_sensor</imu_sensor_name>
             </plugin>
         </model>
 
-        <plugin name="gazebo_world_plugin" filename="install/sd_gazebo_ros_plugins/lib/libhello_world_plugin.so" />
+        <!-- <plugin name="gazebo_world_plugin" filename="install/sd_gazebo_ros_plugins/lib/libhello_world_plugin.so" /> -->
     </world>
 </sdf>
