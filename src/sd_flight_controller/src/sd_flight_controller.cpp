@@ -20,8 +20,6 @@ SDFlightController::SDFlightController() : Node("default_node_name")
 void SDFlightController::on_pose_callback(
 	geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
-	RCLCPP_INFO(this->get_logger(),
-				std::to_string(msg->pose.position.x).c_str());
 }
 
 } // namespace sd
