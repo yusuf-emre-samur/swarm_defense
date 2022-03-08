@@ -107,11 +107,12 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 // called each iteration of simulation
 void DronePlugin::OnUpdate(const gazebo::common::UpdateInfo& _info)
 {
+
 	this->updateThrust();
 	this->publish_pose();
 }
 
-void DronePlugin::publish_pose()
+void DronePlugin::publish_pose() const
 {
 	geometry_msgs::msg::PoseStamped msg;
 	msg.header.stamp = ros2node_->now();
@@ -131,16 +132,13 @@ void DronePlugin::publish_pose()
 
 // called each time receiving message from topic
 void DronePlugin::topic_callback(
-	const sd_interfaces::msg::RotorRPM::SharedPtr rotor_rpm)
+	const sd_interfaces::msg::QuadcopterRPM::SharedPtr rotor_rpm)
 {
-	if ( rotor_rpm->rotor.size() == this->num_rotors_ ) {
-		for ( unsigned short i = 0; i < rotor_rpm->rotor.size(); i++ ) {
-			this->rotor_rpms_[i] = rotor_rpm->rotor[i].rpm;
-		}
-	} else {
-		RCLCPP_ERROR(this->ros2node_->get_logger(),
-					 "Provide RPM for all rotors!");
-	}
+
+	this->rotor_rpms_[0] = rotor_rpm->rotor0.rpm;
+	this->rotor_rpms_[1] = rotor_rpm->rotor1.rpm;
+	this->rotor_rpms_[2] = rotor_rpm->rotor2.rpm;
+	this->rotor_rpms_[3] = rotor_rpm->rotor3.rpm;
 }
 
 void DronePlugin::updateThrust()
@@ -161,19 +159,19 @@ void DronePlugin::updateThrust()
 	}
 }
 
-double DronePlugin::calculateThrust(const double& w)
+double DronePlugin::calculateThrust(const double& w) const
 {
 	double thrust = rotor_thrust_coeff_ * w * w;
 	return thrust;
 }
 
-double DronePlugin::calculateTorque(const double& w)
+double DronePlugin::calculateTorque(const double& w) const
 {
 	double torque = copysign(rotor_torque_coeff_ * w * w, w);
 	return torque;
 }
 
-double DronePlugin::rpm_to_rad_p_sec(const int& rpm)
+double DronePlugin::rpm_to_rad_p_sec(const int& rpm) const
 {
 	return rpm / 60 * 2 * M_PI;
 }
