@@ -31,22 +31,15 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-# # pid
-# add_executable(pid src/pid.cpp)
-# target_include_directories(pid PUBLIC include)
-# ament_target_dependencies(
-#   pid
-#   rclcpp
-#   geometry_msgs
-# )
 
 # sd_flight_controller
-add_executable(flight_controller src/sd_flight_controller.cpp)
-target_include_directories(flight_controller PUBLIC include)
+add_executable(sd_flight_controller src/sd_flight_controller.cpp)
+target_include_directories(sd_flight_controller PUBLIC include)
 ament_target_dependencies(
-  flight_controller
+  sd_flight_controller
   rclcpp
   geometry_msgs
+  sd_interfaces
 )
 
 # include dir
@@ -55,22 +48,11 @@ install(DIRECTORY include/
 ament_export_include_directories(include)
 
 install(TARGETS
-  # pid
-  flight_controller
+  sd_flight_controller
   DESTINATION lib/${PROJECT_NAME}
 )
 
 
-
-# install(
-#   TARGETS
-#   pid
-#   sd_flight_controller
-#   LIBRARY DESTINATION lib
-#   ARCHIVE DESTINATION lib
-#   RUNTIME DESTINATION lib/${PROJECT_NAME}
-#   INCLUDES DESTINATION include
-# )
 
 
 
