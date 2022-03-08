@@ -10,6 +10,8 @@
 #include <functional>
 #include <memory>
 #include <string>
+// other
+#include <sd_flight_controller/pid.hpp>
 
 namespace sd {
 namespace ros {
@@ -19,25 +21,33 @@ class FlightController : public rclcpp::Node
 	FlightController();
 
   private:
+	/// functions
 	// callbacks
-	void on_pose_callback(geometry_msgs::msg::PoseStamped::SharedPtr msg);
+	void on_pose_msg_callback(geometry_msgs::msg::PoseStamped::SharedPtr msg);
 
 	// timer callbacks
 	void pid_timer_callback();
 
+	/// vars
+	rclcpp::Time last_time_;
 	// pose
-	std::string drone_pose_topic_name_; // name of pose topic
+	std::string pose_sub_topic_name_; // name of pose topic
 	geometry_msgs::msg::PoseStamped::SharedPtr last_pose_ =
 		nullptr; // last pose msg
 	rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr
-		pose_subscriber_; // pose subscriber
+		pose_sub_; // pose subscriber
 
 	// pid
 	rclcpp::TimerBase::SharedPtr pid_timer_; // timer for pid
 
 	// rpm
+	std::string rpm_pub_topic_name_; // name of pose topic
 	rclcpp::Publisher<sd_interfaces::msg::QuadcopterRPM>::SharedPtr
 		rmp_pub_; // rpm publisher
+
+	// pids
+	std::unique_ptr<PID> pid_z;
+	uint rpm_thrust;
 };
 } // namespace ros
 } // namespace sd
