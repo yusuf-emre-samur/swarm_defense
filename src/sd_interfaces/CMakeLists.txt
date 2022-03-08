@@ -27,7 +27,7 @@ endif()
 
 set(msg_files
   "msg/RPM.msg"
-  "msg/RotorRPM.msg"
+  "msg/QuadcopterRPM.msg"
 )
 
 # msg folder
