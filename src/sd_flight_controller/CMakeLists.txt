@@ -31,9 +31,12 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+# pid
+
+
 
 # sd_flight_controller
-add_executable(sd_flight_controller src/sd_flight_controller.cpp)
+add_executable(sd_flight_controller src/sd_flight_controller.cpp src/pid.cpp)
 target_include_directories(sd_flight_controller PUBLIC include)
 ament_target_dependencies(
   sd_flight_controller
