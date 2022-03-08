@@ -15,7 +15,8 @@ def flight_controller_node(i):
         executable="sd_flight_controller",
         name=f"sd_flight_controller_{i}",
         parameters=[
-            {"drone_pose_topic": f"/sd_drone_{i}/pose"},
+            {"pose_topic_name": f"/sd_drone_{i}/pose"},
+            {"rpm_topic_name": f"/sd_drone_{i}/rpm"},
             {"use_sim_time": True}
         ],
         arguments=[
