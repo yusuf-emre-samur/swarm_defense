@@ -29,75 +29,67 @@ DronePlugin ::~DronePlugin()
 {
 }
 
-void DronePlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
+void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
 
-	// Store the pointer to the model
-	this->model_ = _parent;
-	// ros node + qos
-	ros2node_ = gazebo_ros::Node::Get();
-	// const gazebo_ros::QoS& qos = ros2node_->get_qos();
-	// vars
-	this->rotor_thrust_coeff_ = 0.00025;
-	this->rotor_torque_coeff_ = 0.0000074;
-	// rotor params
+	this->model_ = _model;
+	this->ros2node_ = gazebo_ros::Node::Get();
+
 	// rotor link names
 	const std::string param_link_name_base = "link_name_rotor_";
 	std::string param_link_name;
 	for ( unsigned int i = 0; i < this->num_rotors_; i++ ) {
-		// load link name
 		param_link_name = param_link_name_base + std::to_string(i);
 		if ( _sdf->HasElement(param_link_name) ) {
 			this->rotor_link_names_[i] =
 				_sdf->GetElement(param_link_name)->Get<std::string>();
-			this->rotor_rpms_[i] = 0;
 		} else {
 			gzthrow("Please provide link name of rotors !");
 		}
 	}
 
 	// imu sensor
-	// imu params
+	std::string imu_link_name, imu_sensor_name;
 	if ( _sdf->HasElement("imu_link_name") ) {
-		this->imu_link_name_ =
-			_sdf->GetElement("imu_link_name")->Get<std::string>();
+		imu_link_name = _sdf->GetElement("imu_link_name")->Get<std::string>();
 	} else {
 		gzthrow("Please provide imu_link_name");
 	}
 	if ( _sdf->HasElement("imu_sensor_name") ) {
-		this->imu_sensor_name_ =
+		imu_sensor_name =
 			_sdf->GetElement("imu_sensor_name")->Get<std::string>();
 	} else {
 		gzthrow("Please provide imu_sensor_name");
 	}
 	// imu raw sensor
-	this->imu_sensor_ = gazebo::sensors::get_sensor(
+	auto imu_sensor_ = gazebo::sensors::get_sensor(
 		this->model_->GetWorld()->Name() +
-		"::" + this->model_->GetScopedName() + "::" + this->imu_link_name_ +
-		"::" + this->imu_sensor_name_);
+		"::" + this->model_->GetScopedName() + "::" + imu_link_name +
+		"::" + imu_sensor_name);
 	// imu sensor
-	if ( this->imu_sensor_.get() == nullptr ) {
-		gzthrow("Could not find imu sensor !");
+	if ( imu_sensor_.get() == nullptr ) {
+		gzthrow("Could not find imu sensor, check parameter!");
 	} else {
-		this->imu_ = std::dynamic_pointer_cast<gazebo::sensors::ImuSensor>(
-			this->imu_sensor_);
+		this->imu_ =
+			std::dynamic_pointer_cast<gazebo::sensors::ImuSensor>(imu_sensor_);
 	}
+
 	// pose publisher
 	const std::string pose_pub_name = this->model_->GetName() + "/pose";
 	this->pose_pub_ =
 		ros2node_->create_publisher<geometry_msgs::msg::PoseStamped>(
 			pose_pub_name, 10);
 
-	// subscription
-	// subscription_ =
-	// 	ros2node_->create_subscription<sd_interfaces::msg::RotorRPM>(
-	// 		"test_topic2", 1,
-	// 		std::bind(&DronePlugin::topic_callback, this,
-	// 				  std::placeholders::_1));
+	// rpm subscription
+	const std::string rpm_sub_name = this->model_->GetName() + "/rpm";
+	this->rpm_sub_ =
+		ros2node_->create_subscription<sd_interfaces::msg::QuadcopterRPM>(
+			rpm_sub_name, 1,
+			std::bind(&DronePlugin::on_msg_rpm_callback, this,
+					  std::placeholders::_1));
 
-	// Listen to the update event. This event is broadcast every
-	// simulation iteration.
-	this->updateConnection_ = gazebo::event::Events::ConnectWorldUpdateBegin(
+	// callback each simulation step
+	this->update_callback_ = gazebo::event::Events::ConnectWorldUpdateBegin(
 		std::bind(&DronePlugin::OnUpdate, this, std::placeholders::_1));
 
 	// INFO
@@ -107,9 +99,9 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf)
 // called each iteration of simulation
 void DronePlugin::OnUpdate(const gazebo::common::UpdateInfo& _info)
 {
-
 	this->updateThrust();
 	this->publish_pose();
+	this->last_time_ = _info.simTime;
 }
 
 void DronePlugin::publish_pose() const
@@ -131,10 +123,10 @@ void DronePlugin::publish_pose() const
 }
 
 // called each time receiving message from topic
-void DronePlugin::topic_callback(
+void DronePlugin::on_msg_rpm_callback(
 	const sd_interfaces::msg::QuadcopterRPM::SharedPtr rotor_rpm)
 {
-
+	// update rpm
 	this->rotor_rpms_[0] = rotor_rpm->rotor0.rpm;
 	this->rotor_rpms_[1] = rotor_rpm->rotor1.rpm;
 	this->rotor_rpms_[2] = rotor_rpm->rotor2.rpm;
@@ -146,13 +138,16 @@ void DronePlugin::updateThrust()
 	double thrust;
 	double torque;
 	gazebo::physics::LinkPtr link;
+
 	for ( unsigned int i = 0; i < this->num_rotors_; i++ ) {
 		link = model_->GetLink(this->rotor_link_names_[i]);
-		thrust =
-			this->calculateThrust(this->rpm_to_rad_p_sec(this->rotor_rpms_[i]));
-		torque =
-			this->calculateTorque(this->rpm_to_rad_p_sec(this->rotor_rpms_[i]));
+
+		// calc. and apply force and torque
 		if ( link != NULL ) {
+			thrust =
+				this->calculateThrust(this->rpm_to_rad(this->rotor_rpms_[i]));
+			torque =
+				this->calculateTorque(this->rpm_to_rad(this->rotor_rpms_[i]));
 			link->AddRelativeForce(ignition::math::Vector3d(0, 0, thrust));
 			link->AddRelativeTorque(ignition::math::Vector3d(0, 0, torque));
 		}
@@ -171,7 +166,7 @@ double DronePlugin::calculateTorque(const double& w) const
 	return torque;
 }
 
-double DronePlugin::rpm_to_rad_p_sec(const int& rpm) const
+double DronePlugin::rpm_to_rad(const int& rpm) const
 {
 	return rpm / 60 * 2 * M_PI;
 }
