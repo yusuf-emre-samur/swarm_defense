@@ -12,10 +12,14 @@ import launch
 def flight_controller_node(i):
     return Node(
         package="sd_flight_controller",
-        executable="flight_controller",
+        executable="sd_flight_controller",
         name=f"sd_flight_controller_{i}",
         parameters=[
-            {"drone_pose_topic": f"/sd_drone_{i}/pose"}
+            {"drone_pose_topic": f"/sd_drone_{i}/pose"},
+            {"use_sim_time": True}
+        ],
+        arguments=[
+
         ]
     )
 
