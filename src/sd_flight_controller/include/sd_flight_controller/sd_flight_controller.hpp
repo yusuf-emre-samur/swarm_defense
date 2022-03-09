@@ -47,7 +47,7 @@ class FlightController : public rclcpp::Node
 
 	// pids
 	std::unique_ptr<PID> pid_z;
-	uint rpm_thrust;
+	int rpm_thrust;
 };
 } // namespace ros
 } // namespace sd
