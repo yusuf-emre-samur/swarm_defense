@@ -108,7 +108,7 @@ void DronePlugin::publish_pose() const
 {
 	geometry_msgs::msg::PoseStamped msg;
 	msg.header.stamp = ros2node_->now();
-	msg.header.frame_id = this->imu_->ScopedName();
+	msg.header.frame_id = this->model_->GetName();
 
 	msg.pose.orientation.x = this->imu_->Orientation().X();
 	msg.pose.orientation.y = this->imu_->Orientation().Y();
