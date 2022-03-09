@@ -28,6 +28,9 @@ class FlightController : public rclcpp::Node
 	// timer callbacks
 	void pid_timer_callback();
 
+	// mma
+	void motor_mixing() const;
+
 	/// vars
 	rclcpp::Time last_time_;
 	// pose
@@ -46,8 +49,15 @@ class FlightController : public rclcpp::Node
 		rmp_pub_; // rpm publisher
 
 	// pids
-	std::unique_ptr<PID> pid_z;
-	int rpm_thrust;
+	std::unique_ptr<PID> pid_z_;
+	std::unique_ptr<PID> pid_roll_;
+	std::unique_ptr<PID> pid_pitch_;
+	std::unique_ptr<PID> pid_yaw_;
+
+	double rpm_thrust_;
+	double rpm_roll_;
+	double rpm_pitch_;
+	double rpm_yaw_;
 };
 } // namespace ros
 } // namespace sd
