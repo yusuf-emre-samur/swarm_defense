@@ -70,7 +70,7 @@ class DronePlugin : public gazebo::ModelPlugin
 
 	static constexpr uint num_rotors_ = 4;
 	std::array<std::string, num_rotors_> rotor_link_names_;
-	std::array<int16_t, num_rotors_> rotor_rpms_;
+	std::array<int, num_rotors_> rotor_rpms_;
 };
 } // namespace gazebo_ros_plugins
 } // namespace sd
