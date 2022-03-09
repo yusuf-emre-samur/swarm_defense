@@ -1,1 +1,1 @@
-int16 rpm
+int64 rpm
