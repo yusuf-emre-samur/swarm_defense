@@ -36,9 +36,10 @@ FlightController::FlightController() : Node("default_node_name")
 	this->rmp_pub_ = this->create_publisher<sd_interfaces::msg::QuadcopterRPM>(
 		this->rpm_pub_topic_name_, 10);
 
-	// init pids
-	this->pid_z = std::make_unique<PID>(10, -10000, 10000, kp, ki, kd);
+	// z pid
+	this->pid_z = std::make_unique<PID>(10, -100, 100, kp, ki, kd);
 	this->rpm_thrust = 0;
+
 	this->last_time_ = this->now();
 	// INFO
 	RCLCPP_INFO(this->get_logger(), "SD Flight Controller Node started!");
@@ -68,10 +69,10 @@ void FlightController::pid_timer_callback()
 	sd_interfaces::msg::QuadcopterRPM msg;
 	msg.header.frame_id = this->get_name();
 	msg.header.stamp = this->now();
-	msg.rotor0.rpm = (1000 + this->rpm_thrust);
-	msg.rotor1.rpm = -(1000 + this->rpm_thrust);
-	msg.rotor2.rpm = (1000 + this->rpm_thrust);
-	msg.rotor3.rpm = -(1000 + this->rpm_thrust);
+	msg.rotor0.rpm = (2099 + this->rpm_thrust);
+	msg.rotor1.rpm = -(2099 + this->rpm_thrust);
+	msg.rotor2.rpm = (2099 + this->rpm_thrust);
+	msg.rotor3.rpm = -(2099 + this->rpm_thrust);
 	// publish rpm message
 	this->rmp_pub_->publish(msg);
 	this->last_time_ = time;

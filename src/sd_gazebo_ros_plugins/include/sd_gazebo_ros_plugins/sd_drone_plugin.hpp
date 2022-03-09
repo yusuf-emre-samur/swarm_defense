@@ -65,7 +65,7 @@ class DronePlugin : public gazebo::ModelPlugin
 	rclcpp::Subscription<sd_interfaces::msg::QuadcopterRPM>::SharedPtr rpm_sub_;
 
 	// params
-	static constexpr double rotor_thrust_coeff_ = 0.00025;
+	static constexpr double rotor_thrust_coeff_ = 0.0001;
 	static constexpr double rotor_torque_coeff_ = 0.0000074;
 
 	static constexpr uint num_rotors_ = 4;
