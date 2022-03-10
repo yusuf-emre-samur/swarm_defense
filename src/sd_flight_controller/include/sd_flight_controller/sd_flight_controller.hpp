@@ -4,14 +4,12 @@
 #include <rclcpp/rclcpp.hpp>
 // interfaces
 #include <geometry_msgs/msg/pose_stamped.hpp>
-#include <sd_interfaces/msg/quadcopter_rpm.hpp>
 // std
 #include <chrono>
 #include <functional>
 #include <memory>
 #include <string>
 // other
-#include <sd_flight_controller/pid.hpp>
 
 namespace sd {
 namespace ros {
@@ -21,43 +19,38 @@ class FlightController : public rclcpp::Node
 	FlightController();
 
   private:
-	/// functions
-	// callbacks
+	// timer callback, flight controller loop
+	void flight_controller_timer_callback();
+
+	// pose sub callback
 	void on_pose_msg_callback(geometry_msgs::msg::PoseStamped::SharedPtr msg);
 
-	// timer callbacks
-	void pid_timer_callback();
+	// set goal pos
+	void set_goal_pos(geometry_msgs::msg::Pose::SharedPtr pos);
 
-	// mma
-	void motor_mixing() const;
+	// publishs goal_pos_ msg to pose_pub_
+	void publish_goal_pos() const;
 
-	/// vars
-	rclcpp::Time last_time_;
-	// pose
+	// curr pose sub
 	std::string pose_sub_topic_name_; // name of pose topic
-	geometry_msgs::msg::PoseStamped::SharedPtr last_pose_ =
-		nullptr; // last pose msg
 	rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr
 		pose_sub_; // pose subscriber
 
-	// pid
-	rclcpp::TimerBase::SharedPtr pid_timer_; // timer for pid
+	// ros
+	rclcpp::Time last_time_;
 
-	// rpm
-	std::string rpm_pub_topic_name_; // name of pose topic
-	rclcpp::Publisher<sd_interfaces::msg::QuadcopterRPM>::SharedPtr
-		rmp_pub_; // rpm publisher
+	// goal pose pub
+	geometry_msgs::msg::PoseStamped::SharedPtr last_pose_ =
+		nullptr;					  // last pose msg
+	std::string pose_pub_topic_name_; // name of pose topic
+	rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr
+		pose_pub_; // rpm publisher
 
-	// pids
-	std::unique_ptr<PID> pid_z_;
-	std::unique_ptr<PID> pid_roll_;
-	std::unique_ptr<PID> pid_pitch_;
-	std::unique_ptr<PID> pid_yaw_;
+	// fc
+	rclcpp::TimerBase::SharedPtr flight_controller_timer_; // timer for fc
 
-	double rpm_thrust_;
-	double rpm_roll_;
-	double rpm_pitch_;
-	double rpm_yaw_;
+	// var
+	geometry_msgs::msg::Pose goal_pose_;
 };
 } // namespace ros
 } // namespace sd
