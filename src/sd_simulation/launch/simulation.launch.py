@@ -17,9 +17,9 @@ def flight_controller_node(i):
         parameters=[
             {"pose_topic_name": f"/sd_drone_{i}/pose"},
             {"rpm_topic_name": f"/sd_drone_{i}/rpm"},
-            {"z_kp": 1.2},
-            {"z_ki": 0.0},
-            {"z_kd": 0.00001},
+            {"z_kp": 0.5},
+            {"z_ki": 0.001},
+            {"z_kd": 0.0001},
             {"use_sim_time": True}
         ],
         arguments=[

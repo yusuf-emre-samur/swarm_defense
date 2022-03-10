@@ -15,8 +15,8 @@ def flight_controller_node(i):
         executable="sd_flight_controller",
         name=f"sd_flight_controller_{i}",
         parameters=[
-            {"pose_topic_name": f"/sd_drone_{i}/pose"},
-            {"rpm_topic_name": f"/sd_drone_{i}/rpm"},
+            {"pose_sub_topic_name": f"/sd_drone_{i}/curr_pose"},
+            {"pose_pub_topic_name": f"/sd_drone_{i}/goal_pose"},
             {"use_sim_time": True}
         ],
         arguments=[
@@ -59,8 +59,8 @@ def generate_launch_description():
     ld.add_action(gzserver)
 
     # add flight controller for each drone
-    # num_drones = 2
-    # for i in range(1, num_drones+1):
-    #     ld.add_action(flight_controller_node(i))
+    num_drones = 1
+    for i in range(1, num_drones+1):
+        ld.add_action(flight_controller_node(i))
 
     return ld
