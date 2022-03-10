@@ -14,8 +14,6 @@
 #include <rclcpp/rclcpp.hpp>
 // msgs
 #include <geometry_msgs/msg/pose_stamped.hpp>
-#include <sd_interfaces/msg/quadcopter_rpm.hpp>
-#include <sd_interfaces/msg/rpm.hpp>
 #include <std_msgs/msg/string.hpp>
 // other
 
@@ -34,12 +32,14 @@ class SimpleDronePlugin : public gazebo::ModelPlugin
 	void OnUpdate(const gazebo::common::UpdateInfo& _info);
 
   private: // functions
-	void on_msg_rpm_callback(sd_interfaces::msg::QuadcopterRPM::SharedPtr msg);
+		   // called when on new pose on topic
+	void on_pose_msg_callback(geometry_msgs::msg::PoseStamped::SharedPtr msg);
 	// quadcopter flight functions
-	void updateThrust();
-	double calculateThrust(const double& w) const;
-	double calculateTorque(const double& w) const;
-	double rpm_to_rad(const int& rpm) const;
+	void fakeRotation();
+
+	// simulate fake fly
+	void fakeFly();
+	void cropVelocity();
 
 	// ros functions
 	// imu + gps = pose
@@ -50,27 +50,31 @@ class SimpleDronePlugin : public gazebo::ModelPlugin
 	gazebo::physics::ModelPtr model_;
 	gazebo::event::ConnectionPtr update_callback_;
 	gazebo::common::Time last_time_;
+	// current pose and goal pose
 	ignition::math::Pose3d pose_;
+	ignition::math::Pose3d goal_pose_;
 
 	// imu sensor
 	gazebo::sensors::ImuSensorPtr imu_;
 
-	// pose pub
+	// curr pose pub
 	rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pose_pub_;
 
 	// ros node
 	gazebo_ros::Node::SharedPtr ros2node_;
 
-	// rpm subscriber
-	rclcpp::Subscription<sd_interfaces::msg::QuadcopterRPM>::SharedPtr rpm_sub_;
+	// goal pose subscriber
+	rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr pose_sub_;
 
-	// params
-	static constexpr double rotor_thrust_coeff_ = 0.0001;
-	static constexpr double rotor_torque_coeff_ = 0.0000074;
+	// vel
+	ignition::math::Vector3d vel_;
+	ignition::math::Vector3d ang_vel_;
+	ignition::math::Vector3d max_vel_;
+	ignition::math::Vector3d max_ang_vel_;
 
+	// for fake rotor rotation
 	static constexpr uint num_rotors_ = 4;
 	std::array<std::string, num_rotors_> rotor_link_names_;
-	std::array<int, num_rotors_> rotor_rpms_;
 };
 } // namespace gazebo_ros_plugins
 } // namespace sd
