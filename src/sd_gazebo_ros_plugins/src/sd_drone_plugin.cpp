@@ -75,18 +75,34 @@ void SimpleDronePlugin::Load(gazebo::physics::ModelPtr _model,
 			std::dynamic_pointer_cast<gazebo::sensors::ImuSensor>(imu_sensor_);
 	}
 
-	// pose publisher
-	const std::string pose_pub_name = this->model_->GetName() + "/pose";
+	// max vel
+	if ( _sdf->HasElement("max_vel") ) {
+		this->max_vel_ =
+			_sdf->GetElement("max_vel")->Get<ignition::math::Vector3d>();
+	} else {
+		this->max_vel_ = ignition::math::Vector3d(1, 1, 1);
+	}
+
+	// max angular vel
+	if ( _sdf->HasElement("max_ang_vel") ) {
+		this->max_ang_vel_ =
+			_sdf->GetElement("max_ang_vel")->Get<ignition::math::Vector3d>();
+	} else {
+		this->max_ang_vel_ = ignition::math::Vector3d(0.1, 0.1, 0.1);
+	}
+
+	// curr pose publisher
+	const std::string pose_pub_name = this->model_->GetName() + "/curr_pose";
 	this->pose_pub_ =
 		ros2node_->create_publisher<geometry_msgs::msg::PoseStamped>(
 			pose_pub_name, 10);
 
-	// rpm subscription
-	const std::string rpm_sub_name = this->model_->GetName() + "/rpm";
-	this->rpm_sub_ =
-		ros2node_->create_subscription<sd_interfaces::msg::QuadcopterRPM>(
+	// goal pose subscription
+	const std::string rpm_sub_name = this->model_->GetName() + "/goal_pose";
+	this->pose_sub_ =
+		ros2node_->create_subscription<geometry_msgs::msg::PoseStamped>(
 			rpm_sub_name, 1,
-			std::bind(&SimpleDronePlugin::on_msg_rpm_callback, this,
+			std::bind(&SimpleDronePlugin::on_pose_msg_callback, this,
 					  std::placeholders::_1));
 
 	// callback each simulation step
@@ -100,15 +116,49 @@ void SimpleDronePlugin::Load(gazebo::physics::ModelPtr _model,
 // called each iteration of simulation
 void SimpleDronePlugin::OnUpdate(const gazebo::common::UpdateInfo& _info)
 {
-	this->updateThrust();
-	this->publish_pose();
 	this->last_time_ = _info.simTime;
-	auto goal = ignition::math::Pose3d(10, 10, 10, 0, 0, 1);
-	auto vel = ignition::math::Pose3d(0.0000001, 0.0000001, 0.0000001,
-									  0.0000001, 0.0000001, 0.0000001) *
-			   (goal - this->model_->WorldPose());
-	this->model_->SetLinearVel(vel.Pos());
-	this->model_->SetAngularVel(vel.Rot().Euler());
+	this->pose_ = this->model_->WorldPose();
+
+	this->fakeRotation();
+	this->fakeFly();
+	this->publish_pose();
+}
+
+void SimpleDronePlugin::fakeFly()
+{
+	const auto scalar =
+		ignition::math::Pose3d(0.001, 0.001, 0.001, 0.001, 0.001, 0.001);
+	auto vel_raw = scalar * (this->goal_pose_ - this->pose_);
+	this->vel_ = vel_raw.Pos();
+	this->ang_vel_ = vel_raw.Rot().Euler();
+
+	this->cropVelocity();
+	this->model_->SetLinearVel(this->vel_);
+	this->model_->SetAngularVel(this->ang_vel_);
+}
+
+void SimpleDronePlugin::cropVelocity()
+{
+	// vel
+	if ( this->vel_.X() > this->max_vel_.X() ) {
+		this->vel_.X() = this->max_vel_.X();
+	}
+	if ( this->vel_.Y() > this->max_vel_.Y() ) {
+		this->vel_.Y() = this->max_vel_.Y();
+	}
+	if ( this->vel_.Z() > this->max_vel_.Z() ) {
+		this->vel_.Z() = this->max_vel_.Z();
+	}
+	// angular vel
+	if ( this->ang_vel_.X() > this->max_ang_vel_.X() ) {
+		this->ang_vel_.X() = this->max_ang_vel_.X();
+	}
+	if ( this->ang_vel_.Y() > this->max_ang_vel_.Y() ) {
+		this->ang_vel_.Y() = this->max_ang_vel_.Y();
+	}
+	if ( this->ang_vel_.Z() > this->max_ang_vel_.Z() ) {
+		this->ang_vel_.Z() = this->max_ang_vel_.Z();
+	}
 }
 
 void SimpleDronePlugin::publish_pose() const
@@ -130,52 +180,34 @@ void SimpleDronePlugin::publish_pose() const
 }
 
 // called each time receiving message from topic
-void SimpleDronePlugin::on_msg_rpm_callback(
-	const sd_interfaces::msg::QuadcopterRPM::SharedPtr rotor_rpm)
+void SimpleDronePlugin::on_pose_msg_callback(
+	const geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
-	// update rpm
-	this->rotor_rpms_[0] = rotor_rpm->rotor0.rpm;
-	this->rotor_rpms_[1] = rotor_rpm->rotor1.rpm;
-	this->rotor_rpms_[2] = rotor_rpm->rotor2.rpm;
-	this->rotor_rpms_[3] = rotor_rpm->rotor3.rpm;
+	this->goal_pose_.SetX(msg->pose.position.x);
+	this->goal_pose_.SetY(msg->pose.position.y);
+	this->goal_pose_.SetZ(msg->pose.position.z);
+
+	this->goal_pose_.Rot().X() = msg->pose.orientation.x;
+	this->goal_pose_.Rot().Y() = msg->pose.orientation.y;
+	this->goal_pose_.Rot().Z() = msg->pose.orientation.z;
+	this->goal_pose_.Rot().W() = msg->pose.orientation.w;
 }
 
-void SimpleDronePlugin::updateThrust()
+void SimpleDronePlugin::fakeRotation()
 {
-	double thrust;
-	double torque;
+	constexpr double thrust = 5;
+	int sign = 1;
 	gazebo::physics::LinkPtr link;
-
+	// apply fake rotation for each link
 	for ( unsigned int i = 0; i < this->num_rotors_; i++ ) {
 		link = model_->GetLink(this->rotor_link_names_[i]);
-
-		// calc. and apply force and torque
 		if ( link != NULL ) {
-			thrust =
-				this->calculateThrust(this->rpm_to_rad(this->rotor_rpms_[i]));
-			torque =
-				this->calculateTorque(this->rpm_to_rad(this->rotor_rpms_[i]));
-			link->AddRelativeForce(ignition::math::Vector3d(0, 0, thrust));
-			link->AddRelativeTorque(ignition::math::Vector3d(0, 0, torque));
+			link->AddRelativeTorque(
+				ignition::math::Vector3d(0, 0, sign * thrust));
+			// link->AddRelativeForce(ignition::math::Vector3d(0, 0, 4.70));
+			sign *= -1;
 		}
 	}
-}
-
-double SimpleDronePlugin::calculateThrust(const double& w) const
-{
-	double thrust = rotor_thrust_coeff_ * w * w;
-	return thrust;
-}
-
-double SimpleDronePlugin::calculateTorque(const double& w) const
-{
-	double torque = copysign(rotor_torque_coeff_ * w * w, w);
-	return torque;
-}
-
-double SimpleDronePlugin::rpm_to_rad(const int& rpm) const
-{
-	return rpm / 60 * 2 * M_PI;
 }
 
 // Register this plugin
