@@ -10,7 +10,7 @@
         </include>
 
         <model name="sd_drone_1">
-            <pose>1 0 0 0 0 0 </pose>
+            <pose>0 0 0 0 0 0 </pose>
             <include>
                 <uri>model://iris_with_standoffs</uri>
             </include>
@@ -21,6 +21,8 @@
                 <link_name_rotor_3>iris::rotor_3</link_name_rotor_3>
                 <imu_link_name>iris::iris/imu_link</imu_link_name>
                 <imu_sensor_name>imu_sensor</imu_sensor_name>
+                <max_vel>3 3 3</max_vel>
+                <max_ang_vel>1 1 1</max_ang_vel>
             </plugin>
         </model>
 
