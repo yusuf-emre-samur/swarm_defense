@@ -75,6 +75,7 @@ ament_target_dependencies(
 )
 
 
+
 # sd drone plugin
 add_library(sd_drone_plugin SHARED
   src/sd_drone_plugin.cpp
@@ -91,22 +92,6 @@ ament_target_dependencies(
   sd_interfaces
 )
 
-# sd simple drone plugin
-add_library(sd_simple_drone_plugin SHARED
-  src/sd_simple_drone_plugin.cpp
-)
-target_include_directories(sd_simple_drone_plugin PUBLIC include)
-ament_target_dependencies(
-  sd_simple_drone_plugin
-  gazebo_dev
-  gazebo_ros
-  rclcpp
-  geometry_msgs
-  std_msgs
-  sensor_msgs
-  sd_interfaces
-)
-
 
 
 install(
@@ -114,7 +99,6 @@ install(
   hello_world_plugin
   ros_test_plugin
   sd_drone_plugin
-  sd_simple_drone_plugin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
