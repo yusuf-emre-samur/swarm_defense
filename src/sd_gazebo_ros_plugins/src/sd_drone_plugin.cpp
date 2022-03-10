@@ -1,5 +1,5 @@
 // interface
-#include "sd_gazebo_ros_plugins/sd_simple_drone_plugin.hpp"
+#include "sd_gazebo_ros_plugins/sd_drone_plugin.hpp"
 // gazebo
 #include <functional>
 #include <gazebo/common/common.hh>
