@@ -21,16 +21,15 @@ namespace sd {
 namespace gazebo_ros_plugins {
 
 // Constructor
-SimpleDronePlugin::SimpleDronePlugin()
+DronePlugin::DronePlugin()
 {
 }
 
-SimpleDronePlugin ::~SimpleDronePlugin()
+DronePlugin ::~DronePlugin()
 {
 }
 
-void SimpleDronePlugin::Load(gazebo::physics::ModelPtr _model,
-							 sdf::ElementPtr _sdf)
+void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
 
 	this->model_ = _model;
@@ -102,19 +101,19 @@ void SimpleDronePlugin::Load(gazebo::physics::ModelPtr _model,
 	this->pose_sub_ =
 		ros2node_->create_subscription<geometry_msgs::msg::PoseStamped>(
 			rpm_sub_name, 1,
-			std::bind(&SimpleDronePlugin::on_pose_msg_callback, this,
+			std::bind(&DronePlugin::on_pose_msg_callback, this,
 					  std::placeholders::_1));
 
 	// callback each simulation step
 	this->update_callback_ = gazebo::event::Events::ConnectWorldUpdateBegin(
-		std::bind(&SimpleDronePlugin::OnUpdate, this, std::placeholders::_1));
+		std::bind(&DronePlugin::OnUpdate, this, std::placeholders::_1));
 
 	// INFO
 	RCLCPP_INFO(ros2node_->get_logger(), "Loaded SD Drone Plugin!");
 }
 
 // called each iteration of simulation
-void SimpleDronePlugin::OnUpdate(const gazebo::common::UpdateInfo& _info)
+void DronePlugin::OnUpdate(const gazebo::common::UpdateInfo& _info)
 {
 	this->last_time_ = _info.simTime;
 	this->pose_ = this->model_->WorldPose();
@@ -124,20 +123,21 @@ void SimpleDronePlugin::OnUpdate(const gazebo::common::UpdateInfo& _info)
 	this->publish_pose();
 }
 
-void SimpleDronePlugin::fakeFly()
+void DronePlugin::fakeFly()
 {
 	const auto scalar =
 		ignition::math::Pose3d(0.001, 0.001, 0.001, 0.001, 0.001, 0.001);
 	auto vel_raw = scalar * (this->goal_pose_ - this->pose_);
 	this->vel_ = vel_raw.Pos();
 	this->ang_vel_ = vel_raw.Rot().Euler();
-
+	RCLCPP_INFO(this->ros2node_->get_logger(),
+				std::to_string(this->vel_.X()).c_str());
 	this->cropVelocity();
 	this->model_->SetLinearVel(this->vel_);
 	this->model_->SetAngularVel(this->ang_vel_);
 }
 
-void SimpleDronePlugin::cropVelocity()
+void DronePlugin::cropVelocity()
 {
 	// vel
 	if ( this->vel_.X() > this->max_vel_.X() ) {
@@ -161,7 +161,7 @@ void SimpleDronePlugin::cropVelocity()
 	}
 }
 
-void SimpleDronePlugin::publish_pose() const
+void DronePlugin::publish_pose() const
 {
 	geometry_msgs::msg::PoseStamped msg;
 	msg.header.stamp = ros2node_->now();
@@ -180,7 +180,7 @@ void SimpleDronePlugin::publish_pose() const
 }
 
 // called each time receiving message from topic
-void SimpleDronePlugin::on_pose_msg_callback(
+void DronePlugin::on_pose_msg_callback(
 	const geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
 	this->goal_pose_.SetX(msg->pose.position.x);
@@ -193,7 +193,7 @@ void SimpleDronePlugin::on_pose_msg_callback(
 	this->goal_pose_.Rot().W() = msg->pose.orientation.w;
 }
 
-void SimpleDronePlugin::fakeRotation()
+void DronePlugin::fakeRotation()
 {
 	constexpr double thrust = 5;
 	int sign = 1;
@@ -211,7 +211,7 @@ void SimpleDronePlugin::fakeRotation()
 }
 
 // Register this plugin
-GZ_REGISTER_MODEL_PLUGIN(SimpleDronePlugin)
+GZ_REGISTER_MODEL_PLUGIN(DronePlugin)
 
 } // namespace gazebo_ros_plugins
 } // namespace sd

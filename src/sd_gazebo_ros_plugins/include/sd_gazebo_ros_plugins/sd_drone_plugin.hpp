@@ -20,12 +20,12 @@
 namespace sd {
 namespace gazebo_ros_plugins {
 
-class SimpleDronePlugin : public gazebo::ModelPlugin
+class DronePlugin : public gazebo::ModelPlugin
 {
   public:
 	// con. / decon.
-	SimpleDronePlugin();
-	~SimpleDronePlugin();
+	DronePlugin();
+	~DronePlugin();
 
 	// gazebo plugin functions
 	void Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf);
