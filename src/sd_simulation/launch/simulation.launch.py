@@ -15,11 +15,8 @@ def flight_controller_node(i):
         executable="sd_flight_controller",
         name=f"sd_flight_controller_{i}",
         parameters=[
-            {"pose_topic_name": f"/sd_drone_{i}/pose"},
-            {"rpm_topic_name": f"/sd_drone_{i}/rpm"},
-            {"z_kp": 0.5},
-            {"z_ki": 0.001},
-            {"z_kd": 0.0001},
+            {"pose_sub_topic_name": f"/sd_drone_{i}/curr_pose"},
+            {"pose_pub_topic_name": f"/sd_drone_{i}/goal_pose"},
             {"use_sim_time": True}
         ],
         arguments=[
@@ -37,7 +34,7 @@ def generate_launch_description():
     # gazebo world file in worlds folder
     world_launch_arg = DeclareLaunchArgument(
         "world",
-        default_value="world.world",
+        default_value="simple_world.world",
         description="Gazebo world file name in worlds folder of package."
     )
 
@@ -62,7 +59,7 @@ def generate_launch_description():
     ld.add_action(gzserver)
 
     # add flight controller for each drone
-    num_drones = 2
+    num_drones = 1
     for i in range(1, num_drones+1):
         ld.add_action(flight_controller_node(i))
 
