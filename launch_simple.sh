@@ -1,1 +1,0 @@
-ros2 launch sd_simulation simple_simulation.launch.py
