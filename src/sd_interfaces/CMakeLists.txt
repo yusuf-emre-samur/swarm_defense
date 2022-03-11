@@ -28,7 +28,7 @@ endif()
 
 
 set(msg_files
-  "msg/Empty.msg"
+  "msg/Pose.msg"
 )
 
 # msg folder
