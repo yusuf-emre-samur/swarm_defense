@@ -1,24 +1,18 @@
 // interface
 #include "sd_gazebo_ros_plugins/sd_drone_plugin.hpp"
 // gazebo
-#include <functional>
-#include <gazebo/common/common.hh>
-#include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <ignition/math/Quaternion.hh>
 #include <ignition/math/Vector3.hh>
-// ros
-#include <gazebo_ros/node.hpp>
-#include <gazebo_ros/utils.hpp>
-#include <rclcpp/rclcpp.hpp>
-
 // other
-#include <cmath>
-#include <memory>
-#include <string>
 
 namespace sd {
 namespace gazebo_ros_plugins {
+
+// noise generator
+std::random_device rd{};
+std::mt19937 e2{rd()};
+std::normal_distribution<> gaussian_noise(0, 0.01);
 
 // Constructor
 DronePlugin::DronePlugin()
@@ -118,49 +112,135 @@ void DronePlugin::OnUpdate(const gazebo::common::UpdateInfo& _info)
 	this->last_time_ = _info.simTime;
 	this->pose_ = this->model_->WorldPose();
 
-	this->fakeRotation();
 	this->fakeFly();
 	this->publish_pose();
 }
 
 void DronePlugin::fakeFly()
 {
+
 	const auto scalar =
 		ignition::math::Pose3d(0.001, 0.001, 0.001, 0.001, 0.001, 0.001);
-	auto vel_raw = scalar * (this->goal_pose_ - this->pose_);
+	auto vel_raw =
+		scalar * (this->goal_pose_ + this->getGaussianNoise() - this->pose_);
+	// angular velocity
+	this->ang_vel_ = vel_raw.Rot().Euler() + this->fakeAngularMotion();
+	// fix motion direction of angle
+	vel_raw.CoordRotationSub(
+		ignition::math::Quaterniond::EulerToQuaternion(ang_vel_));
 	this->vel_ = vel_raw.Pos();
-	this->ang_vel_ = vel_raw.Rot().Euler();
-	RCLCPP_INFO(this->ros2node_->get_logger(),
-				std::to_string(this->vel_.X()).c_str());
 	this->cropVelocity();
+
 	this->model_->SetLinearVel(this->vel_);
 	this->model_->SetAngularVel(this->ang_vel_);
+	if ( this->pose_.Z() > 0.0001 ) {
+		this->fakeRotation();
+	}
+	this->last_vel_ = this->vel_;
 }
 
+ignition::math::Pose3d DronePlugin::getGaussianNoise() const
+{
+	return ignition::math::Pose3d(gaussian_noise(e2), gaussian_noise(e2),
+								  gaussian_noise(e2), gaussian_noise(e2),
+								  gaussian_noise(e2), gaussian_noise(e2));
+}
+
+// add roll on y motion and pitch on x motion for realistic fly
+ignition::math::Vector3d DronePlugin::fakeAngularMotion() const
+{
+	const double x_vel_pitch = -(this->vel_.Y() / this->max_vel_.Y() / 10);
+	const double y_vel_roll = this->vel_.X() / this->max_vel_.X() / 10;
+	return ignition::math::Vector3d(x_vel_pitch, y_vel_roll, 0);
+}
+
+// crop velocity and angular velocity to [-max, max]
 void DronePlugin::cropVelocity()
 {
-	// vel
-	if ( this->vel_.X() > this->max_vel_.X() ) {
+	auto negative_max_vel = -1 * this->max_vel_;
+	auto negative_max_ang_vel = -1 * this->max_ang_vel_;
+	// x
+	if ( this->vel_.X() > 0 && this->vel_.X() > this->max_vel_.X() ) {
 		this->vel_.X() = this->max_vel_.X();
 	}
-	if ( this->vel_.Y() > this->max_vel_.Y() ) {
+	if ( this->vel_.X() < 0 && this->vel_.X() < negative_max_vel.X() ) {
+		this->vel_.X() = negative_max_vel.X();
+	}
+	// y
+	if ( this->vel_.Y() > 0 && this->vel_.Y() > this->max_vel_.Y() ) {
 		this->vel_.Y() = this->max_vel_.Y();
 	}
-	if ( this->vel_.Z() > this->max_vel_.Z() ) {
+	if ( this->vel_.Y() < 0 && this->vel_.Y() < negative_max_vel.Y() ) {
+		this->vel_.Y() = negative_max_vel.Y();
+	}
+	// y
+	if ( this->vel_.Z() > 0 && this->vel_.Z() > this->max_vel_.Z() ) {
 		this->vel_.Z() = this->max_vel_.Z();
 	}
-	// angular vel
-	if ( this->ang_vel_.X() > this->max_ang_vel_.X() ) {
-		this->ang_vel_.X() = this->max_ang_vel_.X();
+	if ( this->vel_.Z() < 0 && this->vel_.Z() < negative_max_vel.Z() ) {
+		this->vel_.Z() = negative_max_vel.Z();
 	}
-	if ( this->ang_vel_.Y() > this->max_ang_vel_.Y() ) {
-		this->ang_vel_.Y() = this->max_ang_vel_.Y();
+
+	// r
+	if ( this->ang_vel_.X() > 0 && this->ang_vel_.X() > this->max_vel_.X() ) {
+		this->ang_vel_.X() = this->max_vel_.X();
 	}
-	if ( this->ang_vel_.Z() > this->max_ang_vel_.Z() ) {
-		this->ang_vel_.Z() = this->max_ang_vel_.Z();
+	if ( this->ang_vel_.X() < 0 &&
+		 this->ang_vel_.X() < negative_max_ang_vel.X() ) {
+		this->ang_vel_.X() = negative_max_ang_vel.X();
+	}
+	// p
+	if ( this->ang_vel_.Y() > 0 && this->ang_vel_.Y() > this->max_vel_.Y() ) {
+		this->ang_vel_.Y() = this->max_vel_.Y();
+	}
+	if ( this->ang_vel_.Y() < 0 &&
+		 this->ang_vel_.Y() < negative_max_ang_vel.Y() ) {
+		this->ang_vel_.Y() = negative_max_ang_vel.Y();
+	}
+	// y
+	if ( this->ang_vel_.Z() > 0 && this->ang_vel_.Z() > this->max_vel_.Z() ) {
+		this->ang_vel_.Z() = this->max_vel_.Z();
+	}
+	if ( this->ang_vel_.Z() < 0 &&
+		 this->ang_vel_.Z() < negative_max_ang_vel.Z() ) {
+		this->ang_vel_.Z() = negative_max_ang_vel.Z();
 	}
 }
 
+// adds fake rotation to drone rotors
+void DronePlugin::fakeRotation()
+{
+	constexpr double thrust = 5;
+	int sign = 1;
+	gazebo::physics::LinkPtr link;
+	// apply fake rotation for each link
+	for ( unsigned int i = 0; i < this->num_rotors_; i++ ) {
+		link = model_->GetLink(this->rotor_link_names_[i]);
+		if ( link != NULL ) {
+			link->AddRelativeTorque(
+				ignition::math::Vector3d(0, 0, sign * thrust));
+			// link->AddRelativeForce(ignition::math::Vector3d(0, 0, 4.70));
+			sign *= -1;
+		}
+	}
+}
+
+// update goal pose on new msg to ros topic ../goal_pose
+void DronePlugin::on_pose_msg_callback(
+	const geometry_msgs::msg::PoseStamped::SharedPtr msg)
+{
+	this->goal_pose_.SetX(msg->pose.position.x);
+	this->goal_pose_.SetY(msg->pose.position.y);
+	this->goal_pose_.SetZ(msg->pose.position.z);
+
+	// only set yaw
+	// this->goal_pose_.Rot().X() = msg->pose.orientation.x;
+	// this->goal_pose_.Rot().Y() = msg->pose.orientation.y;
+	this->goal_pose_.Rot().Z() = msg->pose.orientation.z;
+	// this->goal_pose_.Rot().W() = msg->pose.orientation.w;
+}
+
+// publish current pose to ros topic ../curr_pose
 void DronePlugin::publish_pose() const
 {
 	geometry_msgs::msg::PoseStamped msg;
@@ -177,37 +257,6 @@ void DronePlugin::publish_pose() const
 	msg.pose.position.z = this->model_->WorldPose().Z();
 
 	this->pose_pub_->publish(msg);
-}
-
-// called each time receiving message from topic
-void DronePlugin::on_pose_msg_callback(
-	const geometry_msgs::msg::PoseStamped::SharedPtr msg)
-{
-	this->goal_pose_.SetX(msg->pose.position.x);
-	this->goal_pose_.SetY(msg->pose.position.y);
-	this->goal_pose_.SetZ(msg->pose.position.z);
-
-	this->goal_pose_.Rot().X() = msg->pose.orientation.x;
-	this->goal_pose_.Rot().Y() = msg->pose.orientation.y;
-	this->goal_pose_.Rot().Z() = msg->pose.orientation.z;
-	this->goal_pose_.Rot().W() = msg->pose.orientation.w;
-}
-
-void DronePlugin::fakeRotation()
-{
-	constexpr double thrust = 5;
-	int sign = 1;
-	gazebo::physics::LinkPtr link;
-	// apply fake rotation for each link
-	for ( unsigned int i = 0; i < this->num_rotors_; i++ ) {
-		link = model_->GetLink(this->rotor_link_names_[i]);
-		if ( link != NULL ) {
-			link->AddRelativeTorque(
-				ignition::math::Vector3d(0, 0, sign * thrust));
-			// link->AddRelativeForce(ignition::math::Vector3d(0, 0, 4.70));
-			sign *= -1;
-		}
-	}
 }
 
 // Register this plugin

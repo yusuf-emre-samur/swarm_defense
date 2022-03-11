@@ -2,6 +2,11 @@
 #define SD_GAZEBO_ROS_PLUGINS_DRONE_PLUGIN_HPP_
 // cpp
 #include <array>
+#include <cmath>
+#include <functional>
+#include <memory>
+#include <random>
+#include <string>
 
 // gazebo
 #include <gazebo/common/Plugin.hh>
@@ -15,6 +20,7 @@
 // msgs
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <std_msgs/msg/string.hpp>
+
 // other
 
 namespace sd {
@@ -34,18 +40,22 @@ class DronePlugin : public gazebo::ModelPlugin
   private: // functions
 		   // called when on new pose on topic
 	void on_pose_msg_callback(geometry_msgs::msg::PoseStamped::SharedPtr msg);
-	// quadcopter flight functions
-	void fakeRotation();
-
-	// simulate fake fly
-	void fakeFly();
-	void cropVelocity();
 
 	// ros functions
 	// imu + gps = pose
 	void publish_pose() const;
 
-  private: // vars
+	// simulate fake fly
+	void fakeFly();
+	// crop velocity to [-max,max]
+	void cropVelocity();
+	// create pitch and roll for motion
+	ignition::math::Vector3d fakeAngularMotion() const;
+	// add gaussian noise to velocity
+	ignition::math::Pose3d getGaussianNoise() const;
+	// quadcopter flight functions
+	void fakeRotation();
+
 	// gazebo
 	gazebo::physics::ModelPtr model_;
 	gazebo::event::ConnectionPtr update_callback_;
@@ -68,6 +78,7 @@ class DronePlugin : public gazebo::ModelPlugin
 
 	// vel
 	ignition::math::Vector3d vel_;
+	ignition::math::Vector3d last_vel_;
 	ignition::math::Vector3d ang_vel_;
 	ignition::math::Vector3d max_vel_;
 	ignition::math::Vector3d max_ang_vel_;
