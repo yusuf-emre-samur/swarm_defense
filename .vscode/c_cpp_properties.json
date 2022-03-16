@@ -11,8 +11,7 @@
                 "/usr/include/ignition/common3",
                 "/usr/include/ignition/fuel_tools4",
                 "/usr/include/ignition/msgs5",
-                "/usr/include/ignition/transport8",
-                "${workspaceFolder}/build/sd_interfaces/rosidl_generator_cpp"
+                "/usr/include/ignition/transport8"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",
