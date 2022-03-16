@@ -1,0 +1,33 @@
+<?xml version='1.0'?>
+<sdf version='1.7'>
+  <model name='railway2'>
+    <model name='railway'>
+      <static>1</static>
+      <link name='link'>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://railway/meshes/railway.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+      <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+    </model>
+    <model name='railway_0'>
+      <static>1</static>
+      <link name='link'>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://railway/meshes/railway.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+      <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+    </model>
+    <static>0</static>
+    <allow_auto_disable>1</allow_auto_disable>
+  </model>
+</sdf>
