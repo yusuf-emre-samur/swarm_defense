@@ -12,7 +12,7 @@ namespace gazebo_ros_plugins {
 // noise generator
 std::random_device rd{};
 std::mt19937 e2{rd()};
-std::normal_distribution<> gaussian_noise(0, 0.01);
+std::normal_distribution<> gaussian_noise(0, 0.001);
 
 // Constructor
 DronePlugin::DronePlugin()
@@ -102,6 +102,9 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 	this->update_callback_ = gazebo::event::Events::ConnectWorldUpdateBegin(
 		std::bind(&DronePlugin::OnUpdate, this, std::placeholders::_1));
 
+	this->pose_ = this->model_->WorldPose();
+	this->goal_pose_ = this->pose_;
+
 	// INFO
 	RCLCPP_INFO(ros2node_->get_logger(), "Loaded SD Drone Plugin!");
 }
@@ -133,7 +136,7 @@ void DronePlugin::fakeFly()
 
 	this->model_->SetLinearVel(this->vel_);
 	this->model_->SetAngularVel(this->ang_vel_);
-	if ( this->pose_.Z() > 0.0001 ) {
+	if ( this->pose_.Z() > 0.001 ) {
 		this->fakeRotation();
 	}
 	this->last_vel_ = this->vel_;
