@@ -34,7 +34,7 @@ def generate_launch_description():
     # gazebo world file in worlds folder
     world_launch_arg = DeclareLaunchArgument(
         "world",
-        default_value="simple_world.world",
+        default_value="world.world",
         description="Gazebo world file name in worlds folder of package."
     )
 
