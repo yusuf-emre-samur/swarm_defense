@@ -13,7 +13,6 @@ find_package(rclcpp REQUIRED)
 
 # interfaces
 find_package(geometry_msgs REQUIRED)
-find_package(sd_interfaces REQUIRED)
 
 
 # uncomment the following section in order to fill in
@@ -42,7 +41,6 @@ ament_target_dependencies(
   sd_flight_controller
   rclcpp
   geometry_msgs
-  sd_interfaces
 )
 
 # include dir
