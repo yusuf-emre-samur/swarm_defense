@@ -35,7 +35,7 @@ void RosTestPlugin::Load(gazebo::physics::ModelPtr _parent,
 	this->model_ = _parent;
 
 	// ros node + qos
-	ros2node_ = gazebo_ros::Node::Get(_sdf, _parent);
+	ros2node_ = gazebo_ros::Node::Get();
 	const gazebo_ros::QoS& qos = ros2node_->get_qos();
 
 	// publisher
