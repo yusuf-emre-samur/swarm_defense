@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<sdf version="1.5">
+  <model name="wagon">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://wagon/meshes/model.dae</uri>
+            <scale>100.0 100.0 100.0</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <pose>0 0 0.68 0 0 0</pose>
+  </model>
+</sdf>
