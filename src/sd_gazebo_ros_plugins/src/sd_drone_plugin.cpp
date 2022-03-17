@@ -19,13 +19,12 @@ DronePlugin::DronePlugin()
 {
 }
 
-DronePlugin ::~DronePlugin()
+DronePlugin::~DronePlugin()
 {
 }
 
 void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
-
 	this->model_ = _model;
 	this->ros2node_ = gazebo_ros::Node::Get();
 
