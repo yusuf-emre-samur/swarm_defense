@@ -83,6 +83,14 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 		this->max_ang_vel_ = ignition::math::Vector3d(0.1, 0.1, 0.1);
 	}
 
+	// gimbal
+	if ( _sdf->HasElement("gimbal_tilt_link") ) {
+		this->gimbal_tilt_link_ =
+			_sdf->GetElement("gimbal_tilt_link")->Get<std::string>();
+	} else {
+		gzthrow("Please provide gimbal_tilt_link");
+	}
+
 	// curr pose publisher
 	const std::string pose_pub_name = this->model_->GetName() + "/curr_pose";
 	this->pose_pub_ =
@@ -99,7 +107,7 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
 	// callback each simulation step
 	this->update_callback_ = gazebo::event::Events::ConnectWorldUpdateBegin(
-		std::bind(&DronePlugin::OnUpdate, this, std::placeholders::_1));
+		std::bind(&DronePlugin::OnUpdate, this));
 
 	this->pose_ = this->model_->WorldPose();
 	this->goal_pose_ = this->pose_;
@@ -109,13 +117,14 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 }
 
 // called each iteration of simulation
-void DronePlugin::OnUpdate(const gazebo::common::UpdateInfo& _info)
+void DronePlugin::OnUpdate()
 {
-	this->last_time_ = _info.simTime;
 	this->pose_ = this->model_->WorldPose();
 
 	this->fakeFly();
 	this->publish_pose();
+	this->model_->GetLink(this->gimbal_tilt_link_)
+		->AddTorque(ignition::math::Vector3d(0, 0, 0.00001));
 }
 
 void DronePlugin::fakeFly()

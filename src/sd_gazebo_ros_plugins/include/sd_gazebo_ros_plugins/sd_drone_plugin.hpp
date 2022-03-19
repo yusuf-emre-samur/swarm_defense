@@ -35,7 +35,7 @@ class DronePlugin : public gazebo::ModelPlugin
 
 	// gazebo plugin functions
 	void Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf);
-	void OnUpdate(const gazebo::common::UpdateInfo& _info);
+	void OnUpdate();
 
   private: // functions
 		   // called when on new pose on topic
@@ -59,7 +59,6 @@ class DronePlugin : public gazebo::ModelPlugin
 	// gazebo
 	gazebo::physics::ModelPtr model_;
 	gazebo::event::ConnectionPtr update_callback_;
-	gazebo::common::Time last_time_;
 	// current pose and goal pose
 	ignition::math::Pose3d pose_;
 	ignition::math::Pose3d goal_pose_;
@@ -86,6 +85,9 @@ class DronePlugin : public gazebo::ModelPlugin
 	// for fake rotor rotation
 	static constexpr uint num_rotors_ = 4;
 	std::array<std::string, num_rotors_> rotor_link_names_;
+
+	// gilt
+	std::string gimbal_tilt_link_;
 };
 } // namespace gazebo_ros_plugins
 } // namespace sd

@@ -10,46 +10,13 @@
             <uri>model://sun</uri>
         </include>
 
-        <!-- <model name="sd_drone_1">
-            <pose>1 0 0 0 0 0 </pose>
-            <include>
-                <uri>model://iris_with_standoffs</uri>
-            </include>
-            <plugin name="sd_gr_drone_plugin" filename="install/sd_gazebo_ros_plugins/lib/libsd_drone_plugin.so">
-                <link_name_rotor_0>iris::rotor_0</link_name_rotor_0>
-                <link_name_rotor_1>iris::rotor_1</link_name_rotor_1>
-                <link_name_rotor_2>iris::rotor_2</link_name_rotor_2>
-                <link_name_rotor_3>iris::rotor_3</link_name_rotor_3>
-                <imu_link_name>iris::iris/imu_link</imu_link_name>
-                <imu_sensor_name>imu_sensor</imu_sensor_name>
-                <max_vel>2 2 2</max_vel>
-                <max_ang_vel>1 1 1</max_ang_vel>
-            </plugin>
-        </model>
-
-        <model name="sd_drone_2">
-            <pose>2 0 0 0 0 0 </pose>
-            <include>
-                <uri>model://iris_with_standoffs</uri>
-            </include>
-            <plugin name="sd_gr_drone_plugin" filename="install/sd_gazebo_ros_plugins/lib/libsd_drone_plugin.so">
-                <link_name_rotor_0>iris::rotor_0</link_name_rotor_0>
-                <link_name_rotor_1>iris::rotor_1</link_name_rotor_1>
-                <link_name_rotor_2>iris::rotor_2</link_name_rotor_2>
-                <link_name_rotor_3>iris::rotor_3</link_name_rotor_3>
-                <imu_link_name>iris::iris/imu_link</imu_link_name>
-                <imu_sensor_name>imu_sensor</imu_sensor_name>
-                <max_vel>2 2 2</max_vel>
-                <max_ang_vel>1 1 1</max_ang_vel>
-            </plugin>
-        </model> -->
 
         <model name="sd_drone_1">
             <pose>2 0 0 0 0 0 </pose>
             <include>
                 <uri>model://iris_standoff_camera</uri>
             </include>
-            <plugin name="sd_gr_drone_plugin" filename="install/sd_gazebo_ros_plugins/lib/libsd_drone_plugin.so">
+            <plugin name="sd_drone_plugin" filename="install/sd_gazebo_ros_plugins/lib/libsd_drone_plugin.so">
                 <link_name_rotor_0>iris_standoff_camera::iris::rotor_0</link_name_rotor_0>
                 <link_name_rotor_1>iris_standoff_camera::iris::rotor_1</link_name_rotor_1>
                 <link_name_rotor_2>iris_standoff_camera::iris::rotor_2</link_name_rotor_2>
@@ -58,9 +25,8 @@
                 <imu_sensor_name>imu_sensor</imu_sensor_name>
                 <max_vel>2 2 2</max_vel>
                 <max_ang_vel>1 1 1</max_ang_vel>
+                <gimbal_tilt_link>iris_standoff_camera::gimbal_small_2d::tilt_link</gimbal_tilt_link>
             </plugin>
         </model>
-
-        <!-- <plugin name="gazebo_world_plugin" filename="install/sd_gazebo_ros_plugins/lib/libhello_world_plugin.so" /> -->
     </world>
 </sdf>
