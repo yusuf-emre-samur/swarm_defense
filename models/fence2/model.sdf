@@ -1,0 +1,33 @@
+<?xml version='1.0'?>
+<sdf version='1.7'>
+  <model name='fence2'>
+    <model name='fence_1'>
+      <static>1</static>
+      <link name='link'>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://fence/meshes/model.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+      <pose>-1.16404 0.000219 0 0 -0 0</pose>
+    </model>
+    <model name='fence_2'>
+      <static>1</static>
+      <link name='link'>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://fence/meshes/model.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+      </link>
+      <pose>1.16404 -0.000219 0 0 -0 0</pose>
+    </model>
+    <static>1</static>
+    <allow_auto_disable>1</allow_auto_disable>
+  </model>
+</sdf>
