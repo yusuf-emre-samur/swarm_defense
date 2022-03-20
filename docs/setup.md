@@ -54,6 +54,7 @@ rosdep install --from-paths src --ignore-src -r -y
 # build and launch file
 make files executable
 ```sh
-chmod +x sd_build.sh
-chmod +x sd_launch.sh
+chmod +x sd/source.sh
+chmod +x sd/build.sh
+chmod +x sd/launch.sh
 ```

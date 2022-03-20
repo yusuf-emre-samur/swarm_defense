@@ -2,12 +2,12 @@
 
 # build
 ```sh
-./sd_build.sh
+sd/build.sh
 ```
 
 # launch simulation
 ```sh
-./sd_launch.sh
+sd/launch.sh
 ```
 in new terminal:
 ```sh
