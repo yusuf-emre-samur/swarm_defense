@@ -2,13 +2,11 @@
 
 ## table of content
  - [setup](#setup)
- - [build](#build)
  - [simulation](#simulation)
 
 # setup
-have a look at the [setup](docs/setup.md) readme.
+instructions how to setup the workspace: [setup](docs/setup.md)
 
-# build
-have a look at the [build](docs/build.md) readme.
+
 # simulation
-have a look at the [simulation](docs/simulation.md) readme.
+instructions about building and launching the simulation: [simulation](docs/simulation.md)

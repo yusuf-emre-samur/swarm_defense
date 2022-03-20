@@ -9,3 +9,7 @@
 ```sh
 ./sd_launch.sh
 ```
+in new terminal:
+```sh
+gzclient
+```
