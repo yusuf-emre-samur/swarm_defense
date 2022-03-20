@@ -11,7 +11,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -24,7 +24,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -42,7 +42,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -55,7 +55,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -78,7 +78,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -91,7 +91,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -109,7 +109,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -122,7 +122,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -150,7 +150,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -163,7 +163,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -181,7 +181,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -194,7 +194,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -217,7 +217,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -230,7 +230,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -248,7 +248,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -261,7 +261,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -294,7 +294,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -307,7 +307,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -325,7 +325,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -338,7 +338,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -361,7 +361,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -374,7 +374,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -392,7 +392,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -405,7 +405,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -433,7 +433,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -446,7 +446,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -464,7 +464,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -477,7 +477,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -500,7 +500,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -513,7 +513,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -531,7 +531,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
@@ -544,7 +544,7 @@
                 <visual name='visual'>
                   <geometry>
                     <mesh>
-                      <uri>model://railway/meshes/railway.dae</uri>
+                      <uri>model://railway/meshes/model.dae</uri>
                     </mesh>
                   </geometry>
                 </visual>
