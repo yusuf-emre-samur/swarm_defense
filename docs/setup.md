@@ -1,6 +1,6 @@
 # Setup
 
-# versions
+## versions
 **OS**: Ubuntu 20.04.03 LTS <br>
 **g++**: (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0 <br>
 **clang-format**: 12 <br>
@@ -51,16 +51,9 @@ install dependencies
 rosdep install --from-paths src --ignore-src -r -y
 ```
 
-# first build
+# build and launch file
+make files executable
 ```sh
-source /opt/ros/galactic/setup.bash
-```
-
-```sh
-colcon build --symlink-install
-```
-
-# source
-```sh
-source install/setup.bash
+chmod +x sd_build.sh
+chmod +x sd_launch.sh
 ```

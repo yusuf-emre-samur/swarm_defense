@@ -1,11 +1,11 @@
 # start simulation
 
-# source
+# build
 ```sh
-source install/setup.bash
+./sd_build.sh
 ```
 
 # launch simulation
 ```sh
-ros2 launch simulation simulation.launch.py
+./sd_launch.sh
 ```
