@@ -3,7 +3,7 @@
     <world name="default">
 
         <include>
-            <uri>model://my_grass_plane</uri>
+            <uri>model://grass_plane_20x20</uri>
         </include>
 
         <include>
