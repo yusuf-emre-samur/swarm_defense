@@ -7,6 +7,7 @@
         <geometry>
           <mesh>
             <uri>model://building/meshes/model.dae</uri>
+            <scale>2 2 1.0</scale>
           </mesh>
         </geometry>
       </visual>
