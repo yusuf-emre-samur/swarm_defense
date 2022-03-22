@@ -18932,6 +18932,9 @@
                         <diffuse>
                             <color>0.06666667 0.06666667 0.06666667 1</color>
                         </diffuse>
+                        <ambient>
+                            <color>0.06666667 0.06666667 0.06666667 1</color>
+                        </ambient>
                     </lambert>
                 </technique>
             </profile_COMMON>
@@ -18985,6 +18988,9 @@
                         <diffuse>
                             <color>1 1 1 1</color>
                         </diffuse>
+                        <ambient>
+                            <color>1 1 1 1</color>
+                        </ambient>
                     </lambert>
                 </technique>
             </profile_COMMON>
@@ -18996,6 +19002,9 @@
                         <diffuse>
                             <color>0.4980392 1 0 1</color>
                         </diffuse>
+                        <ambient>
+                            <color>0.4980392 1 0 1</color>
+                        </ambient>
                     </lambert>
                 </technique>
             </profile_COMMON>
@@ -19007,6 +19016,9 @@
                         <diffuse>
                             <color>1 1 1 1</color>
                         </diffuse>
+                        <ambient>
+                            <color>1 1 1 1</color>
+                        </ambient>
                     </lambert>
                 </technique>
             </profile_COMMON>
@@ -19032,6 +19044,9 @@
                         <diffuse>
                             <color>0.2862745 0.2862745 0.2862745 1</color>
                         </diffuse>
+                        <ambient>
+                            <color>0.2862745 0.2862745 0.2862745 1</color>
+                        </ambient>
                     </lambert>
                 </technique>
             </profile_COMMON>
@@ -19043,6 +19058,9 @@
                         <diffuse>
                             <color>0.1176471 0.1176471 0.1176471 1</color>
                         </diffuse>
+                        <ambient>
+                            <color>0.1176471 0.1176471 0.1176471 1</color>
+                        </ambient>
                     </lambert>
                 </technique>
             </profile_COMMON>
@@ -19082,6 +19100,9 @@
                         <diffuse>
                             <color>0.7686275 0 0 1</color>
                         </diffuse>
+                        <ambient>
+                            <color>0.7686275 0 0 1</color>
+                        </ambient>
                     </lambert>
                 </technique>
             </profile_COMMON>
@@ -19121,6 +19142,9 @@
                         <diffuse>
                             <color>0.5568627 0.5568627 0.5568627 1</color>
                         </diffuse>
+                        <ambient>
+                            <color>0.5568627 0.5568627 0.5568627 1</color>
+                        </ambient>
                     </lambert>
                 </technique>
             </profile_COMMON>
@@ -19195,6 +19219,9 @@
                         <diffuse>
                             <color>0.5019608 0.5019608 0.5019608 0.5019608</color>
                         </diffuse>
+                        <ambient>
+                            <color>0.5019608 0.5019608 0.5019608 0.5019608</color>
+                        </ambient>
                         <transparent opaque="RGB_ZERO">
                             <color>0.4980392 0.4980392 0.4980392 0.4980392</color>
                         </transparent>
@@ -19233,6 +19260,9 @@
                         <diffuse>
                             <color>0.6431373 0.6980392 0.7333333 1</color>
                         </diffuse>
+                        <ambient>
+                            <color>0.6431373 0.6980392 0.7333333 1</color>
+                        </ambient>
                     </lambert>
                 </technique>
             </profile_COMMON>
@@ -19244,6 +19274,9 @@
                         <diffuse>
                             <color>0 0 0 1</color>
                         </diffuse>
+                        <ambient>
+                            <color>0 0 0 1</color>
+                        </ambient>
                     </lambert>
                 </technique>
             </profile_COMMON>
@@ -19290,6 +19323,9 @@
                         <diffuse>
                             <color>0.9686275 0.572549 0 1</color>
                         </diffuse>
+                        <ambient>
+                            <color>0.9686275 0.572549 0 1</color>
+                        </ambient>
                     </lambert>
                 </technique>
             </profile_COMMON>
