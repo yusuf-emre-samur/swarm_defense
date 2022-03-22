@@ -1,4 +1,3 @@
-#!/bin/bash
 # vars
 ROS_VERSION=galactic
 # source ros
