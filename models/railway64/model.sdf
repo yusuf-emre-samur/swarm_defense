@@ -1,0 +1,1149 @@
+<?xml version='1.0'?>
+<sdf version='1.7'>
+  <model name='railway64'>
+    <model name='railway32'>
+      <model name='railway16'>
+        <model name='railway8'>
+          <model name='railway4'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>4.79871 -0.000105 0 0 -0 0</pose>
+          </model>
+          <model name='railway4_0'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>-4.79871 9.6e-05 0 0 -0 0</pose>
+          </model>
+          <static>0</static>
+          <allow_auto_disable>1</allow_auto_disable>
+          <pose>9.5973 -0.000147 0 0 -0 0</pose>
+        </model>
+        <model name='railway8_0'>
+          <model name='railway4'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>4.79871 -0.000105 0 0 -0 0</pose>
+          </model>
+          <model name='railway4_0'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>-4.79871 9.6e-05 0 0 -0 0</pose>
+          </model>
+          <static>0</static>
+          <allow_auto_disable>1</allow_auto_disable>
+          <pose>-9.59731 0.000145 0 0 -0 0</pose>
+        </model>
+        <static>0</static>
+        <allow_auto_disable>1</allow_auto_disable>
+        <pose>19.1948 -0.00044 0 0 -0 0</pose>
+      </model>
+      <model name='railway16_0'>
+        <model name='railway8'>
+          <model name='railway4'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>4.79871 -0.000105 0 0 -0 0</pose>
+          </model>
+          <model name='railway4_0'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>-4.79871 9.6e-05 0 0 -0 0</pose>
+          </model>
+          <static>0</static>
+          <allow_auto_disable>1</allow_auto_disable>
+          <pose>9.5973 -0.000147 0 0 -0 0</pose>
+        </model>
+        <model name='railway8_0'>
+          <model name='railway4'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>4.79871 -0.000105 0 0 -0 0</pose>
+          </model>
+          <model name='railway4_0'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>-4.79871 9.6e-05 0 0 -0 0</pose>
+          </model>
+          <static>0</static>
+          <allow_auto_disable>1</allow_auto_disable>
+          <pose>-9.59731 0.000145 0 0 -0 0</pose>
+        </model>
+        <static>0</static>
+        <allow_auto_disable>1</allow_auto_disable>
+        <pose>-19.1948 0.000444 0 0 -0 0</pose>
+      </model>
+      <static>0</static>
+      <allow_auto_disable>1</allow_auto_disable>
+      <pose>38.3896 -0.000844 0 0 -0 0</pose>
+    </model>
+    <model name='railway32_0'>
+      <model name='railway16'>
+        <model name='railway8'>
+          <model name='railway4'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>4.79871 -0.000105 0 0 -0 0</pose>
+          </model>
+          <model name='railway4_0'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>-4.79871 9.6e-05 0 0 -0 0</pose>
+          </model>
+          <static>0</static>
+          <allow_auto_disable>1</allow_auto_disable>
+          <pose>9.5973 -0.000147 0 0 -0 0</pose>
+        </model>
+        <model name='railway8_0'>
+          <model name='railway4'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>4.79871 -0.000105 0 0 -0 0</pose>
+          </model>
+          <model name='railway4_0'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>-4.79871 9.6e-05 0 0 -0 0</pose>
+          </model>
+          <static>0</static>
+          <allow_auto_disable>1</allow_auto_disable>
+          <pose>-9.59731 0.000145 0 0 -0 0</pose>
+        </model>
+        <static>0</static>
+        <allow_auto_disable>1</allow_auto_disable>
+        <pose>19.1948 -0.00044 0 0 -0 0</pose>
+      </model>
+      <model name='railway16_0'>
+        <model name='railway8'>
+          <model name='railway4'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>4.79871 -0.000105 0 0 -0 0</pose>
+          </model>
+          <model name='railway4_0'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>-4.79871 9.6e-05 0 0 -0 0</pose>
+          </model>
+          <static>0</static>
+          <allow_auto_disable>1</allow_auto_disable>
+          <pose>9.5973 -0.000147 0 0 -0 0</pose>
+        </model>
+        <model name='railway8_0'>
+          <model name='railway4'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>4.79871 -0.000105 0 0 -0 0</pose>
+          </model>
+          <model name='railway4_0'>
+            <model name='railway2'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>-2.39934 4.6e-05 0 0 -0 0</pose>
+            </model>
+            <model name='railway2_0'>
+              <model name='railway'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>1.19969 -6.9e-05 0 0 -0 0</pose>
+              </model>
+              <model name='railway_0'>
+                <static>1</static>
+                <link name='link'>
+                  <visual name='visual'>
+                    <geometry>
+                      <mesh>
+                        <uri>model://railway/meshes/model.dae</uri>
+                      </mesh>
+                    </geometry>
+                  </visual>
+                </link>
+                <pose>-1.1997 6.9e-05 0 0 -0 0</pose>
+              </model>
+              <static>0</static>
+              <allow_auto_disable>1</allow_auto_disable>
+              <pose>2.39934 -5.4e-05 0 0 -0 0</pose>
+            </model>
+            <static>0</static>
+            <allow_auto_disable>1</allow_auto_disable>
+            <pose>-4.79871 9.6e-05 0 0 -0 0</pose>
+          </model>
+          <static>0</static>
+          <allow_auto_disable>1</allow_auto_disable>
+          <pose>-9.59731 0.000145 0 0 -0 0</pose>
+        </model>
+        <static>0</static>
+        <allow_auto_disable>1</allow_auto_disable>
+        <pose>-19.1948 0.000444 0 0 -0 0</pose>
+      </model>
+      <static>0</static>
+      <allow_auto_disable>1</allow_auto_disable>
+      <pose>-38.3896 0.000845 0 0 -0 0</pose>
+    </model>
+    <static>0</static>
+    <allow_auto_disable>1</allow_auto_disable>
+  </model>
+</sdf>
