@@ -7,9 +7,9 @@ sd/build.sh
 
 # launch simulation
 ```sh
-sd/launch.sh
+sd/server.sh
 ```
 in new terminal:
 ```sh
-gzclient
+sd/client.sh
 ```
