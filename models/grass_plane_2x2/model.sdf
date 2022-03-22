@@ -1,0 +1,129 @@
+<?xml version='1.0'?>
+<sdf version='1.7'>
+  <model name='grass_plane_2x2'>
+    <model name='grass_plane_1x2'>
+      <model name='grass_plane'>
+        <pose>7.5e-05 9.99997 -0 0 -0 0</pose>
+        <static>1</static>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <box>
+                <size>20 20 0.1</size>
+              </box>
+            </geometry>
+          </collision>
+          <visual name='grass'>
+            <pose>0 0 0 0 -0 0</pose>
+            <cast_shadows>0</cast_shadows>
+            <geometry>
+              <box>
+                <size>20 20 0.1</size>
+              </box>
+            </geometry>
+            <material>
+              <script>
+                <uri>file://media/materials/scripts/gazebo.material</uri>
+                <name>Gazebo/Grass</name>
+              </script>
+            </material>
+          </visual>
+        </link>
+      </model>
+      <model name='grass_plane_0'>
+        <pose>-7e-05 -10 -0 0 -0 0</pose>
+        <static>1</static>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <box>
+                <size>20 20 0.1</size>
+              </box>
+            </geometry>
+          </collision>
+          <visual name='grass'>
+            <pose>0 0 0 0 -0 0</pose>
+            <cast_shadows>0</cast_shadows>
+            <geometry>
+              <box>
+                <size>20 20 0.1</size>
+              </box>
+            </geometry>
+            <material>
+              <script>
+                <uri>file://media/materials/scripts/gazebo.material</uri>
+                <name>Gazebo/Grass</name>
+              </script>
+            </material>
+          </visual>
+        </link>
+      </model>
+      <static>0</static>
+      <allow_auto_disable>1</allow_auto_disable>
+      <pose>9.99992 -2.4e-05 0 0 -0 0</pose>
+    </model>
+    <model name='grass_plane_1x2_0'>
+      <model name='grass_plane'>
+        <pose>7.5e-05 9.99997 -0 0 -0 0</pose>
+        <static>1</static>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <box>
+                <size>20 20 0.1</size>
+              </box>
+            </geometry>
+          </collision>
+          <visual name='grass'>
+            <pose>0 0 0 0 -0 0</pose>
+            <cast_shadows>0</cast_shadows>
+            <geometry>
+              <box>
+                <size>20 20 0.1</size>
+              </box>
+            </geometry>
+            <material>
+              <script>
+                <uri>file://media/materials/scripts/gazebo.material</uri>
+                <name>Gazebo/Grass</name>
+              </script>
+            </material>
+          </visual>
+        </link>
+      </model>
+      <model name='grass_plane_0'>
+        <pose>-7e-05 -10 -0 0 -0 0</pose>
+        <static>1</static>
+        <link name='link'>
+          <collision name='collision'>
+            <geometry>
+              <box>
+                <size>20 20 0.1</size>
+              </box>
+            </geometry>
+          </collision>
+          <visual name='grass'>
+            <pose>0 0 0 0 -0 0</pose>
+            <cast_shadows>0</cast_shadows>
+            <geometry>
+              <box>
+                <size>20 20 0.1</size>
+              </box>
+            </geometry>
+            <material>
+              <script>
+                <uri>file://media/materials/scripts/gazebo.material</uri>
+                <name>Gazebo/Grass</name>
+              </script>
+            </material>
+          </visual>
+        </link>
+      </model>
+      <static>0</static>
+      <allow_auto_disable>1</allow_auto_disable>
+      <pose>-9.99989 3.3e-05 0 0 -0 0</pose>
+    </model>
+    <static>0</static>
+    <allow_auto_disable>1</allow_auto_disable>
+  </model>
+</sdf>
