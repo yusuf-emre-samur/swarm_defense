@@ -1,5 +1,4 @@
 #!/bin/bash
-export GAZEBO_MODEL_PATH=$PWD/models
 # vars
 ROS_VERSION=galactic
 # source ros
@@ -9,5 +8,3 @@ FILE=$PWD/install/setup.bash
 if test -f "$FILE"; then
     source install/setup.bash
 fi
-# launch
-ros2 launch sd_simulation simulation.launch.py
