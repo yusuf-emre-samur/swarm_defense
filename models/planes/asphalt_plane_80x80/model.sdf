@@ -1,12 +1,13 @@
-<?xml version="1.0" ?>
-<sdf version="1.4">
-  <model name="asphalt_plane">
+<?xml version="1.0"?>
+<sdf version="1.5">
+  <model name="asphalt_plane_40x40">
+    <pose>0 0 -0.05 0 0 0</pose>
     <static>true</static>
     <link name="link">
       <collision name="collision">
         <geometry>
           <box>
-            <size>20 20 .1</size>
+            <size>80 80 .1</size>
           </box>
         </geometry>
       </collision>
@@ -14,13 +15,13 @@
         <cast_shadows>false</cast_shadows>
         <geometry>
           <box>
-            <size>20 20 .1</size>
+            <size>80 80 .1</size>
           </box>
         </geometry>
         <material>
           <script>
-            <uri>model://asphalt_plane/materials/scripts</uri>
-            <uri>model://asphalt_plane/materials/textures</uri>
+            <uri>model://asphalt_plane_40x40/materials/scripts</uri>
+            <uri>model://asphalt_plane_40x40/materials/textures</uri>
             <name>vrc/asphalt</name>
           </script>
         </material>

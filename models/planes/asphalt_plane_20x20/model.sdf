@@ -1,6 +1,6 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <sdf version="1.5">
-  <model name="asphalt_plane">
+  <model name="asphalt_plane_20x20">
     <pose>0 0 -0.05 0 0 0</pose>
     <static>true</static>
     <link name="link">
@@ -20,8 +20,8 @@
         </geometry>
         <material>
           <script>
-            <uri>model://asphalt_plane/materials/scripts</uri>
-            <uri>model://asphalt_plane/materials/textures</uri>
+            <uri>model://asphalt_plane_20x20/materials/scripts</uri>
+            <uri>model://asphalt_plane_20x20/materials/textures</uri>
             <name>vrc/asphalt</name>
           </script>
         </material>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <sdf version="1.5">
-    <model name="grass_plane">
+    <model name="grass_plane_20x20">
         <pose>0 0 -0.05 0 0 0</pose>
         <static>true</static>
         <link name="link">
