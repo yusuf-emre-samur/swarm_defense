@@ -32927,7 +32927,7 @@
     <state world_name='default'>
       <sim_time>1 804000000</sim_time>
       <real_time>0 0</real_time>
-      <wall_time>1648038693 101193419</wall_time>
+      <wall_time>1648038767 671933806</wall_time>
       <iterations>0</iterations>
       <model name='asphalt_plane_40x40'>
         <pose>-201.419 -40.7533 -0.05 0 -0 0</pose>
@@ -41951,7 +41951,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>-20.3027 -305.164 237.789 -0 0.853796 1.75062</pose>
+        <pose>39.8796 -324.348 193.789 0 0.661796 1.89862</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
