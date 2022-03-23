@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<sdf version="1.5">
+  <model name="bumper">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://bumper/meshes/model.dae</uri>
+            <scale>50 50 50</scale>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>
