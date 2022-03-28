@@ -39,6 +39,25 @@
       <elevation>0</elevation>
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
+    <model name="sd_drone_1">
+            <pose>2 0 0 0 0 0 </pose>
+            <include>
+                <uri>model://iris_standoff_camera</uri>
+            </include>
+            <plugin name="sd_drone_plugin" filename="install/sd_gazebo_ros_plugins/lib/libsd_drone_plugin.so">
+                <link_name_rotor_0>iris_standoff_camera::iris::rotor_0</link_name_rotor_0>
+                <link_name_rotor_1>iris_standoff_camera::iris::rotor_1</link_name_rotor_1>
+                <link_name_rotor_2>iris_standoff_camera::iris::rotor_2</link_name_rotor_2>
+                <link_name_rotor_3>iris_standoff_camera::iris::rotor_3</link_name_rotor_3>
+
+                <imu_link_name>iris_standoff_camera::iris::iris/imu_link</imu_link_name>
+                <imu_sensor_name>imu_sensor</imu_sensor_name>
+                <max_vel>2 2 2</max_vel>
+                <max_ang_vel>1 1 1</max_ang_vel>
+
+                <gimbal_tilt_link>iris_standoff_camera::gimbal_small_2d::tilt_link</gimbal_tilt_link>
+            </plugin>
+        </model>
     <model name='mud_plane_40x40'>
       <model name='mud_plane_20x20'>
         <model name='mud_plane'>
