@@ -112,6 +112,7 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 	this->pose_ = this->model_->WorldPose();
 	this->goal_pose_ = this->pose_;
 
+	this->gimbal_goal_angle_ = 2.5;
 	// INFO
 	RCLCPP_INFO(ros2node_->get_logger(), "Loaded SD Drone Plugin!");
 }
@@ -122,9 +123,24 @@ void DronePlugin::OnUpdate()
 	this->pose_ = this->model_->WorldPose();
 
 	this->fakeFly();
+	// this->gimbal();
 	this->publish_pose();
+}
+
+// to do
+void DronePlugin::gimbal()
+{
+	auto gimbal_pos =
+		this->model_->GetLink(this->gimbal_tilt_link_)->WorldPose();
+
+	RCLCPP_INFO(ros2node_->get_logger(), "roll:");
+	RCLCPP_INFO(ros2node_->get_logger(),
+				std::to_string(gimbal_pos.Rot().Euler().X()).c_str());
+
+	auto roll_vel = this->gimbal_goal_angle_ - gimbal_pos.Rot().Euler().X();
+
 	this->model_->GetLink(this->gimbal_tilt_link_)
-		->AddTorque(ignition::math::Vector3d(0, 0, 0.00001));
+		->AddRelativeTorque(ignition::math::Vector3d(5 * roll_vel, 0, 0));
 }
 
 void DronePlugin::fakeFly()

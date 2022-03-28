@@ -56,12 +56,18 @@ class DronePlugin : public gazebo::ModelPlugin
 	// quadcopter flight functions
 	void fakeRotation();
 
+	// set gimbal angle
+	void gimbal();
+
 	// gazebo
 	gazebo::physics::ModelPtr model_;
 	gazebo::event::ConnectionPtr update_callback_;
 	// current pose and goal pose
 	ignition::math::Pose3d pose_;
 	ignition::math::Pose3d goal_pose_;
+
+	// gimbal
+	double gimbal_goal_angle_;
 
 	// imu sensor
 	gazebo::sensors::ImuSensorPtr imu_;
