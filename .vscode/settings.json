@@ -79,7 +79,8 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "*.idl": "cpp",
-        "geometry": "cpp"
+        "geometry": "cpp",
+        "world": "xml"
     },
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
