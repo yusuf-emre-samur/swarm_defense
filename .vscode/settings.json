@@ -80,7 +80,7 @@
         "variant": "cpp",
         "*.idl": "cpp",
         "geometry": "cpp",
-        "world": "xml"
+        "*.world": "xml"
     },
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
