@@ -28,7 +28,8 @@ endif()
 
 
 set(msg_files
-  "msg/Pose.msg"
+  "msg/Pose2.msg"
+  "msg/Poses2Stamped.msg"
 )
 
 # msg folder
