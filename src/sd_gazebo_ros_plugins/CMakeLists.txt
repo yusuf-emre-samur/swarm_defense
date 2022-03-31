@@ -20,6 +20,7 @@ find_package(tf2_geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(sd_interfaces REQUIRED)
 
 
 
@@ -91,12 +92,28 @@ ament_target_dependencies(
 )
 
 
+# sd drone plugin
+add_library(sd_actor_plugin SHARED
+  src/sd_actor_plugin.cpp
+)
+target_include_directories(sd_actor_plugin PUBLIC include)
+ament_target_dependencies(
+sd_actor_plugin
+  gazebo_dev
+  gazebo_ros
+  rclcpp
+  geometry_msgs
+  std_msgs
+  sensor_msgs
+  sd_interfaces
+)
 
 install(
   TARGETS
   hello_world_plugin
   ros_test_plugin
   sd_drone_plugin
+  sd_actor_plugin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
