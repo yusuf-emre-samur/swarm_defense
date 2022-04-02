@@ -18,7 +18,8 @@
 #include <gazebo_ros/node.hpp>
 #include <rclcpp/rclcpp.hpp>
 // msgs
-#include <geometry_msgs/msg/pose_stamped.hpp>
+#include <sd_interfaces/msg/position3_stamped.hpp>
+#include <std_msgs/msg/header.hpp>
 #include <std_msgs/msg/string.hpp>
 
 // other
@@ -39,11 +40,12 @@ class DronePlugin : public gazebo::ModelPlugin
 
   private: // functions
 		   // called when on new pose on topic
-	void on_pose_msg_callback(geometry_msgs::msg::PoseStamped::SharedPtr msg);
+	void on_position_msg_callback(
+		const sd_interfaces::msg::Position3Stamped::SharedPtr msg);
 
 	// ros functions
 	// imu + gps = pose
-	void publish_pose() const;
+	void publish_position() const;
 
 	// simulate fake fly
 	void fakeFly();
@@ -56,30 +58,23 @@ class DronePlugin : public gazebo::ModelPlugin
 	// quadcopter flight functions
 	void fakeRotation();
 
-	// set gimbal angle
-	void gimbal();
-
 	// gazebo
 	gazebo::physics::ModelPtr model_;
 	gazebo::event::ConnectionPtr update_callback_;
-	// current pose and goal pose
-	ignition::math::Pose3d pose_;
-	ignition::math::Pose3d goal_pose_;
+	// current and target position
+	ignition::math::Vector3d pos_;
+	ignition::math::Vector3d target_pos_;
 
-	// gimbal
-	double gimbal_goal_angle_;
-
-	// imu sensor
-	gazebo::sensors::ImuSensorPtr imu_;
 
 	// curr pose pub
-	rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pose_pub_;
+	rclcpp::Publisher<sd_interfaces::msg::Position3Stamped>::SharedPtr pos_pub_;
 
 	// ros node
 	gazebo_ros::Node::SharedPtr ros2node_;
 
 	// goal pose subscriber
-	rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr pose_sub_;
+	rclcpp::Subscription<sd_interfaces::msg::Position3Stamped>::SharedPtr
+		pos_sub_;
 
 	// vel
 	ignition::math::Vector3d vel_;

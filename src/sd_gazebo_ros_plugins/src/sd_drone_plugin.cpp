@@ -41,32 +41,6 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 		}
 	}
 
-	// imu sensor
-	std::string imu_link_name, imu_sensor_name;
-	if ( _sdf->HasElement("imu_link_name") ) {
-		imu_link_name = _sdf->GetElement("imu_link_name")->Get<std::string>();
-	} else {
-		gzthrow("Please provide imu_link_name");
-	}
-	if ( _sdf->HasElement("imu_sensor_name") ) {
-		imu_sensor_name =
-			_sdf->GetElement("imu_sensor_name")->Get<std::string>();
-	} else {
-		gzthrow("Please provide imu_sensor_name");
-	}
-	// imu raw sensor
-	auto imu_sensor_ = gazebo::sensors::get_sensor(
-		this->model_->GetWorld()->Name() +
-		"::" + this->model_->GetScopedName() + "::" + imu_link_name +
-		"::" + imu_sensor_name);
-	// imu sensor
-	if ( imu_sensor_.get() == nullptr ) {
-		gzthrow("Could not find imu sensor, check parameter!");
-	} else {
-		this->imu_ =
-			std::dynamic_pointer_cast<gazebo::sensors::ImuSensor>(imu_sensor_);
-	}
-
 	// max vel
 	if ( _sdf->HasElement("max_vel") ) {
 		this->max_vel_ =
@@ -92,27 +66,26 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 	}
 
 	// curr pose publisher
-	const std::string pose_pub_name = this->model_->GetName() + "/curr_pose";
-	this->pose_pub_ =
-		ros2node_->create_publisher<geometry_msgs::msg::PoseStamped>(
+	const std::string pose_pub_name = this->model_->GetName() + "/pos";
+	this->pos_pub_ =
+		ros2node_->create_publisher<sd_interfaces::msg::Position3Stamped>(
 			pose_pub_name, 10);
 
 	// goal pose subscription
-	const std::string rpm_sub_name = this->model_->GetName() + "/goal_pose";
-	this->pose_sub_ =
-		ros2node_->create_subscription<geometry_msgs::msg::PoseStamped>(
+	const std::string rpm_sub_name = this->model_->GetName() + "/target_pos";
+	this->pos_sub_ =
+		ros2node_->create_subscription<sd_interfaces::msg::Position3Stamped>(
 			rpm_sub_name, 1,
-			std::bind(&DronePlugin::on_pose_msg_callback, this,
+			std::bind(&DronePlugin::on_position_msg_callback, this,
 					  std::placeholders::_1));
 
 	// callback each simulation step
 	this->update_callback_ = gazebo::event::Events::ConnectWorldUpdateBegin(
 		std::bind(&DronePlugin::OnUpdate, this));
 
-	this->pose_ = this->model_->WorldPose();
-	this->goal_pose_ = this->pose_;
+	this->pos_ = this->model_->WorldPose().Pos();
+	this->target_pos_ = this->pos_;
 
-	this->gimbal_goal_angle_ = 2.5;
 	// INFO
 	RCLCPP_INFO(ros2node_->get_logger(), "Loaded SD Drone Plugin!");
 }
@@ -120,36 +93,23 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 // called each iteration of simulation
 void DronePlugin::OnUpdate()
 {
-	this->pose_ = this->model_->WorldPose();
+	this->pos_ = this->model_->WorldPose().Pos();
 
 	this->fakeFly();
 	// this->gimbal();
-	this->publish_pose();
-}
-
-// to do
-void DronePlugin::gimbal()
-{
-	auto gimbal_pos =
-		this->model_->GetLink(this->gimbal_tilt_link_)->WorldPose();
-
-	RCLCPP_INFO(ros2node_->get_logger(), "roll:");
-	RCLCPP_INFO(ros2node_->get_logger(),
-				std::to_string(gimbal_pos.Rot().Euler().X()).c_str());
-
-	auto roll_vel = this->gimbal_goal_angle_ - gimbal_pos.Rot().Euler().X();
-
-	this->model_->GetLink(this->gimbal_tilt_link_)
-		->AddRelativeTorque(ignition::math::Vector3d(5 * roll_vel, 0, 0));
+	this->publish_position();
 }
 
 void DronePlugin::fakeFly()
 {
-
+	const auto q = ignition::math::Quaterniond::EulerToQuaternion(
+		ignition::math::Vector3d(0, 0, 0));
 	const auto scalar =
 		ignition::math::Pose3d(0.001, 0.001, 0.001, 0.001, 0.001, 0.001);
-	auto vel_raw =
-		scalar * (this->goal_pose_ + this->getGaussianNoise() - this->pose_);
+	auto pose = this->model_->WorldPose();
+	auto target_pose = ignition::math::Pose3d(this->target_pos_, q);
+
+	auto vel_raw = scalar * (target_pose + this->getGaussianNoise() - pose);
 	// angular velocity
 	this->ang_vel_ = vel_raw.Rot().Euler() + this->fakeAngularMotion();
 	// fix motion direction of angle
@@ -160,7 +120,7 @@ void DronePlugin::fakeFly()
 
 	this->model_->SetLinearVel(this->vel_);
 	this->model_->SetAngularVel(this->ang_vel_);
-	if ( this->pose_.Z() > 0.001 ) {
+	if ( this->pos_.Z() > 0.001 ) {
 		this->fakeRotation();
 	}
 	this->last_vel_ = this->vel_;
@@ -252,38 +212,27 @@ void DronePlugin::fakeRotation()
 	}
 }
 
-// update goal pose on new msg to ros topic ../goal_pose
-void DronePlugin::on_pose_msg_callback(
-	const geometry_msgs::msg::PoseStamped::SharedPtr msg)
+// update target position on new msg to ros topic ../target_pos
+void DronePlugin::on_position_msg_callback(
+	const sd_interfaces::msg::Position3Stamped::SharedPtr msg)
 {
-	this->goal_pose_.SetX(msg->pose.position.x);
-	this->goal_pose_.SetY(msg->pose.position.y);
-	this->goal_pose_.SetZ(msg->pose.position.z);
-
-	// only set yaw
-	// this->goal_pose_.Rot().X() = msg->pose.orientation.x;
-	// this->goal_pose_.Rot().Y() = msg->pose.orientation.y;
-	this->goal_pose_.Rot().Z() = msg->pose.orientation.z;
-	// this->goal_pose_.Rot().W() = msg->pose.orientation.w;
+	this->target_pos_.X() = msg->pos3.x;
+	this->target_pos_.Y() = msg->pos3.y;
+	this->target_pos_.Z() = msg->pos3.z;
 }
 
-// publish current pose to ros topic ../curr_pose
-void DronePlugin::publish_pose() const
+// publish current positiom to ros topic ../pos
+void DronePlugin::publish_position() const
 {
-	geometry_msgs::msg::PoseStamped msg;
+	sd_interfaces::msg::Position3Stamped msg;
 	msg.header.stamp = ros2node_->now();
 	msg.header.frame_id = this->model_->GetName();
 
-	msg.pose.orientation.x = this->imu_->Orientation().X();
-	msg.pose.orientation.y = this->imu_->Orientation().Y();
-	msg.pose.orientation.z = this->imu_->Orientation().Z();
-	msg.pose.orientation.w = this->imu_->Orientation().W();
+	msg.pos3.x = this->model_->WorldPose().X();
+	msg.pos3.y = this->model_->WorldPose().Y();
+	msg.pos3.z = this->model_->WorldPose().Z();
 
-	msg.pose.position.x = this->model_->WorldPose().X();
-	msg.pose.position.y = this->model_->WorldPose().Y();
-	msg.pose.position.z = this->model_->WorldPose().Z();
-
-	this->pose_pub_->publish(msg);
+	this->pos_pub_->publish(msg);
 }
 
 // Register this plugin
