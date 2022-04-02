@@ -43,9 +43,9 @@ void ActorPlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 	this->setAnimationType(ANIMATION_ENUM::STANDING);
 
 	this->targets_sub_ =
-		ros2node_->create_subscription<sd_interfaces::msg::Poses2Stamped>(
+		ros2node_->create_subscription<sd_interfaces::msg::Position2Stamped>(
 			"actor_targets", 1,
-			std::bind(&ActorPlugin::on_targets_msg_callback, this,
+			std::bind(&ActorPlugin::on_position_msg_callback, this,
 					  std::placeholders::_1));
 
 	// sim callback
@@ -163,8 +163,8 @@ void ActorPlugin::walkLogic(const gazebo::common::UpdateInfo& _info)
 //
 //
 
-void ActorPlugin::on_targets_msg_callback(
-	const sd_interfaces::msg::Poses2Stamped::SharedPtr msg)
+void ActorPlugin::on_position_msg_callback(
+	const sd_interfaces::msg::Position2Stamped::SharedPtr msg)
 {
 }
 

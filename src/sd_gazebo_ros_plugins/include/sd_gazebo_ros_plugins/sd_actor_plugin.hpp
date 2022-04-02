@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 // interfaces
-#include <sd_interfaces/msg/poses2_stamped.hpp>
+#include <sd_interfaces/msg/position2_stamped.hpp>
 
 namespace sd {
 namespace gazebo_ros_plugins {
@@ -42,8 +42,8 @@ class ActorPlugin : public gazebo::ModelPlugin
 
 	void setAnimationType(ANIMATION_ENUM animation_type);
 
-	void on_targets_msg_callback(
-		const sd_interfaces::msg::Poses2Stamped::SharedPtr msg);
+	void on_position_msg_callback(
+		const sd_interfaces::msg::Position2Stamped::SharedPtr msg);
 	// gazebo
 	gazebo::physics::ActorPtr actor_;
 	gazebo::event::ConnectionPtr update_callback_;
@@ -68,7 +68,7 @@ class ActorPlugin : public gazebo::ModelPlugin
 	gazebo_ros::Node::SharedPtr ros2node_;
 
 	// sub
-	rclcpp::Subscription<sd_interfaces::msg::Poses2Stamped>::SharedPtr
+	rclcpp::Subscription<sd_interfaces::msg::Position2Stamped>::SharedPtr
 		targets_sub_;
 };
 
