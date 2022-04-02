@@ -22,16 +22,12 @@
                 <link_name_rotor_2>iris_standoff_camera::iris::rotor_2</link_name_rotor_2>
                 <link_name_rotor_3>iris_standoff_camera::iris::rotor_3</link_name_rotor_3>
 
-                <imu_link_name>iris_standoff_camera::iris::iris/imu_link</imu_link_name>
-                <imu_sensor_name>imu_sensor</imu_sensor_name>
                 <max_vel>2 2 2</max_vel>
                 <max_ang_vel>1 1 1</max_ang_vel>
-
-                <gimbal_tilt_link>iris_standoff_camera::gimbal_small_2d::tilt_link</gimbal_tilt_link>
             </plugin>
         </model>
         <actor name="actor1">
-            <pose>0 0 1.05 0 0 0</pose>
+            <pose>2 2 1.05 0 0 0</pose>
             <skin>
                 <filename>moonwalk.dae</filename>
                 <scale>1.0</scale>
