@@ -26,6 +26,7 @@ DronePlugin::~DronePlugin()
 void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
 	this->model_ = _model;
+	this->id_ = this->model_->GetName();
 	this->ros2node_ = gazebo_ros::Node::Get();
 
 	// rotor link names
@@ -57,22 +58,14 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 		this->max_ang_vel_ = ignition::math::Vector3d(0.1, 0.1, 0.1);
 	}
 
-	// gimbal
-	if ( _sdf->HasElement("gimbal_tilt_link") ) {
-		this->gimbal_tilt_link_ =
-			_sdf->GetElement("gimbal_tilt_link")->Get<std::string>();
-	} else {
-		gzthrow("Please provide gimbal_tilt_link");
-	}
-
 	// curr pose publisher
-	const std::string pose_pub_name = this->model_->GetName() + "/pos";
+	const std::string pose_pub_name = this->id_ + "/pos";
 	this->pos_pub_ =
 		ros2node_->create_publisher<sd_interfaces::msg::Position3Stamped>(
 			pose_pub_name, 10);
 
 	// goal pose subscription
-	const std::string rpm_sub_name = this->model_->GetName() + "/target_pos";
+	const std::string rpm_sub_name = this->id_ + "/target_pos";
 	this->pos_sub_ =
 		ros2node_->create_subscription<sd_interfaces::msg::Position3Stamped>(
 			rpm_sub_name, 1,
@@ -226,7 +219,7 @@ void DronePlugin::publish_position() const
 {
 	sd_interfaces::msg::Position3Stamped msg;
 	msg.header.stamp = ros2node_->now();
-	msg.header.frame_id = this->model_->GetName();
+	msg.header.frame_id = "world";
 
 	msg.pos3.x = this->model_->WorldPose().X();
 	msg.pos3.y = this->model_->WorldPose().Y();

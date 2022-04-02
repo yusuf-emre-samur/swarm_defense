@@ -47,31 +47,31 @@ endif()
 
 
 
-# hello world plugin
-add_library(hello_world_plugin SHARED
-  src/hello_world_plugin.cpp
-)
-target_include_directories(hello_world_plugin PUBLIC include)
-ament_target_dependencies(
-  hello_world_plugin
-  gazebo_dev
-  gazebo_ros
-  rclcpp
-)
+# # hello world plugin
+# add_library(hello_world_plugin SHARED
+#   src/hello_world_plugin.cpp
+# )
+# target_include_directories(hello_world_plugin PUBLIC include)
+# ament_target_dependencies(
+#   hello_world_plugin
+#   gazebo_dev
+#   gazebo_ros
+#   rclcpp
+# )
 
 
-# sd test plugin
-add_library(ros_test_plugin SHARED
-  src/ros_test_plugin.cpp
-)
-target_include_directories(ros_test_plugin PUBLIC include)
-ament_target_dependencies(
-  ros_test_plugin
-  gazebo_dev
-  gazebo_ros
-  rclcpp
-  std_msgs
-)
+# # sd test plugin
+# add_library(ros_test_plugin SHARED
+#   src/ros_test_plugin.cpp
+# )
+# target_include_directories(ros_test_plugin PUBLIC include)
+# ament_target_dependencies(
+#   ros_test_plugin
+#   gazebo_dev
+#   gazebo_ros
+#   rclcpp
+#   std_msgs
+# )
 
 
 
@@ -106,8 +106,8 @@ sd_actor_plugin
 
 install(
   TARGETS
-  hello_world_plugin
-  ros_test_plugin
+  # hello_world_plugin
+  # ros_test_plugin
   sd_drone_plugin
   sd_actor_plugin
   ARCHIVE DESTINATION lib

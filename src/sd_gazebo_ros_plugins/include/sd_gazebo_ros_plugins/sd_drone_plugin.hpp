@@ -58,6 +58,8 @@ class DronePlugin : public gazebo::ModelPlugin
 	// quadcopter flight functions
 	void fakeRotation();
 
+	std::string id_;
+
 	// gazebo
 	gazebo::physics::ModelPtr model_;
 	gazebo::event::ConnectionPtr update_callback_;
@@ -86,9 +88,6 @@ class DronePlugin : public gazebo::ModelPlugin
 	// for fake rotor rotation
 	static constexpr uint num_rotors_ = 4;
 	std::array<std::string, num_rotors_> rotor_link_names_;
-
-	// gilt
-	std::string gimbal_tilt_link_;
 };
 } // namespace gazebo_ros_plugins
 } // namespace sd
