@@ -12,7 +12,8 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 
 # interfaces
-find_package(geometry_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(sd_interfaces REQUIRED)
 
 
 # uncomment the following section in order to fill in
@@ -39,7 +40,8 @@ target_include_directories(sd_flight_controller PUBLIC include)
 ament_target_dependencies(
   sd_flight_controller
   rclcpp
-  geometry_msgs
+  std_msgs
+  sd_interfaces
 )
 
 # include dir
