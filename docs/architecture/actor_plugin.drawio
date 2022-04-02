@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="hYvHsm7MbWkhPp0KK5MO" name="Page-1">
-        <mxGraphModel dx="1302" dy="907" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1200" background="#666666" math="0" shadow="0">
+        <mxGraphModel dx="1107" dy="771" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1200" background="#666666" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -28,7 +28,7 @@
                 <mxCell id="16" value="pub" style="edgeStyle=none;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=18;labelBackgroundColor=#666666;" parent="1" source="14" target="10" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="14" value="&lt;font style=&quot;font-size: 18px&quot;&gt;&lt;b&gt;sd_flight_controller&lt;br&gt;&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;glass=0;shadow=0;sketch=0;" parent="1" vertex="1">
+                <mxCell id="14" value="&lt;font style=&quot;font-size: 18px&quot;&gt;&lt;b&gt;sd_actor_controller&lt;br&gt;&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;glass=0;shadow=0;sketch=0;" parent="1" vertex="1">
                     <mxGeometry x="300" y="420" width="200" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="18" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 3;strokeWidth=2;fontSize=18;" parent="1" edge="1">
@@ -43,16 +43,16 @@
                 <mxCell id="20" value="&lt;font style=&quot;font-size: 12px&quot;&gt;plugin&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;" parent="1" vertex="1">
                     <mxGeometry x="1100" y="500" width="60" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="21" value="&lt;span style=&quot;font-size: 12px&quot;&gt;sd_interfaces/msg/Position3&lt;br&gt;Stamped&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;" parent="1" vertex="1">
+                <mxCell id="21" value="&lt;span style=&quot;font-size: 12px&quot;&gt;sd_interfaces/msg/Position2Stamped&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;" parent="1" vertex="1">
                     <mxGeometry x="710" y="620" width="60" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="22" value="&lt;span style=&quot;font-size: 12px&quot;&gt;sd_interfaces/msg/Position3Stamped&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;" parent="1" vertex="1">
+                <mxCell id="22" value="&lt;font style=&quot;font-size: 12px&quot;&gt;sd_interfaces/msg/Position2Stamped&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;" parent="1" vertex="1">
                     <mxGeometry x="710" y="500" width="60" height="20" as="geometry"/>
                 </mxCell>
                 <mxCell id="23" value="&lt;font style=&quot;font-size: 12px&quot;&gt;node&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;" parent="1" vertex="1">
                     <mxGeometry x="370" y="500" width="60" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="2" value="&lt;font style=&quot;font-size: 18px&quot;&gt;&lt;b&gt;sd_drone_plugin&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=0;noLabel=0;portConstraintRotation=0;autosize=0;fixDash=0;dropTarget=0;collapsible=0;gradientColor=none;glass=0;shadow=0;sketch=0;" parent="1" vertex="1">
+                <mxCell id="2" value="&lt;font style=&quot;font-size: 18px&quot;&gt;&lt;b&gt;sd_actor_plugin&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=0;noLabel=0;portConstraintRotation=0;autosize=0;fixDash=0;dropTarget=0;collapsible=0;gradientColor=none;glass=0;shadow=0;sketch=0;" parent="1" vertex="1">
                     <mxGeometry x="1000" y="420" width="240" height="80" as="geometry"/>
                 </mxCell>
             </root>
