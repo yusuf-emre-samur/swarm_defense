@@ -28,8 +28,12 @@ endif()
 
 
 set(msg_files
-  "msg/Pose2.msg"
-  "msg/Poses2Stamped.msg"
+  "msg/Position2.msg"
+  "msg/Position2Stamped.msg"
+  "msg/Position2Array.msg"
+  "msg/Position3.msg"
+  "msg/Position3Stamped.msg"
+  "msg/Position3Array.msg"
 )
 
 # msg folder
