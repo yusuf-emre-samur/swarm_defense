@@ -19,7 +19,7 @@ find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(sd_interfaces REQUIRED)
 
 
@@ -70,7 +70,6 @@ ament_target_dependencies(
   gazebo_dev
   gazebo_ros
   rclcpp
-  geometry_msgs
   std_msgs
 )
 
@@ -86,13 +85,12 @@ ament_target_dependencies(
   gazebo_dev
   gazebo_ros
   rclcpp
-  geometry_msgs
   std_msgs
-  sensor_msgs
+  sd_interfaces
 )
 
 
-# sd drone plugin
+# sd actor plugin
 add_library(sd_actor_plugin SHARED
   src/sd_actor_plugin.cpp
 )
@@ -102,9 +100,7 @@ sd_actor_plugin
   gazebo_dev
   gazebo_ros
   rclcpp
-  geometry_msgs
   std_msgs
-  sensor_msgs
   sd_interfaces
 )
 
