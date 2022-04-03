@@ -15,13 +15,13 @@ def flight_controller_node(i):
         executable="sd_flight_controller",
         name=f"sd_flight_controller_{i}",
         parameters=[
-            {"pos_sub_topic_name": f"/sd_drone_{i}/pos"},
-            {"pos_pub_topic_name": f"/sd_drone_{i}/target_pos"},
+            {"id": f"sd_drone_{i}"},
             {"use_sim_time": True}
         ],
         arguments=[
 
-        ]
+        ],
+        namespace=f"sd_drone_{i}"
     )
 
 
