@@ -6,9 +6,8 @@ namespace ros {
 FlightController::FlightController() : Node("default_node_name")
 {
 	// node params
-	// id of flight_controller
+	// id of flight controller, node name
 	this->id_ = this->get_name();
-	// pid
 
 	// pos subscriber
 	this->pos_sub_ =
@@ -17,7 +16,7 @@ FlightController::FlightController() : Node("default_node_name")
 			std::bind(&FlightController::on_position_msg_callback, this,
 					  std::placeholders::_1));
 
-	// pid timer
+	// controller timer
 	this->flight_controller_timer_ = this->create_wall_timer(
 		100ms,
 		std::bind(&FlightController::flight_controller_timer_callback, this));
@@ -27,6 +26,7 @@ FlightController::FlightController() : Node("default_node_name")
 		this->create_publisher<sd_interfaces::msg::Position3Stamped>(
 			"target_pos", 1);
 
+	// initial values
 	this->target_pos_.x = 10;
 	this->target_pos_.y = 10;
 	this->target_pos_.z = 10;
