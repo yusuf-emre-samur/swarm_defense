@@ -17,6 +17,7 @@
                 <uri>model://iris_standoff_camera</uri>
             </include>
             <plugin name="sd_drone_plugin" filename="install/sd_gazebo_ros_plugins/lib/libsd_drone_plugin.so">
+                <namespace>sd_drone_1</namespace>
                 <link_name_rotor_0>iris_standoff_camera::iris::rotor_0</link_name_rotor_0>
                 <link_name_rotor_1>iris_standoff_camera::iris::rotor_1</link_name_rotor_1>
                 <link_name_rotor_2>iris_standoff_camera::iris::rotor_2</link_name_rotor_2>
@@ -26,8 +27,8 @@
                 <max_ang_vel>1 1 1</max_ang_vel>
             </plugin>
         </model>
-        <actor name="actor1">
-            <pose>2 2 1.05 0 0 0</pose>
+        <actor name="actor_1">
+            <pose>0 0 1.05 0 0 0</pose>
             <skin>
                 <filename>moonwalk.dae</filename>
                 <scale>1.0</scale>
@@ -46,7 +47,9 @@
                 <scale>1.000000</scale>
                 <interpolate_x>true</interpolate_x>
             </animation>
-            <plugin name="actor1_plugin" filename="libsd_actor_plugin.so"></plugin>
+            <plugin name="actor_plugin" filename="libsd_actor_plugin.so">
+                <namespace>actor_1</namespace>
+            </plugin>
         </actor>
 
 
