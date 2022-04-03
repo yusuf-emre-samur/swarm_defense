@@ -19,9 +19,9 @@
 namespace sd {
 namespace gazebo_ros_plugins {
 
-enum ANIMATION_ENUM { WALKING, STANDING, RUNNING, MAX };
+enum ANIMATION_ENUM { STANDING, WALKING, RUNNING, MAX };
 
-const std::array<std::string, 3> ANIMATION_NAMES = {"walking", "standing",
+const std::array<std::string, 3> ANIMATION_NAMES = {"standing", "walking",
 													"running"};
 
 class ActorPlugin : public gazebo::ModelPlugin
@@ -61,8 +61,6 @@ class ActorPlugin : public gazebo::ModelPlugin
 	// next targets
 	std::vector<ignition::math::Vector3d> next_targets_;
 
-	double distance_target_;
-
 	// weights and vel.
 	double target_weight_ = 1.0;
 	double obstacle_weight_ = 1.0;
@@ -81,6 +79,8 @@ class ActorPlugin : public gazebo::ModelPlugin
 
 	rclcpp::Subscription<sd_interfaces::msg::WalkingType>::SharedPtr
 		walking_type_sub_;
+
+	ANIMATION_ENUM walking_type_;
 };
 
 } // namespace gazebo_ros_plugins

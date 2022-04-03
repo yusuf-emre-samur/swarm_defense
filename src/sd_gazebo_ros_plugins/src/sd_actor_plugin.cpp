@@ -41,7 +41,9 @@ void ActorPlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 	this->target_weight_ = 1.15;
 	this->obstacle_weight_ = 1.5;
 	// default animation type is standing
-	this->setAnimationType(ANIMATION_ENUM::STANDING);
+
+	this->walking_type_ = ANIMATION_ENUM::WALKING;
+	this->chooseNextTarget();
 
 	// ros subscr. to "<ns>/targets" topic
 	this->targets_sub_ =
@@ -114,8 +116,7 @@ void ActorPlugin::chooseNextTarget()
 	if ( this->next_targets_.size() > 0 ) {
 		this->target_ = this->next_targets_.front();
 		this->next_targets_.erase(this->next_targets_.begin());
-		// default animation type
-		this->setAnimationType(ANIMATION_ENUM::WALKING);
+		this->setAnimationType(this->walking_type_);
 	} else {
 		// no new targets
 		this->setAnimationType(ANIMATION_ENUM::STANDING);
@@ -133,10 +134,8 @@ void ActorPlugin::walkLogic(const gazebo::common::UpdateInfo& _info)
 	ignition::math::Vector3d pos = this->target_ - pose.Pos();
 	ignition::math::Vector3d rpy = pose.Rot().Euler();
 
-	this->distance_target_ = pos.Length() - zval;
-
 	// choose a new target position if the actor has reached its current target
-	if ( this->distance_target_ < 0.1 ) {
+	if ( pos.Length() - zval < 0.1 ) {
 		this->chooseNextTarget();
 		pos = this->target_ - pose.Pos();
 	}
@@ -178,6 +177,7 @@ void ActorPlugin::on_position_msg(
 		auto vec3 = ignition::math::Vector3d(pos.x, pos.y, 0);
 		this->next_targets_.push_back(vec3);
 	}
+	this->chooseNextTarget();
 }
 
 void ActorPlugin::on_walking_type_msg(
@@ -185,7 +185,8 @@ void ActorPlugin::on_walking_type_msg(
 {
 	if ( msg->type < ANIMATION_ENUM::MAX ) {
 		auto anim_type = static_cast<ANIMATION_ENUM>(msg->type);
-		this->setAnimationType(anim_type);
+		this->walking_type_ = anim_type;
+		this->setAnimationType(this->walking_type_);
 	}
 }
 
