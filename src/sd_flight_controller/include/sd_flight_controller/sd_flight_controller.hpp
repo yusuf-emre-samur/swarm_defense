@@ -28,25 +28,23 @@ class FlightController : public rclcpp::Node
 		const sd_interfaces::msg::Position3Stamped::SharedPtr msg);
 
 	// set goal pos
-	void set_goal_position(
+	void set_target_position(
 		const sd_interfaces::msg::Position3Stamped::SharedPtr pos);
 
 	// publishs goal_pos_ msg to pose_pub_
-	void publish_goal_position() const;
+	void publish_target_position() const;
 
-	// curr pose sub
-	std::string pos_sub_topic_name_; // name of pose topic
+	std::string id_;
+
+	// curr pos sub
 	rclcpp::Subscription<sd_interfaces::msg::Position3Stamped>::SharedPtr
 		pos_sub_; // pose subscriber
 
-	// ros
-	rclcpp::Time last_time_;
-
-	// goal pose pub
-	sd_interfaces::msg::Position3 last_pos_; // last pose msg
-	std::string pos_pub_topic_name_;		 // name of pose topic
+	// last pos msg
+	sd_interfaces::msg::Position3 last_pos_;
+	// target pos pub
 	rclcpp::Publisher<sd_interfaces::msg::Position3Stamped>::SharedPtr
-		pos_pub_; // rpm publisher
+		target_pos_pub_;
 
 	// fc
 	rclcpp::TimerBase::SharedPtr flight_controller_timer_; // timer for fc
