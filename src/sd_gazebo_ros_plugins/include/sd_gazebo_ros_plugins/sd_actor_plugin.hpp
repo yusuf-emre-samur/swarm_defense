@@ -14,11 +14,12 @@
 #include <vector>
 // interfaces
 #include <sd_interfaces/msg/position2_array.hpp>
+#include <sd_interfaces/msg/walking_type.hpp>
 
 namespace sd {
 namespace gazebo_ros_plugins {
 
-enum ANIMATION_ENUM { WALKING, STANDING, RUNNING };
+enum ANIMATION_ENUM { WALKING, STANDING, RUNNING, MAX };
 
 const std::array<std::string, 3> ANIMATION_NAMES = {"walking", "standing",
 													"running"};
@@ -42,8 +43,11 @@ class ActorPlugin : public gazebo::ModelPlugin
 
 	void setAnimationType(ANIMATION_ENUM animation_type);
 
-	void on_position_msg_callback(
-		const sd_interfaces::msg::Position2Array::SharedPtr msg);
+	void
+	on_position_msg(const sd_interfaces::msg::Position2Array::SharedPtr msg);
+
+	void
+	on_walking_type_msg(const sd_interfaces::msg::WalkingType::SharedPtr msg);
 
 	std::string id_;
 	// gazebo
@@ -56,6 +60,8 @@ class ActorPlugin : public gazebo::ModelPlugin
 
 	// next targets
 	std::vector<ignition::math::Vector3d> next_targets_;
+
+	double distance_target_;
 
 	// weights and vel.
 	double target_weight_ = 1.0;
@@ -72,6 +78,9 @@ class ActorPlugin : public gazebo::ModelPlugin
 	// sub
 	rclcpp::Subscription<sd_interfaces::msg::Position2Array>::SharedPtr
 		targets_sub_;
+
+	rclcpp::Subscription<sd_interfaces::msg::WalkingType>::SharedPtr
+		walking_type_sub_;
 };
 
 } // namespace gazebo_ros_plugins

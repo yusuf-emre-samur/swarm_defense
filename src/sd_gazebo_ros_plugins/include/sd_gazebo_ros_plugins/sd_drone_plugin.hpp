@@ -63,20 +63,20 @@ class DronePlugin : public gazebo::ModelPlugin
 	// gazebo
 	gazebo::physics::ModelPtr model_;
 	gazebo::event::ConnectionPtr update_callback_;
+
 	// current and target position
 	ignition::math::Vector3d pos_;
 	ignition::math::Vector3d target_pos_;
 
+	// ros
+	gazebo_ros::Node::SharedPtr ros2node_;
 
 	// curr pose pub
 	rclcpp::Publisher<sd_interfaces::msg::Position3Stamped>::SharedPtr pos_pub_;
 
-	// ros node
-	gazebo_ros::Node::SharedPtr ros2node_;
-
-	// goal pose subscriber
+	// target pose subscriber
 	rclcpp::Subscription<sd_interfaces::msg::Position3Stamped>::SharedPtr
-		pos_sub_;
+		target_pos_sub_;
 
 	// vel
 	ignition::math::Vector3d vel_;
