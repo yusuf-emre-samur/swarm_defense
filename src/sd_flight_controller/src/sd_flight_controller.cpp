@@ -27,9 +27,9 @@ FlightController::FlightController() : Node("default_node_name")
 			"target_pos", 1);
 
 	// initial values
-	this->target_pos_.x = 10;
-	this->target_pos_.y = 10;
-	this->target_pos_.z = 10;
+	// this->target_pos_.x = 10;
+	// this->target_pos_.y = 10;
+	// this->target_pos_.z = 10;
 
 	// INFO
 	RCLCPP_INFO(this->get_logger(),
