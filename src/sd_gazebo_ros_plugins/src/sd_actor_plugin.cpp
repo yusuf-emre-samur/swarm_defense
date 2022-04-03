@@ -37,7 +37,7 @@ void ActorPlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
 	// params
 	this->last_update_ = 0;
-	this->target_ = ignition::math::Vector3d(0, 0, 0);
+	this->target_ = this->actor_->WorldPose().Pos();
 	this->target_weight_ = 1.15;
 	this->obstacle_weight_ = 1.5;
 	// default animation type is standing
