@@ -27,7 +27,8 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
 	this->model_ = _model;
 	this->id_ = this->model_->GetName();
-	this->ros2node_ = gazebo_ros::Node::Get();
+
+	this->ros2node_ = gazebo_ros::Node::Get(_sdf, _model);
 
 	// rotor link names
 	const std::string param_link_name_base = "link_name_rotor_";
@@ -58,17 +59,15 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 		this->max_ang_vel_ = ignition::math::Vector3d(0.1, 0.1, 0.1);
 	}
 
-	// curr pose publisher
-	const std::string pose_pub_name = this->id_ + "/pos";
+	// curr pos publisher
 	this->pos_pub_ =
-		ros2node_->create_publisher<sd_interfaces::msg::Position3Stamped>(
-			pose_pub_name, 10);
+		ros2node_->create_publisher<sd_interfaces::msg::Position3Stamped>("pos",
+																		  1);
 
-	// goal pose subscription
-	const std::string rpm_sub_name = this->id_ + "/target_pos";
-	this->pos_sub_ =
+	// target pos subscription
+	this->target_pos_sub_ =
 		ros2node_->create_subscription<sd_interfaces::msg::Position3Stamped>(
-			rpm_sub_name, 1,
+			"target_pos", 1,
 			std::bind(&DronePlugin::on_position_msg_callback, this,
 					  std::placeholders::_1));
 
@@ -76,18 +75,21 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 	this->update_callback_ = gazebo::event::Events::ConnectWorldUpdateBegin(
 		std::bind(&DronePlugin::OnUpdate, this));
 
+	// initial values
 	this->pos_ = this->model_->WorldPose().Pos();
 	this->target_pos_ = this->pos_;
 
 	// INFO
-	RCLCPP_INFO(ros2node_->get_logger(), "Loaded SD Drone Plugin!");
+	RCLCPP_INFO(
+		ros2node_->get_logger(),
+		std::string("Loaded SD Drone Plugin for Drone ID: " + this->id_ + " !")
+			.c_str());
 }
 
 // called each iteration of simulation
 void DronePlugin::OnUpdate()
 {
 	this->pos_ = this->model_->WorldPose().Pos();
-
 	this->fakeFly();
 	// this->gimbal();
 	this->publish_position();
