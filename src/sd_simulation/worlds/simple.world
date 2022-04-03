@@ -53,6 +53,31 @@
         </actor>
 
 
+        <actor name="actor_2">
+            <pose>0 0 1.05 0 0 0</pose>
+            <skin>
+                <filename>moonwalk.dae</filename>
+                <scale>1.0</scale>
+            </skin>
+            <animation name="walking">
+                <filename>walk.dae</filename>
+                <scale>1.000000</scale>
+                <interpolate_x>true</interpolate_x>
+            </animation>
+            <animation name="standing">
+                <filename>stand.dae</filename>
+                <scale>1.000000</scale>
+            </animation>
+            <animation name="running">
+                <filename>run.dae</filename>
+                <scale>1.000000</scale>
+                <interpolate_x>true</interpolate_x>
+            </animation>
+            <plugin name="actor_plugin" filename="libsd_actor_plugin.so">
+                <namespace>actor_2</namespace>
+            </plugin>
+        </actor>
+
         <model name="sbahn1">
             <pose>-72 9 0</pose>
             <include>
