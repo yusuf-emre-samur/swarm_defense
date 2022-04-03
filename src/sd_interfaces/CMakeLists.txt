@@ -34,6 +34,7 @@ set(msg_files
   "msg/Position3.msg"
   "msg/Position3Stamped.msg"
   "msg/Position3Array.msg"
+  "msg/WalkingType.msg"
 )
 
 # msg folder
