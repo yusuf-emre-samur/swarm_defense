@@ -13,6 +13,8 @@ find_package(gazebo_dev REQUIRED)
 find_package(gazebo_ros REQUIRED)
 # rcl
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(rclcpp_components REQUIRED)
 # tf2
 find_package(tf2 REQUIRED)
 # interfaces
@@ -21,6 +23,8 @@ find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sd_interfaces REQUIRED)
+
+ 
 
 
 
@@ -100,6 +104,8 @@ sd_actor_plugin
   gazebo_dev
   gazebo_ros
   rclcpp
+  rclcpp_action
+  rclcpp_components
   std_msgs
   sd_interfaces
 )

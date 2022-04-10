@@ -7,12 +7,15 @@
 #include "gazebo/util/system.hh"
 #include <ignition/math.hh>
 // ros
+#include "rclcpp_action/rclcpp_action.hpp"
+#include "rclcpp_components/register_node_macro.hpp"
 #include <gazebo_ros/node.hpp>
 #include <rclcpp/rclcpp.hpp>
 // cpp
 #include <string>
 #include <vector>
 // interfaces
+#include <sd_interfaces/action/walk.hpp>
 #include <sd_interfaces/msg/position2_array.hpp>
 #include <sd_interfaces/msg/walking_type.hpp>
 
@@ -26,8 +29,6 @@ const std::array<std::string, 3> ANIMATION_NAMES = {"standing", "walking",
 
 class ActorPlugin : public gazebo::ModelPlugin
 {
-
-	/// \brief Constructor
 
   public:
 	ActorPlugin();
@@ -50,6 +51,7 @@ class ActorPlugin : public gazebo::ModelPlugin
 	on_walking_type_msg(const sd_interfaces::msg::WalkingType::SharedPtr msg);
 
 	std::string id_;
+
 	// gazebo
 	gazebo::physics::ActorPtr actor_;
 	gazebo::event::ConnectionPtr update_callback_;
@@ -58,12 +60,8 @@ class ActorPlugin : public gazebo::ModelPlugin
 	// current target
 	ignition::math::Vector3d target_;
 
-	// next targets
-	std::vector<ignition::math::Vector3d> next_targets_;
-
 	// weights and vel.
-	double target_weight_ = 1.0;
-	double obstacle_weight_ = 1.0;
+	static constexpr double target_weight_ = 1.15;
 	double animation_factor_ = 1.0;
 	ignition::math::Vector3d velocity_;
 
@@ -73,14 +71,34 @@ class ActorPlugin : public gazebo::ModelPlugin
 	// ros node
 	gazebo_ros::Node::SharedPtr ros2node_;
 
-	// sub
-	rclcpp::Subscription<sd_interfaces::msg::Position2Array>::SharedPtr
-		targets_sub_;
+	// ros walk action server
+	rclcpp_action::Server<sd_interfaces::action::Walk>::SharedPtr
+		action_server_;
 
-	rclcpp::Subscription<sd_interfaces::msg::WalkingType>::SharedPtr
-		walking_type_sub_;
+	// goal handel
+	rclcpp_action::GoalResponse
+	handle_goal(const rclcpp_action::GoalUUID& uuid,
+				std::shared_ptr<const sd_interfaces::action::Walk::Goal> goal);
+	// cancel handle
+	rclcpp_action::CancelResponse
+	handle_cancel(const std::shared_ptr<
+				  rclcpp_action::ServerGoalHandle<sd_interfaces::action::Walk>>
+					  goal_handle);
 
-	ANIMATION_ENUM walking_type_;
+	// accepted handle
+	void handle_accepted(
+		const std::shared_ptr<
+			rclcpp_action::ServerGoalHandle<sd_interfaces::action::Walk>>
+			goal_handle);
+
+	// execute thread
+	void
+	execute(const std::shared_ptr<
+				rclcpp_action::ServerGoalHandle<sd_interfaces::action::Walk>>
+				goal_handle,
+			rclcpp::Clock::SharedPtr rosclock);
+
+	bool action_set_ = false;
 };
 
 } // namespace gazebo_ros_plugins
