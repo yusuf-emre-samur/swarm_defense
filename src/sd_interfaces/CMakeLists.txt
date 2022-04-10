@@ -36,10 +36,15 @@ set(msg_files
   "msg/Position3Array.msg"
   "msg/WalkingType.msg"
 )
+set(action_files
+  "action/Walk.action"
+)
+
 
 # msg folder
 rosidl_generate_interfaces(${PROJECT_NAME}
   ${msg_files}
+  ${action_files}
   DEPENDENCIES
   std_msgs
   geometry_msgs
