@@ -15,11 +15,13 @@ class HelloWorldPlugin : public gazebo::WorldPlugin
   public:
 	HelloWorldPlugin();
 	~HelloWorldPlugin();
+	void OnUpdate();
 
 	void Load(gazebo::physics::WorldPtr _world, sdf::ElementPtr _sdf);
 
   private:
 	gazebo_ros::Node::SharedPtr ros2node_;
+	gazebo::event::ConnectionPtr updateConnection_;
 };
 } // namespace gazebo_ros_plugins
 } // namespace sd

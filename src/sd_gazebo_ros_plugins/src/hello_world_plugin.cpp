@@ -17,6 +17,14 @@ void HelloWorldPlugin::Load(gazebo::physics::WorldPtr _world,
 {
 	ros2node_ = gazebo_ros::Node::Get(_sdf);
 	RCLCPP_INFO(ros2node_->get_logger(), "Loaded HelloWorldPlugin!");
+
+	this->updateConnection_ = gazebo::event::Events::ConnectWorldUpdateBegin(
+		std::bind(&HelloWorldPlugin::OnUpdate, this));
+}
+
+void HelloWorldPlugin::OnUpdate()
+{
+	RCLCPP_INFO(ros2node_->get_logger(), "Update Callback HelloWorldPlugin!");
 }
 
 GZ_REGISTER_WORLD_PLUGIN(HelloWorldPlugin)

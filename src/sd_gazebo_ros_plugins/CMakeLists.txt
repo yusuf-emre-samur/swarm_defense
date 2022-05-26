@@ -51,17 +51,17 @@ endif()
 
 
 
-# # hello world plugin
-# add_library(hello_world_plugin SHARED
-#   src/hello_world_plugin.cpp
-# )
-# target_include_directories(hello_world_plugin PUBLIC include)
-# ament_target_dependencies(
-#   hello_world_plugin
-#   gazebo_dev
-#   gazebo_ros
-#   rclcpp
-# )
+# hello world plugin
+add_library(hello_world_plugin SHARED
+  src/hello_world_plugin.cpp
+)
+target_include_directories(hello_world_plugin PUBLIC include)
+ament_target_dependencies(
+  hello_world_plugin
+  gazebo_dev
+  gazebo_ros
+  rclcpp
+)
 
 
 # # sd test plugin
@@ -112,7 +112,7 @@ sd_actor_plugin
 
 install(
   TARGETS
-  # hello_world_plugin
+  hello_world_plugin
   # ros_test_plugin
   sd_drone_plugin
   sd_actor_plugin

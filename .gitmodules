@@ -1,0 +1,3 @@
+[submodule "gazebo_models"]
+	path = gazebo_models
+	url = git@github.com:yusuf-emre-samur/swarm_defense_models.git

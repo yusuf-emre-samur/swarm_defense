@@ -84,5 +84,6 @@
                 <uri>model://sbahn</uri>
             </include>
         </model>
+        <plugin name="test" filename="libhello_world_plugin.so" />
     </world>
 </sdf>
