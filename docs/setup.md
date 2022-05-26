@@ -16,6 +16,16 @@ install Gazebo:
 curl -sSL http://get.gazebosim.org | sh
 ```
 
+
+# Git submodules
+```sh
+git submodule init
+```
+and
+```sh
+git submodule update
+```
+
 # Dependencies:
 ```sh
 sudo apt update
