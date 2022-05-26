@@ -1,3 +1,4 @@
 [submodule "swarm_defense_models"]
 	path = swarm_defense_models
-	url = https://github.com/yusuf-emre-samur/swarm_defense_models.git
+	url = git@github.com:yusuf-emre-samur/swarm_defense_models.git
+	branch = master
