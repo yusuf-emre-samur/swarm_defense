@@ -15,27 +15,29 @@ void WorldPlugin::Load(gazebo::physics::WorldPtr _world, sdf::ElementPtr _sdf)
 {
 	this->world_ = _world;
 
-	ros2node_ = gazebo_ros::Node::Get(_sdf);
+	this->ros2node_ = gazebo_ros::Node::Get(_sdf);
+	const gazebo_ros::QoS& qos = this->ros2node_->get_qos();
 
-	// actor names
-	auto actor = _sdf->GetElement("actors")->GetElement("actor");
-	while ( actor ) {
-		auto name = actor->Get<std::string>();
+	// object to track
+	auto object = _sdf->GetElement("objects")->GetElement("object");
+	while ( object ) {
+		auto name = object->Get<std::string>();
+		auto model_ptr = this->world_->ModelByName(name);
+		if ( !model_ptr ) {
+			RCLCPP_ERROR(ros2node_->get_logger(),
+						 std::string("Model with name: " + name +
+									 " not found in world !")
+							 .c_str());
+		}
 		track_objects_.push_back(name);
-		actor = actor->GetNextElement("actor");
-	}
-
-	// drone names
-	auto drone = _sdf->GetElement("drones")->GetElement("drone");
-	while ( drone ) {
-		auto name = drone->Get<std::string>();
-		track_objects_.push_back(name);
-		drone = drone->GetNextElement("drone");
+		object = object->GetNextElement("object");
 	}
 
 	// publisher
-	publisher_ = ros2node_->create_publisher<sd_interfaces::msg::ObjectsVector>(
-		"world_objects", 10);
+	this->publisher_ =
+		ros2node_->create_publisher<sd_interfaces::msg::ObjectsVector>(
+			"world_objects",
+			qos.get_publisher_qos("world_objects", rclcpp::QoS(10)));
 
 	this->updateConnection_ = gazebo::event::Events::ConnectWorldUpdateBegin(
 		std::bind(&WorldPlugin::OnUpdate, this));
@@ -45,10 +47,33 @@ void WorldPlugin::Load(gazebo::physics::WorldPtr _world, sdf::ElementPtr _sdf)
 
 void WorldPlugin::OnUpdate()
 {
-	// for ( const auto& object : this->track_objects_ ) {
-	// 	auto model = this->world_->ModelByName(object);
-	// 	RCLCPP_INFO(ros2node_->get_logger(), model->GetName().c_str());
-	// }
+	sd_interfaces::msg::ObjectsVector object_list;
+	geometry_msgs::msg::PoseArray poses;
+	for ( const auto& object : this->track_objects_ ) {
+		auto model = this->world_->ModelByName(object);
+		auto bbox = model->BoundingBox();
+
+		sd_interfaces::msg::Object obj;
+		obj.id = object;
+		// center
+		obj.bbox.center.x = bbox.Center().X();
+		obj.bbox.center.y = bbox.Center().Y();
+		obj.bbox.center.z = bbox.Center().Z();
+		// min
+		obj.bbox.pmin.x = bbox.Min().X();
+		obj.bbox.pmin.y = bbox.Min().Y();
+		obj.bbox.pmin.z = bbox.Min().Z();
+		// max
+		obj.bbox.pmax.x = bbox.Max().X();
+		obj.bbox.pmax.y = bbox.Max().Y();
+		obj.bbox.pmax.z = bbox.Max().Z();
+
+		object_list.objects.push_back(obj);
+	}
+	// publish
+	object_list.header.frame_id = "world";
+	object_list.header.stamp = this->ros2node_->now();
+	this->publisher_->publish(object_list);
 }
 
 GZ_REGISTER_WORLD_PLUGIN(WorldPlugin)
