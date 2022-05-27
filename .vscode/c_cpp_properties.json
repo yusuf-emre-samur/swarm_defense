@@ -13,7 +13,8 @@
                 "/usr/include/ignition/msgs5",
                 "/usr/include/ignition/transport8",
                 "${workspaceFolder}/build/sd_interfaces/rosidl_generator_cpp",
-                "/usr/include/sdformat-9.8"
+                "/usr/include/sdformat-9.8",
+                "${workspaceFolder}/src/sd_actor_plugin/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",
