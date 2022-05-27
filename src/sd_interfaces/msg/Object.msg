@@ -1,3 +1,2 @@
-std_msgs/Header header
-sd_interfaces/Position2 pos2
+sd_interfaces/Position pos
 string id
