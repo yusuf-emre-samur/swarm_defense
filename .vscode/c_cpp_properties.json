@@ -6,13 +6,14 @@
                 "${workspaceFolder}/src/**",
                 "/opt/ros/galactic/include",
                 "/usr/include/gazebo-11",
-                "/usr/include/sdformat-9.7",
+                "/usr/include/sdformat-9.8",
                 "/usr/include/ignition/math6",
                 "/usr/include/ignition/common3",
                 "/usr/include/ignition/fuel_tools4",
                 "/usr/include/ignition/msgs5",
                 "/usr/include/ignition/transport8",
-                "${workspaceFolder}/build/sd_interfaces/rosidl_generator_cpp"
+                "${workspaceFolder}/build/sd_interfaces/rosidl_generator_cpp",
+                "/usr/include/sdformat-9.8"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",
