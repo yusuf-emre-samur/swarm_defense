@@ -49,13 +49,7 @@ void ActorPlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
 	// params
 	this->last_update_ = 0;
-	// make actor standing at start
-	auto pose = this->actor_->WorldPose();
-	auto rpy = ignition::math::Vector3d(actor_roll, 0, 0);
-	auto q = ignition::math::Quaterniond::EulerToQuaternion(rpy);
-	pose.Rot() = q;
-	this->actor_->SetWorldPose(pose);
-
+	this->target_ = this->actor_->WorldPose().Pos();
 	// default animation type is standing
 
 	this->setAnimationType(ANIMATION_ENUM::STANDING);
@@ -191,8 +185,10 @@ void ActorPlugin::execute(
 			// rotate in place, instead of jumping.
 			if ( std::abs(yaw.Radian()) > IGN_DTOR(10) ) {
 				pose.Rot() = ignition::math::Quaterniond(
-					actor_roll, 0, rpy.Z() + yaw.Radian() * 0.001);
-			} else {
+					actor_roll, 0, rpy.Z() + yaw.Radian() * 0.01);
+			}
+			// move
+			else {
 				pose.Pos() += pos_dif * this->velocity_ * 0.001;
 				pose.Rot() = ignition::math::Quaterniond(
 					actor_roll, 0, rpy.Z() + yaw.Radian());
@@ -235,6 +231,15 @@ void ActorPlugin::execute(
 // each sim step
 void ActorPlugin::OnUpdate(const gazebo::common::UpdateInfo& _info)
 {
+
+	if ( !this->action_set_ ) {
+		// make actor stand
+		auto pose = this->actor_->WorldPose();
+		auto rpy = ignition::math::Vector3d(actor_roll, 0, 0);
+		auto q = ignition::math::Quaterniond::EulerToQuaternion(rpy);
+		pose.Rot() = q;
+		this->actor_->SetWorldPose(pose);
+	}
 	this->last_update_ = _info.simTime;
 }
 

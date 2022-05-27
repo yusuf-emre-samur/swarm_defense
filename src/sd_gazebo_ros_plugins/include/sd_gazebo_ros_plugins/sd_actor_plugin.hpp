@@ -16,7 +16,7 @@
 #include <vector>
 // interfaces
 #include <sd_interfaces/action/walk.hpp>
-#include <sd_interfaces/msg/position2_array.hpp>
+#include <sd_interfaces/msg/positions_vector.hpp>
 #include <sd_interfaces/msg/walking_type.hpp>
 
 namespace sd {
@@ -45,7 +45,7 @@ class ActorPlugin : public gazebo::ModelPlugin
 	void setAnimationType(ANIMATION_ENUM animation_type);
 
 	void
-	on_position_msg(const sd_interfaces::msg::Position2Array::SharedPtr msg);
+	on_position_msg(const sd_interfaces::msg::PositionsVector::SharedPtr msg);
 
 	void
 	on_walking_type_msg(const sd_interfaces::msg::WalkingType::SharedPtr msg);
@@ -98,7 +98,12 @@ class ActorPlugin : public gazebo::ModelPlugin
 				goal_handle,
 			rclcpp::Clock::SharedPtr rosclock);
 
+	void walk();
+
 	bool action_set_ = false;
+
+	ignition::math::Pose3d pose;
+	double distanceTraveled;
 };
 
 } // namespace gazebo_ros_plugins
