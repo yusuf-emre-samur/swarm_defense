@@ -7,10 +7,10 @@
 #include "gazebo/util/system.hh"
 #include <ignition/math.hh>
 // ros
-#include "rclcpp_action/rclcpp_action.hpp"
-#include "rclcpp_components/register_node_macro.hpp"
 #include <gazebo_ros/node.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
+#include <rclcpp_components/register_node_macro.hpp>
 // cpp
 #include <string>
 #include <vector>
@@ -101,9 +101,6 @@ class ActorPlugin : public gazebo::ModelPlugin
 	void walk();
 
 	bool action_set_ = false;
-
-	ignition::math::Pose3d pose;
-	double distanceTraveled;
 };
 
 } // namespace gazebo_ros_plugins

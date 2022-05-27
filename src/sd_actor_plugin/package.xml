@@ -20,6 +20,8 @@
   <!-- rcl -->
   <depend>rcl</depend>
   <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
+  <depend>rclcpp_action</depend>
   <!-- interfaces -->
   <depend>sd_interfaces</depend>
 

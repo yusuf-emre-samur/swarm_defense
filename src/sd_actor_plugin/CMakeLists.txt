@@ -47,6 +47,8 @@ ament_target_dependencies(
   gazebo_dev
   gazebo_ros
   rclcpp
+  rclcpp_action
+  rclcpp_components
   sd_interfaces
 )
 
