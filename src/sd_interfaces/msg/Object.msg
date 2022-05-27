@@ -1,2 +1,3 @@
-sd_interfaces/Position pos
+sd_interfaces/BoundingBox bbox
 string id
+
