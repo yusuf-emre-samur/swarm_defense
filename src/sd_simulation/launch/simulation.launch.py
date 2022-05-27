@@ -48,7 +48,8 @@ def generate_launch_description():
             ]),
         ]),
         launch_arguments={
-            "world": PathJoinSubstitution([pkg_share, "worlds", LaunchConfiguration("world")]),
+            # PathJoinSubstitution([pkg_share, "worlds", LaunchConfiguration("world")]),
+            "world": LaunchConfiguration("world"),
             "verbose": "true",
             "pause": "true"
         }.items()
