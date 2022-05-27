@@ -18,7 +18,7 @@
 #include <gazebo_ros/node.hpp>
 #include <rclcpp/rclcpp.hpp>
 // msgs
-#include <sd_interfaces/msg/position3_stamped.hpp>
+#include <sd_interfaces/msg/position_stamped.hpp>
 #include <std_msgs/msg/header.hpp>
 #include <std_msgs/msg/string.hpp>
 
@@ -41,7 +41,7 @@ class DronePlugin : public gazebo::ModelPlugin
   private: // functions
 		   // called when on new pose on topic
 	void on_position_msg_callback(
-		const sd_interfaces::msg::Position3Stamped::SharedPtr msg);
+		const sd_interfaces::msg::PositionStamped::SharedPtr msg);
 
 	// ros functions
 	// imu + gps = pose
@@ -72,10 +72,10 @@ class DronePlugin : public gazebo::ModelPlugin
 	gazebo_ros::Node::SharedPtr ros2node_;
 
 	// curr pose pub
-	rclcpp::Publisher<sd_interfaces::msg::Position3Stamped>::SharedPtr pos_pub_;
+	rclcpp::Publisher<sd_interfaces::msg::PositionStamped>::SharedPtr pos_pub_;
 
 	// target pose subscriber
-	rclcpp::Subscription<sd_interfaces::msg::Position3Stamped>::SharedPtr
+	rclcpp::Subscription<sd_interfaces::msg::PositionStamped>::SharedPtr
 		target_pos_sub_;
 
 	// vel

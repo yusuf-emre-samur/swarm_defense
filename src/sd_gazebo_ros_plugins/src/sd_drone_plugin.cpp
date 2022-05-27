@@ -61,12 +61,12 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
 	// curr pos publisher
 	this->pos_pub_ =
-		ros2node_->create_publisher<sd_interfaces::msg::Position3Stamped>("pos",
-																		  1);
+		ros2node_->create_publisher<sd_interfaces::msg::PositionStamped>("pos",
+																		 1);
 
 	// target pos subscription
 	this->target_pos_sub_ =
-		ros2node_->create_subscription<sd_interfaces::msg::Position3Stamped>(
+		ros2node_->create_subscription<sd_interfaces::msg::PositionStamped>(
 			"target_pos", 1,
 			std::bind(&DronePlugin::on_position_msg_callback, this,
 					  std::placeholders::_1));
@@ -209,23 +209,23 @@ void DronePlugin::fakeRotation()
 
 // update target position on new msg to ros topic ../target_pos
 void DronePlugin::on_position_msg_callback(
-	const sd_interfaces::msg::Position3Stamped::SharedPtr msg)
+	const sd_interfaces::msg::PositionStamped::SharedPtr msg)
 {
-	this->target_pos_.X() = msg->pos3.x;
-	this->target_pos_.Y() = msg->pos3.y;
-	this->target_pos_.Z() = msg->pos3.z;
+	this->target_pos_.X() = msg->position.x;
+	this->target_pos_.Y() = msg->position.y;
+	this->target_pos_.Z() = msg->position.z;
 }
 
 // publish current positiom to ros topic ../pos
 void DronePlugin::publish_position() const
 {
-	sd_interfaces::msg::Position3Stamped msg;
+	sd_interfaces::msg::PositionStamped msg;
 	msg.header.stamp = ros2node_->now();
 	msg.header.frame_id = "world";
 
-	msg.pos3.x = this->model_->WorldPose().X();
-	msg.pos3.y = this->model_->WorldPose().Y();
-	msg.pos3.z = this->model_->WorldPose().Z();
+	msg.position.x = this->model_->WorldPose().X();
+	msg.position.y = this->model_->WorldPose().Y();
+	msg.position.z = this->model_->WorldPose().Z();
 
 	this->pos_pub_->publish(msg);
 }
