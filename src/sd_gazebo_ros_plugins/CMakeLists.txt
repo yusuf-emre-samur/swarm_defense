@@ -15,19 +15,10 @@ find_package(gazebo_ros REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
-# tf2
-find_package(tf2 REQUIRED)
 # interfaces
-find_package(tf2_geometry_msgs REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(geometry_msgs REQUIRED)
-find_package(std_msgs REQUIRED)
 find_package(sd_interfaces REQUIRED)
 
  
-
-
-
 
 # gazebo
 # include_directories(${GAZEBO_INCLUDE_DIRS})
@@ -51,17 +42,17 @@ endif()
 
 
 
-# hello world plugin
-add_library(hello_world_plugin SHARED
-  src/hello_world_plugin.cpp
-)
-target_include_directories(hello_world_plugin PUBLIC include)
-ament_target_dependencies(
-  hello_world_plugin
-  gazebo_dev
-  gazebo_ros
-  rclcpp
-)
+# # hello world plugin
+# add_library(hello_world_plugin SHARED
+#   src/hello_world_plugin.cpp
+# )
+# target_include_directories(hello_world_plugin PUBLIC include)
+# ament_target_dependencies(
+#   hello_world_plugin
+#   gazebo_dev
+#   gazebo_ros
+#   rclcpp
+# )
 
 
 # # sd test plugin
@@ -79,43 +70,10 @@ ament_target_dependencies(
 
 
 
-# sd drone plugin
-add_library(sd_drone_plugin SHARED
-  src/sd_drone_plugin.cpp
-)
-target_include_directories(sd_drone_plugin PUBLIC include)
-ament_target_dependencies(
-  sd_drone_plugin
-  gazebo_dev
-  gazebo_ros
-  rclcpp
-  std_msgs
-  sd_interfaces
-)
-
-
-# sd actor plugin
-add_library(sd_actor_plugin SHARED
-  src/sd_actor_plugin.cpp
-)
-target_include_directories(sd_actor_plugin PUBLIC include)
-ament_target_dependencies(
-sd_actor_plugin
-  gazebo_dev
-  gazebo_ros
-  rclcpp
-  rclcpp_action
-  rclcpp_components
-  std_msgs
-  sd_interfaces
-)
-
 install(
   TARGETS
-  hello_world_plugin
+  # hello_world_plugin
   # ros_test_plugin
-  sd_drone_plugin
-  sd_actor_plugin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin

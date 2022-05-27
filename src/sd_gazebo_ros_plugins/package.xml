@@ -22,7 +22,6 @@
   <depend>rclcpp</depend>
   <!-- interfaces -->
   <depend>sd_interfaces</depend>
-  <depend>std_msgs</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
