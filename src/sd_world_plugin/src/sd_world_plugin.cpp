@@ -36,8 +36,7 @@ void WorldPlugin::Load(gazebo::physics::WorldPtr _world, sdf::ElementPtr _sdf)
 	// publisher
 	this->publisher_ =
 		ros2node_->create_publisher<sd_interfaces::msg::ObjectsVector>(
-			"world_objects",
-			qos.get_publisher_qos("world_objects", rclcpp::QoS(10)));
+			"objects", qos.get_publisher_qos("objects", rclcpp::QoS(10)));
 
 	this->updateConnection_ = gazebo::event::Events::ConnectWorldUpdateBegin(
 		std::bind(&WorldPlugin::OnUpdate, this));
