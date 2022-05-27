@@ -36,8 +36,6 @@ class WorldPlugin : public gazebo::WorldPlugin
 	gazebo_ros::Node::SharedPtr ros2node_;
 	// publisher
 	rclcpp::Publisher<sd_interfaces::msg::ObjectsVector>::SharedPtr publisher_;
-	rclcpp::Publisher<geometry_msgs::msg::PoseArray>::SharedPtr
-		geometry_publisher_;
 
 	// actor and drone names
 	std::vector<std::string> track_objects_;

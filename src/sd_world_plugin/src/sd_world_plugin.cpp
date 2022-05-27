@@ -47,7 +47,6 @@ void WorldPlugin::Load(gazebo::physics::WorldPtr _world, sdf::ElementPtr _sdf)
 void WorldPlugin::OnUpdate()
 {
 	sd_interfaces::msg::ObjectsVector object_list;
-	geometry_msgs::msg::PoseArray poses;
 	for ( const auto& object : this->track_objects_ ) {
 		auto model = this->world_->ModelByName(object);
 		auto bbox = model->BoundingBox();
