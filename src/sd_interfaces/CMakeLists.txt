@@ -28,12 +28,16 @@ endif()
 
 
 set(msg_files
-  "msg/Position.msg"
-  "msg/PositionStamped.msg"
-  "msg/PositionsVector.msg"
+  "msg/BoundingBox.msg"
+
   "msg/Object.msg"
   "msg/ObjectStamped.msg"
   "msg/ObjectsVector.msg"
+  
+  "msg/Position.msg"
+  "msg/PositionStamped.msg"
+  "msg/PositionsVector.msg"
+  
   "msg/WalkingType.msg"
 )
 set(action_files
