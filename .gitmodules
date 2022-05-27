@@ -1,4 +1,4 @@
 [submodule "swarm_defense_gazebo"]
 	path = swarm_defense_gazebo
 	url = git@github.com:yusuf-emre-samur/swarm_defense_gazebo.git
-	branch = master
+	branch = main
