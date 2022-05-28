@@ -41,7 +41,6 @@ set(msg_files
   "msg/WalkingType.msg"
 )
 set(action_files
-  "action/Walk.action"
 )
 
 
