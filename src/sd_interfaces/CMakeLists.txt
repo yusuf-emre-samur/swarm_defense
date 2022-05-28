@@ -40,6 +40,11 @@ set(msg_files
   
   "msg/WalkingType.msg"
 )
+
+set(service_files
+  "srv/SetDroneTarget.srv"
+)
+
 set(action_files
 )
 
@@ -47,6 +52,7 @@ set(action_files
 # msg folder
 rosidl_generate_interfaces(${PROJECT_NAME}
   ${msg_files}
+  ${service_files}
   ${action_files}
   DEPENDENCIES
   std_msgs
