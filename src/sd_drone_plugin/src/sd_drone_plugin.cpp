@@ -7,7 +7,6 @@
 // other
 
 namespace sd {
-namespace gazebo_ros_plugins {
 
 // noise generator
 std::random_device rd{};
@@ -61,15 +60,15 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
 	// curr pos publisher
 	this->pos_pub_ =
-		ros2node_->create_publisher<sd_interfaces::msg::PositionStamped>("pos",
-																		 1);
+		ros2node_->create_publisher<sd_interfaces::msg::PositionStamped>(
+			"position", 1);
 
-	// target pos subscription
-	this->target_pos_sub_ =
-		ros2node_->create_subscription<sd_interfaces::msg::PositionStamped>(
-			"target_pos", 1,
-			std::bind(&DronePlugin::on_position_msg_callback, this,
-					  std::placeholders::_1));
+	// service server for setting target position
+	this->target_service_ =
+		this->ros2node_->create_service<sd_interfaces::srv::SetDroneTarget>(
+			"set_target",
+			std::bind(&DronePlugin::SetTargetCallback, this,
+					  std::placeholders::_1, std::placeholders::_2));
 
 	// callback each simulation step
 	this->update_callback_ = gazebo::event::Events::ConnectWorldUpdateBegin(
@@ -207,15 +206,6 @@ void DronePlugin::fakeRotation()
 	}
 }
 
-// update target position on new msg to ros topic ../target_pos
-void DronePlugin::on_position_msg_callback(
-	const sd_interfaces::msg::PositionStamped::SharedPtr msg)
-{
-	this->target_pos_.X() = msg->position.x;
-	this->target_pos_.Y() = msg->position.y;
-	this->target_pos_.Z() = msg->position.z;
-}
-
 // publish current positiom to ros topic ../pos
 void DronePlugin::publish_position() const
 {
@@ -230,8 +220,18 @@ void DronePlugin::publish_position() const
 	this->pos_pub_->publish(msg);
 }
 
+void DronePlugin::SetTargetCallback(
+	const std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Request> request,
+	std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Response> response)
+{
+	this->target_pos_.X() = request->x;
+	this->target_pos_.Y() = request->y;
+	this->target_pos_.Z() = request->z;
+
+	response->set__success(true);
+}
+
 // Register this plugin
 GZ_REGISTER_MODEL_PLUGIN(DronePlugin)
 
-} // namespace gazebo_ros_plugins
 } // namespace sd

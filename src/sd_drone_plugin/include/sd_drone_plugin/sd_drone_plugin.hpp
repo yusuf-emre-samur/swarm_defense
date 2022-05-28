@@ -1,5 +1,5 @@
-#ifndef SD_GAZEBO_ROS_PLUGINS_DRONE_PLUGIN_HPP_
-#define SD_GAZEBO_ROS_PLUGINS_DRONE_PLUGIN_HPP_
+#ifndef SD_DRONE_PLUGIN_HPP_
+#define SD_DRONE_PLUGIN_HPP_
 // cpp
 #include <array>
 #include <cmath>
@@ -7,7 +7,6 @@
 #include <memory>
 #include <random>
 #include <string>
-
 // gazebo
 #include <gazebo/common/Plugin.hh>
 #include <gazebo/common/common.hh>
@@ -19,13 +18,13 @@
 #include <rclcpp/rclcpp.hpp>
 // interfaces
 #include <sd_interfaces/msg/position_stamped.hpp>
+#include <sd_interfaces/srv/set_drone_target.hpp>
 #include <std_msgs/msg/header.hpp>
 #include <std_msgs/msg/string.hpp>
 
 // other
 
 namespace sd {
-namespace gazebo_ros_plugins {
 
 class DronePlugin : public gazebo::ModelPlugin
 {
@@ -37,6 +36,10 @@ class DronePlugin : public gazebo::ModelPlugin
 	// gazebo plugin functions
 	void Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf);
 	void OnUpdate();
+	void SetTargetCallback(
+		const std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Request>
+			request,
+		std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Response> response);
 
   private: // functions
 		   // called when on new pose on topic
@@ -74,9 +77,9 @@ class DronePlugin : public gazebo::ModelPlugin
 	// curr pose pub
 	rclcpp::Publisher<sd_interfaces::msg::PositionStamped>::SharedPtr pos_pub_;
 
-	// target pose subscriber
-	rclcpp::Subscription<sd_interfaces::msg::PositionStamped>::SharedPtr
-		target_pos_sub_;
+	// target service
+	rclcpp::Service<sd_interfaces::srv::SetDroneTarget>::SharedPtr
+		target_service_;
 
 	// vel
 	ignition::math::Vector3d vel_;
@@ -89,7 +92,6 @@ class DronePlugin : public gazebo::ModelPlugin
 	static constexpr uint num_rotors_ = 4;
 	std::array<std::string, num_rotors_> rotor_link_names_;
 };
-} // namespace gazebo_ros_plugins
 } // namespace sd
 
 #endif
