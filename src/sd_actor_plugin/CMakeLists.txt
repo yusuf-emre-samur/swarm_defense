@@ -62,4 +62,13 @@ install(
   RUNTIME DESTINATION bin
 )
 
+install(
+  DIRECTORY include/${PROJECT_NAME}
+  DESTINATION include
+)
+ament_export_include_directories(include)
+ament_export_dependencies(
+  gazebo_ros
+)
+
 ament_package()
