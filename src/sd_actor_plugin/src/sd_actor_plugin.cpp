@@ -40,10 +40,20 @@ void ActorPlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 		auto point = _sdf->GetElement("points")->GetElement("point");
 		while ( point ) {
 			WalkingPoint wp;
-			auto p = point->Get<ignition::math::Vector3d>();
+			if ( point->HasAttribute("type") ) {
+				auto walking_type = point->GetAttribute("type")->GetAsString();
+				if ( walking_type == "run" ) {
+					wp.walking_type = ANIMATION_ENUM::RUNNING;
+				}
+				if ( walking_type == "walk" ) {
+					wp.walking_type = ANIMATION_ENUM::WALKING;
+				}
+			} else {
+				wp.walking_type = ANIMATION_ENUM::WALKING;
+			}
+			auto p = point->Get<ignition::math::Vector2d>();
 			wp.x = p.X();
 			wp.y = p.Y();
-			wp.walking_type = static_cast<ANIMATION_ENUM>(p.Z());
 			this->points_.push(wp);
 			point = point->GetNextElement("point");
 		}
