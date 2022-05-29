@@ -51,6 +51,13 @@ void ActorPlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 			} else {
 				wp.walking_type = ANIMATION_ENUM::WALKING;
 			}
+			if ( point->HasAttribute("wait_after") ) {
+				auto wait_after =
+					point->GetAttribute("wait_after")->GetAsString();
+				wp.wait_after = std::stod(wait_after);
+			} else {
+				wp.walking_type = ANIMATION_ENUM::WALKING;
+			}
 			auto p = point->Get<ignition::math::Vector2d>();
 			wp.x = p.X();
 			wp.y = p.Y();
@@ -71,8 +78,16 @@ void ActorPlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 // each sim step
 void ActorPlugin::OnUpdate(const gazebo::common::UpdateInfo& _info)
 {
+	if ( this->current_wp_.target_reached ) {
+		// if wait is over
+		if ( (_info.simTime - this->target_reached_time_).sec >
+			 this->current_wp_.wait_after ) {
+			this->setNextTarget();
+		}
+	} else {
+		this->walk(_info);
+	}
 	this->last_update_ = _info.simTime;
-	this->walk(_info);
 }
 
 void ActorPlugin::setNextTarget()
@@ -136,8 +151,11 @@ void ActorPlugin::walk(const gazebo::common::UpdateInfo& _info)
 		std::sqrt(std::pow(this->target_.X() - pose.Pos().X(), 2) +
 				  std::pow(this->target_.Y() - pose.Pos().Y(), 2));
 
+	// target reached
 	if ( distance < 0.1 ) {
-		this->setNextTarget();
+		this->target_reached_time_ = _info.simTime;
+		this->current_wp_.target_reached = true;
+		this->setAnimationType(ANIMATION_ENUM::STANDING);
 	}
 
 	// normalize the direction vector, and apply the target weight

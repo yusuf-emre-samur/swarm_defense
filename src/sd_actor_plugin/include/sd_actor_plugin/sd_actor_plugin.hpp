@@ -26,7 +26,8 @@ enum ANIMATION_ENUM { STANDING, WALKING, RUNNING, MAX };
 struct WalkingPoint {
 	int x, y;
 	ANIMATION_ENUM walking_type;
-	uint wait_after = 0;
+	double wait_after = 0;
+	bool target_reached = false;
 };
 
 const std::array<std::string, 3> ANIMATION_NAMES = {"standing", "walking",
@@ -65,6 +66,8 @@ class ActorPlugin : public gazebo::ModelPlugin
 	// current target
 	ignition::math::Vector3d target_;
 	WalkingPoint current_wp_;
+
+	gazebo::common::Time target_reached_time_;
 
 	// weights and vel.
 	static constexpr double target_weight_ = 1.15;
