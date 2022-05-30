@@ -55,8 +55,6 @@ void ActorPlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 				auto wait_after =
 					point->GetAttribute("wait_after")->GetAsString();
 				wp.wait_after = std::stod(wait_after);
-			} else {
-				wp.walking_type = ANIMATION_ENUM::WALKING;
 			}
 			auto p = point->Get<ignition::math::Vector2d>();
 			wp.x = p.X();
@@ -169,11 +167,11 @@ void ActorPlugin::walk(const gazebo::common::UpdateInfo& _info)
 	// rotate in place, instead of jumping.
 	if ( std::abs(yaw.Radian()) > IGN_DTOR(10) ) {
 		pose.Rot() = ignition::math::Quaterniond(actor_roll, 0,
-												 rpy.Z() + yaw.Radian() * 0.01);
+												 rpy.Z() + yaw.Radian() * 0.1);
 	}
 	// move
 	else {
-		pose.Pos() += pos_dif * this->velocity_ * 0.001;
+		pose.Pos() += pos_dif * this->velocity_ * 0.01;
 		pose.Rot() =
 			ignition::math::Quaterniond(actor_roll, 0, rpy.Z() + yaw.Radian());
 	}
