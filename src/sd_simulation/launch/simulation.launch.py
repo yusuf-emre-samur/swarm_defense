@@ -47,6 +47,19 @@ def generate_launch_description():
     # drones
     ###############################################################
     num_drones = 8
+    base_station_positions = [
+        [-200, -100, 11.4],
+        [-200, -102, 11.4],
+        [-200, -104, 11.4],
+        [-200, -106, 11.4],
+        [-202, -100, 11.4],
+        [-202, -102, 11.4],
+        [-202, -104, 11.4],
+        [-202, -106, 11.4],
+
+    ]
+
+
     for i in range(1, num_drones+1):
 
         # sd drone controller
@@ -57,7 +70,8 @@ def generate_launch_description():
                 name="sd_drone_controller",
                 parameters=[
                     {"use_sim_time": True},
-                    {"drone_id": i}
+                    {"drone_id": i},
+                    {"base_station_pos": base_station_positions[i-1]}
                 ],
                 arguments=[
 
