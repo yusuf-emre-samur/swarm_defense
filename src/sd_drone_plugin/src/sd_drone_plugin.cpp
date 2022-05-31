@@ -224,8 +224,6 @@ void DronePlugin::SetTargetCallback(
 	const std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Request> request,
 	std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Response> response)
 {
-	RCLCPP_INFO(this->ros2node_->get_logger(), "received request");
-
 	this->target_pos_.X() = request->x;
 	this->target_pos_.Y() = request->y;
 	this->target_pos_.Z() = request->z;
