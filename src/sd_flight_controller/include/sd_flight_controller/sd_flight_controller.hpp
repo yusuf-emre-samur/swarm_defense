@@ -8,6 +8,7 @@
 
 // rclcpp
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp_components/register_node_macro.hpp>
 
 // interfaces
 #include <sd_interfaces/msg/position.hpp>

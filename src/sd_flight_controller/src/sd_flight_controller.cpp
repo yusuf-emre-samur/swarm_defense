@@ -18,7 +18,7 @@ FlightController::FlightController() : rclcpp::Node("FlightController")
 
 	using namespace std::chrono_literals;
 	this->timer_ = rclcpp::create_timer(
-		this, this->get_clock(), 1s,
+		this, this->get_clock(), 250ms,
 		std::bind(&FlightController::timer_callback, this));
 
 	// subscription target
@@ -47,22 +47,27 @@ void FlightController::set_target()
 	request->y = this->target_.y();
 	request->z = this->target_.z();
 
-	RCLCPP_INFO(this->get_logger(), "sending request");
-	auto future = this->client_set_target_->async_send_request(request);
-	// Wait for the result.
-	RCLCPP_INFO(this->get_logger(), "waiting for future");
-	future.wait();
-	auto result = future.get();
-	RCLCPP_INFO(this->get_logger(), "received result");
-	{
-		std::lock_guard<std::mutex> lock(this->target_set_m);
-		this->target_set_ = false;
-	}
+	using ServiceResponseFuture =
+		rclcpp::Client<sd_interfaces::srv::SetDroneTarget>::SharedFuture;
+
+	auto response_received_callback = [this](ServiceResponseFuture future) {
+		auto result = future.get();
+		if ( result->success ) {
+			{
+				std::lock_guard<std::mutex> lock(this->target_set_m);
+				this->target_set_ = false;
+			}
+		} else {
+			RCLCPP_ERROR(this->get_logger(),
+						 "set_target request not successfully");
+		}
+	};
+	auto future_result = this->client_set_target_->async_send_request(
+		request, response_received_callback);
 }
 
 void FlightController::callback_target(const sd_interfaces::msg::Position& msg)
 {
-	RCLCPP_INFO(this->get_logger(), "received position");
 	// set target
 	this->target_.x() = msg.x;
 	this->target_.y() = msg.y;

@@ -14,6 +14,7 @@
 
   <depend>rcl</depend>
   <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
   <depend>Eigen3</depend>
   <depend>sd_interfaces</depend>
 
