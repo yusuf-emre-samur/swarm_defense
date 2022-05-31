@@ -11,6 +11,7 @@
 #include <rclcpp_components/register_node_macro.hpp>
 
 // interfaces
+#include <sd_interfaces/msg/flight_target.hpp>
 #include <sd_interfaces/msg/position.hpp>
 #include <sd_interfaces/srv/set_drone_target.hpp>
 
@@ -35,8 +36,9 @@ class FlightController : public rclcpp::Node
 	// ros
 	rclcpp::TimerBase ::SharedPtr timer_;
 
-	rclcpp::Subscription<sd_interfaces::msg::Position>::SharedPtr sub_target_;
-	void callback_target(const sd_interfaces::msg::Position& msg);
+	rclcpp::Subscription<sd_interfaces::msg::FlightTarget>::SharedPtr
+		sub_target_;
+	void callback_target(const sd_interfaces::msg::FlightTarget& msg);
 
 	rclcpp::Client<sd_interfaces::srv::SetDroneTarget>::SharedPtr
 		client_set_target_;
@@ -47,6 +49,7 @@ class FlightController : public rclcpp::Node
 
 	// position
 	Eigen::Vector3d target_;
+	bool motors_on_ = false;
 	std::mutex target_set_m;
 	bool target_set_ = false;
 };

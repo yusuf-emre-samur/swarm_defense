@@ -9,23 +9,17 @@ FlightController::FlightController() : rclcpp::Node("FlightController")
 	this->get_parameter("drone_id", this->id_);
 	this->name_ = "drone_" + std::to_string(this->id_);
 
-	// drone base station
-	this->declare_parameter("base_station_pos");
-	rclcpp::Parameter base_station_pos("base_station_pos",
-									   std::vector<double>({}));
-	this->get_parameter("base_station_pos", base_station_pos);
-	auto tmp = base_station_pos.as_double_array();
-
 	using namespace std::chrono_literals;
 	this->timer_ = rclcpp::create_timer(
 		this, this->get_clock(), 250ms,
 		std::bind(&FlightController::timer_callback, this));
 
 	// subscription target
-	this->sub_target_ = this->create_subscription<sd_interfaces::msg::Position>(
-		"target", 10,
-		std::bind(&FlightController::callback_target, this,
-				  std::placeholders::_1));
+	this->sub_target_ =
+		this->create_subscription<sd_interfaces::msg::FlightTarget>(
+			"target", 10,
+			std::bind(&FlightController::callback_target, this,
+					  std::placeholders::_1));
 
 	// client set target
 	this->client_set_target_ =
@@ -43,9 +37,10 @@ void FlightController::set_target()
 {
 	auto request =
 		std::make_shared<sd_interfaces::srv::SetDroneTarget::Request>();
-	request->x = this->target_.x();
-	request->y = this->target_.y();
-	request->z = this->target_.z();
+	request->target.pos.x = this->target_.x();
+	request->target.pos.y = this->target_.y();
+	request->target.pos.z = this->target_.z();
+	request->target.motors_on = this->motors_on_;
 
 	using ServiceResponseFuture =
 		rclcpp::Client<sd_interfaces::srv::SetDroneTarget>::SharedFuture;
@@ -66,12 +61,14 @@ void FlightController::set_target()
 		request, response_received_callback);
 }
 
-void FlightController::callback_target(const sd_interfaces::msg::Position& msg)
+void FlightController::callback_target(
+	const sd_interfaces::msg::FlightTarget& msg)
 {
 	// set target
-	this->target_.x() = msg.x;
-	this->target_.y() = msg.y;
-	this->target_.z() = msg.z;
+	this->target_.x() = msg.pos.x;
+	this->target_.y() = msg.pos.y;
+	this->target_.z() = msg.pos.z;
+	this->motors_on_ = msg.motors_on;
 
 	{
 		std::lock_guard<std::mutex> lock(this->target_set_m);
@@ -84,8 +81,7 @@ void FlightController::callback_target(const sd_interfaces::msg::Position& msg)
 int main(int argc, char* argv[])
 {
 	rclcpp::init(argc, argv);
-	auto node = std::make_shared<sd::FlightController>();
-	rclcpp::spin(node);
+	rclcpp::spin(std::make_shared<sd::FlightController>());
 	rclcpp::shutdown();
 	return 0;
 }
