@@ -35,6 +35,7 @@ set(msg_files
 
   "msg/WorldObjects.msg"
   "msg/DroneMsg.msg"
+  "msg/FlightTarget.msg"
   
   "msg/Position.msg"
   "msg/PositionStamped.msg"

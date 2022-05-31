@@ -1,6 +1,3 @@
-float64 x
-float64 y
-float64 z
-bool motors_on True
+sd_interfaces/FlightTarget target
 ---
 bool success
