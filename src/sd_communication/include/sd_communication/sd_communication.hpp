@@ -25,10 +25,30 @@ class DroneCommunication : public rclcpp::Node
 	// functions
 	void timer_callback();
 
+	void update_knowledge();
+	void sent_messages();
+
 	// parameters
 	// ros
 	rclcpp::TimerBase ::SharedPtr timer_;
-	// rclcpp::Publisher<sd_interfaces::msg::Position>::SharedPtr publisher_;
+
+	// sub communication send
+	rclcpp::Subscription<sd_interfaces::msg::DroneMsg>::SharedPtr
+		sub_comm_send_;
+	void callback_comm_send(const sd_interfaces::msg::DroneMsg& msg);
+
+	// publisher communication receive
+	rclcpp::Publisher<sd_interfaces::msg::DroneMsg>::SharedPtr
+		pub_comm_receive_;
+
+	// sub communication send
+	rclcpp::Subscription<sd_interfaces::msg::DroneMsg>::SharedPtr
+		sub_comm_incoming_;
+	void callback_comm_incoming(const sd_interfaces::msg::DroneMsg& msg);
+
+	// publisher communication receive
+	rclcpp::Publisher<sd_interfaces::msg::DroneMsg>::SharedPtr
+		pub_comm_outgoing_;
 
 	// drone
 	int id_;
