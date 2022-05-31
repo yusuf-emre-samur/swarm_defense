@@ -32,7 +32,9 @@ set(msg_files
 
   "msg/Object.msg"
   "msg/ObjectStamped.msg"
-  "msg/ObjectsVector.msg"
+
+  "msg/WorldObjects.msg"
+  "msg/DroneMsg.msg"
   
   "msg/Position.msg"
   "msg/PositionStamped.msg"
