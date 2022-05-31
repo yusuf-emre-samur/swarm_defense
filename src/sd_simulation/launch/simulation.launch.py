@@ -43,5 +43,48 @@ def generate_launch_description():
     )
     ld.add_action(gzserver)
 
+    ###############################################################
+    # drones
+    ###############################################################
+    num_drones = 8
+    for i in range(1, num_drones+1):
 
+        # sd drone controller
+        ld.add_action(
+            Node(
+                package="sd_drone_controller",
+                executable="sd_drone_controller",
+                name="sd_drone_controller",
+                parameters=[
+                    {"use_sim_time": True},
+                    {"drone_id": i}
+                ],
+                arguments=[
+
+                ],
+                remappings=[
+                    ("__ns", f"/drones/drone_{i}"),
+                    ("__node", f"drone_{i}")
+                ]
+            )
+        )
+        # sd flight controller
+        ld.add_action(
+            Node(
+                package="sd_flight_controller",
+                executable="sd_flight_controller",
+                name="sd_flight_controller",
+                parameters=[
+                    {"use_sim_time": True},
+                    {"drone_id": i}
+                ],
+                arguments=[
+
+                ],
+                remappings=[
+                    ("__ns", f"/drones/drone_{i}"),
+                    ("__node", f"drone_{i}")
+                ]
+            )
+        )
     return ld
