@@ -89,8 +89,11 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 void DronePlugin::OnUpdate()
 {
 	this->pos_ = this->model_->WorldPose().Pos();
-	this->fakeFly();
-	// this->gimbal();
+	if ( this->motor_on_ ) {
+		this->fakeRotation();
+		this->fakeFly();
+	}
+
 	this->publish_position();
 }
 
@@ -114,9 +117,6 @@ void DronePlugin::fakeFly()
 
 	this->model_->SetLinearVel(this->vel_);
 	this->model_->SetAngularVel(this->ang_vel_);
-	if ( this->pos_.Z() > 0.001 ) {
-		this->fakeRotation();
-	}
 	this->last_vel_ = this->vel_;
 }
 
@@ -224,9 +224,12 @@ void DronePlugin::SetTargetCallback(
 	const std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Request> request,
 	std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Response> response)
 {
+	RCLCPP_INFO(this->ros2node_->get_logger(), "received request");
+
 	this->target_pos_.X() = request->x;
 	this->target_pos_.Y() = request->y;
 	this->target_pos_.Z() = request->z;
+	this->motor_on_ = request->motors_on;
 
 	response->set__success(true);
 }

@@ -91,6 +91,7 @@ class DronePlugin : public gazebo::ModelPlugin
 	// for fake rotor rotation
 	static constexpr uint num_rotors_ = 4;
 	std::array<std::string, num_rotors_> rotor_link_names_;
+	bool motor_on_ = false;
 };
 } // namespace sd
 
