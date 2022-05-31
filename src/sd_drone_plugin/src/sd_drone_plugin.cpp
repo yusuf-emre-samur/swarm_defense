@@ -224,10 +224,10 @@ void DronePlugin::SetTargetCallback(
 	const std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Request> request,
 	std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Response> response)
 {
-	this->target_pos_.X() = request->x;
-	this->target_pos_.Y() = request->y;
-	this->target_pos_.Z() = request->z;
-	this->motor_on_ = request->motors_on;
+	this->target_pos_.X() = request->target.pos.x;
+	this->target_pos_.Y() = request->target.pos.y;
+	this->target_pos_.Z() = request->target.pos.z;
+	this->motor_on_ = request->target.motors_on;
 
 	response->set__success(true);
 }
