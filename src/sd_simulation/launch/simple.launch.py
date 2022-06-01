@@ -52,7 +52,7 @@ def generate_launch_description():
 
     ]
 
-    for i in range(0, num_drones):
+    for i in range(num_drones):
 
         # sd drone controller
         ld.add_action(
