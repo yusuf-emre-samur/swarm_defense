@@ -50,14 +50,6 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 		this->max_vel_ = ignition::math::Vector3d(1, 1, 1);
 	}
 
-	// max angular vel
-	if ( _sdf->HasElement("max_ang_vel") ) {
-		this->max_ang_vel_ =
-			_sdf->GetElement("max_ang_vel")->Get<ignition::math::Vector3d>();
-	} else {
-		this->max_ang_vel_ = ignition::math::Vector3d(0.1, 0.1, 0.1);
-	}
-
 	// curr pos publisher
 	this->pos_pub_ =
 		ros2node_->create_publisher<sd_interfaces::msg::PositionStamped>(
@@ -72,7 +64,7 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
 	// callback each simulation step
 	this->update_callback_ = gazebo::event::Events::ConnectWorldUpdateBegin(
-		std::bind(&DronePlugin::OnUpdate, this));
+		std::bind(&DronePlugin::OnUpdate, this, std::placeholders::_1));
 
 	// initial values
 	this->pos_ = this->model_->WorldPose().Pos();
@@ -86,38 +78,56 @@ void DronePlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 }
 
 // called each iteration of simulation
-void DronePlugin::OnUpdate()
+void DronePlugin::OnUpdate(const gazebo::common::UpdateInfo& _info)
 {
 	this->pos_ = this->model_->WorldPose().Pos();
 	if ( this->motor_on_ ) {
 		this->fakeRotation();
-		this->fakeFly();
+		this->fakeFly(_info.simTime - this->last_time_);
 	}
 
 	this->publish_position();
+	this->last_time_ = _info.simTime;
 }
 
-void DronePlugin::fakeFly()
+void DronePlugin::fakeFly(const gazebo::common::Time& dt)
 {
-	const auto q = ignition::math::Quaterniond::EulerToQuaternion(
-		ignition::math::Vector3d(0, 0, 0));
-	const auto scalar =
-		ignition::math::Pose3d(0.001, 0.001, 0.001, 0.001, 0.001, 0.001);
-	auto pose = this->model_->WorldPose();
-	auto target_pose = ignition::math::Pose3d(this->target_pos_, q);
+	{
+		auto pose = this->model_->WorldPose();
+		auto pos = pose.Pos();
+		auto rot = pose.Rot();
+		auto rpy = rot.Euler();
 
-	auto vel_raw = scalar * (target_pose + this->getGaussianNoise() - pose);
-	// angular velocity
-	this->ang_vel_ = vel_raw.Rot().Euler() + this->fakeAngularMotion();
-	// fix motion direction of angle
-	vel_raw.CoordRotationSub(
-		ignition::math::Quaterniond::EulerToQuaternion(ang_vel_));
-	this->vel_ = vel_raw.Pos();
-	this->cropVelocity();
+		auto pos_dif = this->target_pos_ - pos;
 
-	this->model_->SetLinearVel(this->vel_);
-	this->model_->SetAngularVel(this->ang_vel_);
-	this->last_vel_ = this->vel_;
+		// target reached when dist < 0.1
+		const auto distance = pos.Distance(this->target_pos_);
+
+		// normalize the direction vector and multiply with max. velocity
+		pos_dif = pos_dif.Normalize() * this->max_vel_;
+		if ( distance < 3 ) {
+			pos_dif *= distance / 3;
+		}
+
+		// compute the yaw orientation to target
+		ignition::math::Angle yaw = atan2(pos_dif.Y(), pos_dif.X()) - rpy.Z();
+		yaw.Normalize();
+
+		// first lift up and rotate
+		if ( pos_dif.Abs().Z() > 0.3 || std::abs(yaw.Radian()) > IGN_DTOR(5) ) {
+			// lif
+			pos_dif.X() = 0;
+			pos_dif.Y() = 0;
+			this->model_->SetLinearVel(pos_dif);
+			// rotate
+			auto ang_vel = ignition::math::Vector3d(0, 0, yaw.Radian());
+			this->model_->SetAngularVel(ang_vel);
+		} else {
+			// then move
+			pos += pos_dif;
+			this->model_->SetLinearVel(pos_dif);
+		}
+	}
 }
 
 ignition::math::Pose3d DronePlugin::getGaussianNoise() const
@@ -125,67 +135,6 @@ ignition::math::Pose3d DronePlugin::getGaussianNoise() const
 	return ignition::math::Pose3d(gaussian_noise(e2), gaussian_noise(e2),
 								  gaussian_noise(e2), gaussian_noise(e2),
 								  gaussian_noise(e2), gaussian_noise(e2));
-}
-
-// add roll on y motion and pitch on x motion for realistic fly
-ignition::math::Vector3d DronePlugin::fakeAngularMotion() const
-{
-	const double x_vel_pitch = -(this->vel_.Y() / this->max_vel_.Y() / 10);
-	const double y_vel_roll = this->vel_.X() / this->max_vel_.X() / 10;
-	return ignition::math::Vector3d(x_vel_pitch, y_vel_roll, 0);
-}
-
-// crop velocity and angular velocity to [-max, max]
-void DronePlugin::cropVelocity()
-{
-	auto negative_max_vel = -1 * this->max_vel_;
-	auto negative_max_ang_vel = -1 * this->max_ang_vel_;
-	// x
-	if ( this->vel_.X() > 0 && this->vel_.X() > this->max_vel_.X() ) {
-		this->vel_.X() = this->max_vel_.X();
-	}
-	if ( this->vel_.X() < 0 && this->vel_.X() < negative_max_vel.X() ) {
-		this->vel_.X() = negative_max_vel.X();
-	}
-	// y
-	if ( this->vel_.Y() > 0 && this->vel_.Y() > this->max_vel_.Y() ) {
-		this->vel_.Y() = this->max_vel_.Y();
-	}
-	if ( this->vel_.Y() < 0 && this->vel_.Y() < negative_max_vel.Y() ) {
-		this->vel_.Y() = negative_max_vel.Y();
-	}
-	// y
-	if ( this->vel_.Z() > 0 && this->vel_.Z() > this->max_vel_.Z() ) {
-		this->vel_.Z() = this->max_vel_.Z();
-	}
-	if ( this->vel_.Z() < 0 && this->vel_.Z() < negative_max_vel.Z() ) {
-		this->vel_.Z() = negative_max_vel.Z();
-	}
-
-	// r
-	if ( this->ang_vel_.X() > 0 && this->ang_vel_.X() > this->max_vel_.X() ) {
-		this->ang_vel_.X() = this->max_vel_.X();
-	}
-	if ( this->ang_vel_.X() < 0 &&
-		 this->ang_vel_.X() < negative_max_ang_vel.X() ) {
-		this->ang_vel_.X() = negative_max_ang_vel.X();
-	}
-	// p
-	if ( this->ang_vel_.Y() > 0 && this->ang_vel_.Y() > this->max_vel_.Y() ) {
-		this->ang_vel_.Y() = this->max_vel_.Y();
-	}
-	if ( this->ang_vel_.Y() < 0 &&
-		 this->ang_vel_.Y() < negative_max_ang_vel.Y() ) {
-		this->ang_vel_.Y() = negative_max_ang_vel.Y();
-	}
-	// y
-	if ( this->ang_vel_.Z() > 0 && this->ang_vel_.Z() > this->max_vel_.Z() ) {
-		this->ang_vel_.Z() = this->max_vel_.Z();
-	}
-	if ( this->ang_vel_.Z() < 0 &&
-		 this->ang_vel_.Z() < negative_max_ang_vel.Z() ) {
-		this->ang_vel_.Z() = negative_max_ang_vel.Z();
-	}
 }
 
 // adds fake rotation to drone rotors
@@ -224,6 +173,7 @@ void DronePlugin::SetTargetCallback(
 	const std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Request> request,
 	std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Response> response)
 {
+	RCLCPP_INFO(this->ros2node_->get_logger(), "received request");
 	this->target_pos_.X() = request->target.pos.x;
 	this->target_pos_.Y() = request->target.pos.y;
 	this->target_pos_.Z() = request->target.pos.z;
