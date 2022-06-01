@@ -35,7 +35,7 @@ class DronePlugin : public gazebo::ModelPlugin
 
 	// gazebo plugin functions
 	void Load(gazebo::physics::ModelPtr _parent, sdf::ElementPtr _sdf);
-	void OnUpdate();
+	void OnUpdate(const gazebo::common::UpdateInfo& _info);
 	void SetTargetCallback(
 		const std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Request>
 			request,
@@ -51,11 +51,8 @@ class DronePlugin : public gazebo::ModelPlugin
 	void publish_position() const;
 
 	// simulate fake fly
-	void fakeFly();
-	// crop velocity to [-max,max]
-	void cropVelocity();
-	// create pitch and roll for motion
-	ignition::math::Vector3d fakeAngularMotion() const;
+	void fakeFly(const gazebo::common::Time& dt);
+
 	// add gaussian noise to velocity
 	ignition::math::Pose3d getGaussianNoise() const;
 	// quadcopter flight functions
@@ -82,16 +79,14 @@ class DronePlugin : public gazebo::ModelPlugin
 		target_service_;
 
 	// vel
-	ignition::math::Vector3d vel_;
-	ignition::math::Vector3d last_vel_;
-	ignition::math::Vector3d ang_vel_;
 	ignition::math::Vector3d max_vel_;
-	ignition::math::Vector3d max_ang_vel_;
 
 	// for fake rotor rotation
 	static constexpr uint num_rotors_ = 4;
 	std::array<std::string, num_rotors_> rotor_link_names_;
 	bool motor_on_ = false;
+
+	gazebo::common::Time last_time_;
 };
 } // namespace sd
 
