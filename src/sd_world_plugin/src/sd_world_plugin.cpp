@@ -35,7 +35,7 @@ void WorldPlugin::Load(gazebo::physics::WorldPtr _world, sdf::ElementPtr _sdf)
 
 	// publisher
 	this->publisher_ =
-		ros2node_->create_publisher<sd_interfaces::msg::ObjectsVector>(
+		ros2node_->create_publisher<sd_interfaces::msg::WorldObjects>(
 			"objects", qos.get_publisher_qos("objects", rclcpp::QoS(10)));
 
 	this->updateConnection_ = gazebo::event::Events::ConnectWorldUpdateBegin(
@@ -46,7 +46,7 @@ void WorldPlugin::Load(gazebo::physics::WorldPtr _world, sdf::ElementPtr _sdf)
 
 void WorldPlugin::OnUpdate()
 {
-	sd_interfaces::msg::ObjectsVector object_list;
+	sd_interfaces::msg::WorldObjects object_list;
 	for ( const auto& object : this->track_objects_ ) {
 		auto model = this->world_->ModelByName(object);
 		auto bbox = model->BoundingBox();

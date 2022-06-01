@@ -14,7 +14,7 @@
 // ros
 #include <rclcpp/rclcpp.hpp>
 // interfaces
-#include <sd_interfaces/msg/objects_vector.hpp>
+#include <sd_interfaces/msg/world_objects.hpp>
 
 namespace sd {
 
@@ -35,7 +35,7 @@ class WorldPlugin : public gazebo::WorldPlugin
 	// ros node
 	gazebo_ros::Node::SharedPtr ros2node_;
 	// publisher
-	rclcpp::Publisher<sd_interfaces::msg::ObjectsVector>::SharedPtr publisher_;
+	rclcpp::Publisher<sd_interfaces::msg::WorldObjects>::SharedPtr publisher_;
 
 	// actor and drone names
 	std::vector<std::string> track_objects_;
