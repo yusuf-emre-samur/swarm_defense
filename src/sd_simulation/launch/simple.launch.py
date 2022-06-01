@@ -19,7 +19,7 @@ def generate_launch_description():
     # gazebo world file in worlds folder
     world_launch_arg = DeclareLaunchArgument(
         "world",
-        default_value="world.world",
+        default_value="simple.world",
         description="Gazebo world file name in worlds folder of package."
     )
     ld.add_action(world_launch_arg)
@@ -46,20 +46,13 @@ def generate_launch_description():
     ###############################################################
     # drones
     ###############################################################
-    num_drones = 8
+    num_drones = 1
     base_station_positions = [
-        [-200, -100, 11.4],
-        [-200, -102, 11.4],
-        [-200, -104, 11.4],
-        [-200, -106, 11.4],
-        [-202, -100, 11.4],
-        [-202, -102, 11.4],
-        [-202, -104, 11.4],
-        [-202, -106, 11.4],
+        [0, 0, 0.1],
 
     ]
 
-    for i in range(num_drones+1):
+    for i in range(0, num_drones):
 
         # sd drone controller
         ld.add_action(
