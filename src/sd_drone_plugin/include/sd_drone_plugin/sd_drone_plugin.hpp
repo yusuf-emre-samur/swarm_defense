@@ -51,7 +51,7 @@ class DronePlugin : public gazebo::ModelPlugin
 	void publish_position() const;
 
 	// simulate fake fly
-	void fakeFly(const gazebo::common::Time& dt);
+	void flight_model();
 
 	// add gaussian noise to velocity
 	ignition::math::Pose3d getGaussianNoise() const;

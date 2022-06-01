@@ -83,14 +83,14 @@ void DronePlugin::OnUpdate(const gazebo::common::UpdateInfo& _info)
 	this->pos_ = this->model_->WorldPose().Pos();
 	if ( this->motor_on_ ) {
 		this->fakeRotation();
-		this->fakeFly(_info.simTime - this->last_time_);
+		this->flight_model();
 	}
 
 	this->publish_position();
 	this->last_time_ = _info.simTime;
 }
 
-void DronePlugin::fakeFly(const gazebo::common::Time& dt)
+void DronePlugin::flight_model()
 {
 	{
 		auto pose = this->model_->WorldPose();
@@ -99,14 +99,21 @@ void DronePlugin::fakeFly(const gazebo::common::Time& dt)
 		auto rpy = rot.Euler();
 
 		auto pos_dif = this->target_pos_ - pos;
+		auto rpy_diff = ignition::math::Vector3d(0, 0, 0) - rpy;
 
 		// target reached when dist < 0.1
-		const auto distance = pos.Distance(this->target_pos_);
+		auto dist_vec = pos_dif;
+		const auto distance = dist_vec.Length();
+
+		// xy and zdistance
+		const auto z_dist = dist_vec.Z();
+		dist_vec.Z() = 0;
+		const auto xy_dist = dist_vec.Length();
 
 		// normalize the direction vector and multiply with max. velocity
-		pos_dif = pos_dif.Normalize() * this->max_vel_;
+		auto vel = pos_dif.Normalize() * this->max_vel_;
 		if ( distance < 3 ) {
-			pos_dif *= distance / 3;
+			vel *= distance / 3;
 		}
 
 		// compute the yaw orientation to target
@@ -114,18 +121,20 @@ void DronePlugin::fakeFly(const gazebo::common::Time& dt)
 		yaw.Normalize();
 
 		// first lift up and rotate
-		if ( pos_dif.Abs().Z() > 0.3 || std::abs(yaw.Radian()) > IGN_DTOR(5) ) {
+		if ( z_dist > 0.3 || std::abs(yaw.Radian()) > IGN_DTOR(5) ) {
 			// lif
-			pos_dif.X() = 0;
-			pos_dif.Y() = 0;
-			this->model_->SetLinearVel(pos_dif);
+			vel.X() = 0;
+			vel.Y() = 0;
+			this->model_->SetLinearVel(vel);
+
 			// rotate
-			auto ang_vel = ignition::math::Vector3d(0, 0, yaw.Radian());
-			this->model_->SetAngularVel(ang_vel);
+			if ( xy_dist > 0.1 ) {
+				rpy_diff.Z() = yaw.Radian();
+				this->model_->SetAngularVel(rpy_diff);
+			}
+
 		} else {
-			// then move
-			pos += pos_dif;
-			this->model_->SetLinearVel(pos_dif);
+			this->model_->SetLinearVel(vel);
 		}
 	}
 }
@@ -173,7 +182,6 @@ void DronePlugin::SetTargetCallback(
 	const std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Request> request,
 	std::shared_ptr<sd_interfaces::srv::SetDroneTarget::Response> response)
 {
-	RCLCPP_INFO(this->ros2node_->get_logger(), "received request");
 	this->target_pos_.X() = request->target.pos.x;
 	this->target_pos_.Y() = request->target.pos.y;
 	this->target_pos_.Z() = request->target.pos.z;
