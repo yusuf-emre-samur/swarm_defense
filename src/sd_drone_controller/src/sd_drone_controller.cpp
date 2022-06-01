@@ -5,7 +5,7 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 {
 	// parameters
 	// drone id
-	this->declare_parameter<int>("drone_id", 0);
+	this->declare_parameter<uint8_t>("drone_id", 0);
 	this->get_parameter("drone_id", this->id_);
 	this->name_ = "drone_" + std::to_string(this->id_);
 
@@ -34,7 +34,7 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 					  std::placeholders::_1));
 
 	this->sub_comm_receive_ =
-		this->create_subscription<sd_interfaces::msg::DroneMsg>(
+		this->create_subscription<sd_interfaces::msg::SwarmInfo>(
 			"communication_receive", 1,
 			std::bind(&DroneController::callback_comm_receive, this,
 					  std::placeholders::_1));
@@ -44,6 +44,9 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 			"position", 1,
 			std::bind(&DroneController::callback_position, this,
 					  std::placeholders::_1));
+
+	this->pub_comm_send_ = create_publisher<sd_interfaces::msg::DroneMsgOut>(
+		"communication_send", 1);
 
 	// ros publisher
 	this->pub_target_ =
@@ -96,27 +99,38 @@ void DroneController::flight_to_base_station()
 
 void DroneController::send_message_to_swarm()
 {
+	sd_interfaces::msg::DroneMsgOut msg;
+	// header
+	msg.drone_header.drone_id = this->id_;
+	msg.drone_header.drone_mode = static_cast<uint8_t>(this->drone_mode_);
+	msg.drone_header.stamp = this->now();
+	// pos
+	msg.drone_header.pos.x = this->position_.x();
+	msg.drone_header.pos.y = this->position_.y();
+	msg.drone_header.pos.z = this->position_.z();
+
+	this->pub_comm_send_->publish(msg);
 }
 
 // subscirber world objects
 void DroneController::callback_world_objects(
-	const sd_interfaces::msg::WorldObjects& msg)
+	const sd_interfaces::msg::WorldObjects::SharedPtr msg)
 {
 }
 
 // subscriber communincation receive
 void DroneController::callback_comm_receive(
-	const sd_interfaces::msg::DroneMsg& msg)
+	const sd_interfaces::msg::SwarmInfo::SharedPtr msg)
 {
 }
 
 // subscriber position
 void DroneController::callback_position(
-	const sd_interfaces::msg::PositionStamped& msg)
+	const sd_interfaces::msg::PositionStamped::SharedPtr msg)
 {
-	this->position_.x() = msg.position.x;
-	this->position_.y() = msg.position.y;
-	this->position_.z() = msg.position.z;
+	this->position_.x() = msg->position.x;
+	this->position_.y() = msg->position.y;
+	this->position_.z() = msg->position.z;
 }
 
 } // namespace sd

@@ -10,9 +10,11 @@
 #include <rclcpp/rclcpp.hpp>
 
 // interfaces
-#include <sd_interfaces/msg/drone_msg.hpp>
+#include <sd_interfaces/msg/drone_msg_out.hpp>
+#include <sd_interfaces/msg/drone_msgs.hpp>
 #include <sd_interfaces/msg/flight_target.hpp>
 #include <sd_interfaces/msg/position_stamped.hpp>
+#include <sd_interfaces/msg/swarm_info.hpp>
 #include <sd_interfaces/msg/world_objects.hpp>
 
 // other
@@ -54,21 +56,25 @@ class DroneController : public rclcpp::Node
 	// sub world objects
 	rclcpp::Subscription<sd_interfaces::msg::WorldObjects>::SharedPtr
 		sub_world_objects_;
-	void callback_world_objects(const sd_interfaces::msg::WorldObjects& msg);
+	void callback_world_objects(
+		const sd_interfaces::msg::WorldObjects::SharedPtr msg);
 
 	// sub communication receive
-	rclcpp::Subscription<sd_interfaces::msg::DroneMsg>::SharedPtr
+	rclcpp::Subscription<sd_interfaces::msg::SwarmInfo>::SharedPtr
 		sub_comm_receive_;
-	void callback_comm_receive(const sd_interfaces::msg::DroneMsg& msg);
+	void
+	callback_comm_receive(const sd_interfaces::msg::SwarmInfo::SharedPtr msg);
 
 	// sub position
 	rclcpp::Subscription<sd_interfaces::msg::PositionStamped>::SharedPtr
 		sub_position_;
-	void callback_position(const sd_interfaces::msg::PositionStamped& msg);
+	void
+	callback_position(const sd_interfaces::msg::PositionStamped::SharedPtr msg);
 
 	// ros publisher
 	rclcpp::Publisher<sd_interfaces::msg::FlightTarget>::SharedPtr pub_target_;
-	rclcpp::Publisher<sd_interfaces::msg::DroneMsg>::SharedPtr pub_comm_send_;
+	rclcpp::Publisher<sd_interfaces::msg::DroneMsgOut>::SharedPtr
+		pub_comm_send_;
 
 	// parameters
 	// ros
@@ -76,7 +82,7 @@ class DroneController : public rclcpp::Node
 	// rclcpp::Publisher<sd_interfaces::msg::Position>::SharedPtr publisher_;
 
 	// drone
-	int id_;
+	uint8_t id_;
 	std::string name_;
 	DroneMode drone_mode_ = DroneMode::READY;
 	FlightMode flight_mode_ = FlightMode::LANDED;

@@ -46,9 +46,10 @@ def generate_launch_description():
     ###############################################################
     # drones
     ###############################################################
-    num_drones = 1
+    num_drones = 2
     base_station_positions = [
         [0, 0, 0.1],
+        [2, 2, 0.1]
 
     ]
 
@@ -83,6 +84,26 @@ def generate_launch_description():
                 parameters=[
                     {"use_sim_time": True},
                     {"drone_id": i}
+                ],
+                arguments=[
+
+                ],
+                remappings=[
+                    ("__ns", f"/drones/drone_{i}"),
+                    ("__node", f"drone_{i}")
+                ]
+            )
+        )
+        # sd  communication
+        ld.add_action(
+            Node(
+                package="sd_communication",
+                executable="sd_communication",
+                name="sd_communication",
+                parameters=[
+                    {"use_sim_time": True},
+                    {"drone_id": i},
+                    {"old_after": 10}
                 ],
                 arguments=[
 

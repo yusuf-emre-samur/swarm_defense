@@ -5,9 +5,9 @@ FlightController::FlightController() : rclcpp::Node("FlightController")
 {
 	// parameters
 	// drone id
-	this->declare_parameter<int>("drone_id", 0);
-	this->get_parameter("drone_id", this->id_);
-	this->name_ = "drone_" + std::to_string(this->id_);
+	this->declare_parameter<uint8_t>("drone_id", 0);
+	this->get_parameter("drone_id", this->drone_id_);
+	this->name_ = "drone_" + std::to_string(this->drone_id_);
 
 	using namespace std::chrono_literals;
 	this->timer_ = rclcpp::create_timer(
@@ -21,6 +21,20 @@ FlightController::FlightController() : rclcpp::Node("FlightController")
 			std::bind(&FlightController::callback_target, this,
 					  std::placeholders::_1));
 
+	// subscribe communication receive
+	this->sub_comm_receive_ =
+		this->create_subscription<sd_interfaces::msg::SwarmInfo>(
+			"communication_receive", 1,
+			std::bind(&FlightController::callback_comm_receive, this,
+					  std::placeholders::_1));
+
+	// subscribe positiom
+	this->sub_pos_ =
+		this->create_subscription<sd_interfaces::msg::PositionStamped>(
+			"position", 1,
+			std::bind(&FlightController::callback_position, this,
+					  std::placeholders::_1));
+
 	// client set target
 	this->client_set_target_ =
 		this->create_client<sd_interfaces::srv::SetDroneTarget>("set_target");
@@ -31,6 +45,7 @@ void FlightController::timer_callback()
 	if ( this->target_set_ ) {
 		this->set_target();
 	}
+	this->check_collision();
 }
 
 void FlightController::set_target()
@@ -76,6 +91,34 @@ void FlightController::callback_target(
 	}
 }
 
+void FlightController::callback_comm_receive(
+	const sd_interfaces::msg::SwarmInfo::SharedPtr msg)
+{
+	// this->drone_msgs_ = msg;
+}
+
+void FlightController::check_collision()
+{
+	// for ( const auto& drone_msg : this->drone_msgs_.drone_msgs ) {
+	// 	auto eigen_pos = Eigen::Vector3d(drone_msg.drone_header.pos.x,
+	// 									 drone_msg.drone_header.pos.y,
+	// 									 drone_msg.drone_header.pos.z);
+	// 	auto distance = (this->position_ - eigen_pos).cwiseAbs().norm();
+
+	// 	RCLCPP_INFO(this->get_logger(),
+	// 				std::to_string(this->drone_id_).c_str());
+
+	// 	RCLCPP_INFO(this->get_logger(), std::to_string(distance).c_str());
+	// }
+}
+
+void FlightController::callback_position(
+	const sd_interfaces::msg::PositionStamped::SharedPtr msg)
+{
+	this->position_.x() = msg->position.x;
+	this->position_.y() = msg->position.y;
+	this->position_.z() = msg->position.z;
+}
 } // namespace sd
 
 int main(int argc, char* argv[])

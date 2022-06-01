@@ -1,0 +1,4 @@
+uint8 threat_id
+sd_interfaces/Position pos
+uint8 identified_from_drone
+uint8 num_threats

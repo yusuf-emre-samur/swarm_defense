@@ -10,6 +10,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(builtin_interfaces REQUIRED)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
@@ -34,8 +35,15 @@ set(msg_files
   "msg/ObjectStamped.msg"
 
   "msg/WorldObjects.msg"
-  "msg/DroneMsg.msg"
+
+  "msg/DroneHeader.msg"
+
+  "msg/DroneMsgOut.msg"
+  "msg/DroneMsgs.msg"
   "msg/FlightTarget.msg"
+
+  "msg/SwarmPositions.msg"
+  "msg/SwarmInfo.msg"
   
   "msg/Position.msg"
   "msg/PositionStamped.msg"
@@ -59,7 +67,9 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   ${action_files}
   DEPENDENCIES
   std_msgs
+  builtin_interfaces
   geometry_msgs
+
 )
 
 
