@@ -11,7 +11,9 @@
 
 // interfaces
 #include <sd_interfaces/msg/drone_msg.hpp>
+#include <sd_interfaces/msg/drone_msg_out.hpp>
 #include <sd_interfaces/msg/position.hpp>
+#include <sd_interfaces/msg/swarm_info.hpp>
 #include <sd_interfaces/msg/world_objects.hpp>
 
 namespace sd {
@@ -25,34 +27,48 @@ class DroneCommunication : public rclcpp::Node
 	// functions
 	void timer_callback();
 
-	void update_knowledge();
-	void sent_messages();
+	void update_knowledge(const rclcpp::Time& time);
+	uint8_t old_after_;
+
+	// sent msg from drone controller to drones
+	void sent_messages_outgoing();
+
+	// sent msg from drones to drone controller
+	void sent_messages_incoming();
+	// sd_interfaces::msg::DroneMsgs msg_incoming_;
 
 	// parameters
 	// ros
-	rclcpp::TimerBase ::SharedPtr timer_;
+	rclcpp::TimerBase::SharedPtr timer_;
 
 	// sub communication send
-	rclcpp::Subscription<sd_interfaces::msg::DroneMsg>::SharedPtr
+	rclcpp::Subscription<sd_interfaces::msg::DroneMsgOut>::SharedPtr
 		sub_comm_send_;
-	void callback_comm_send(const sd_interfaces::msg::DroneMsg& msg);
+	void
+	callback_comm_send(const sd_interfaces::msg::DroneMsgOut::SharedPtr msg);
 
 	// publisher communication receive
-	rclcpp::Publisher<sd_interfaces::msg::DroneMsg>::SharedPtr
+	rclcpp::Publisher<sd_interfaces::msg::SwarmInfo>::SharedPtr
 		pub_comm_receive_;
 
-	// sub communication send
-	rclcpp::Subscription<sd_interfaces::msg::DroneMsg>::SharedPtr
+	// sub communication incoming
+	rclcpp::Subscription<sd_interfaces::msg::DroneMsgOut>::SharedPtr
 		sub_comm_incoming_;
-	void callback_comm_incoming(const sd_interfaces::msg::DroneMsg& msg);
+	void callback_comm_incoming(
+		const sd_interfaces::msg::DroneMsgOut::SharedPtr msg);
 
-	// publisher communication receive
-	rclcpp::Publisher<sd_interfaces::msg::DroneMsg>::SharedPtr
+	// publisher communication send out
+	rclcpp::Publisher<sd_interfaces::msg::DroneMsgOut>::SharedPtr
 		pub_comm_outgoing_;
 
 	// drone
-	int id_;
+	uint8_t id_;
 	std::string name_;
+
+	sd_interfaces::msg::DroneMsgOut::SharedPtr msg_send_;
+	sd_interfaces::msg::SwarmPositions swarm_positions_;
+
+	rclcpp::Time last_time_;
 };
 
 } // namespace sd
