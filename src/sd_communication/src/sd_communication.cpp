@@ -16,7 +16,7 @@ DroneCommunication::DroneCommunication() : rclcpp::Node("DroneCommunication")
 	// timer
 	using namespace std::chrono_literals;
 	this->timer_ = rclcpp::create_timer(
-		this, this->get_clock(), 500ms,
+		this, this->get_clock(), 250ms,
 		std::bind(&DroneCommunication::timer_callback, this));
 
 	// subscriber send
@@ -46,47 +46,42 @@ DroneCommunication::DroneCommunication() : rclcpp::Node("DroneCommunication")
 
 void DroneCommunication::timer_callback()
 {
-	auto time = this->now();
 	// this->update_knowledge(time);
-	this->sent_messages_outgoing();
+	// this->sent_messages_outgoing();
 	this->sent_messages_incoming();
 
-	this->last_time_ = time;
+	this->last_time_ = this->now();
 }
 
 void DroneCommunication::callback_comm_send(
 	const sd_interfaces::msg::DroneMsgOut::SharedPtr msg)
 {
-	this->msg_send_ = msg;
+	this->pub_comm_outgoing_->publish(*msg.get());
 }
 
 void DroneCommunication::callback_comm_incoming(
 	const sd_interfaces::msg::DroneMsgOut::SharedPtr msg)
 {
-	auto& drones = this->swarm_positions_.drones;
-
-	bool found_flag = false;
-	auto it = drones.begin();
-	for ( it; it != drones.end(); ) {
-
-		if ( it->drone_id == msg->drone_header.drone_id ) {
-			RCLCPP_INFO(this->get_logger(), "found");
-			it->drone_mode = msg->drone_header.drone_mode;
-			it->pos = msg->drone_header.pos;
-			it->stamp = msg->drone_header.stamp;
-		}
-		if ( (this->last_time_ - this->now()) >
-			 rclcpp::Duration::from_seconds(this->old_after_) ) {
-			RCLCPP_INFO(this->get_logger(), "old erasing");
-			it = drones.erase(it);
-		} else {
+	if ( msg->drone_header.drone_id != this->id_ ) {
+		auto& drones = this->swarm_positions_.drones;
+		auto it = drones.begin();
+		bool not_found_flag = true;
+		while ( it != drones.end() ) {
+			if ( (this->now() - it->stamp) >
+				 rclcpp::Duration::from_seconds(this->old_after_) ) {
+				it = drones.erase(it);
+			}
+			if ( it->drone_id == msg->drone_header.drone_id ) {
+				not_found_flag = false;
+				it->drone_mode = msg->drone_header.drone_mode;
+				it->pos = msg->drone_header.pos;
+				it->stamp = msg->drone_header.stamp;
+			}
 			++it;
 		}
-	}
-
-	if ( it != drones.end() ) {
-		RCLCPP_INFO(this->get_logger(), "not found");
-		drones.push_back(msg->drone_header);
+		if ( not_found_flag ) {
+			drones.push_back(msg->drone_header);
+		}
 	}
 }
 
@@ -97,13 +92,14 @@ void DroneCommunication::sent_messages_outgoing()
 	}
 }
 
-void DroneCommunication::update_knowledge(const rclcpp::Time& time)
+void DroneCommunication::update_knowledge()
 {
 }
 
 void DroneCommunication::sent_messages_incoming()
 {
-	// this->pub_comm_receive_->publish(this->msg_incoming_);
+	this->swarm_info_.swarm_positions = this->swarm_positions_;
+	this->pub_comm_receive_->publish(this->swarm_info_);
 }
 
 } // namespace sd

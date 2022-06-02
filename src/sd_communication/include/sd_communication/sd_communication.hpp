@@ -27,7 +27,7 @@ class DroneCommunication : public rclcpp::Node
 	// functions
 	void timer_callback();
 
-	void update_knowledge(const rclcpp::Time& time);
+	void update_knowledge();
 	uint8_t old_after_;
 
 	// sent msg from drone controller to drones
@@ -67,6 +67,7 @@ class DroneCommunication : public rclcpp::Node
 
 	sd_interfaces::msg::DroneMsgOut::SharedPtr msg_send_;
 	sd_interfaces::msg::SwarmPositions swarm_positions_;
+	sd_interfaces::msg::SwarmInfo swarm_info_;
 
 	rclcpp::Time last_time_;
 };

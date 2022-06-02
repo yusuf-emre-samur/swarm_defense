@@ -11,6 +11,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(sd_interfaces REQUIRED)
+find_package(sd_drone_controller REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -30,11 +31,13 @@ add_executable(sd_flight_controller
 )
 
 target_include_directories(sd_flight_controller PUBLIC include)
+include_directories(${sd_drone_controller_INCLUDE_DIRS})
 ament_target_dependencies(
   sd_flight_controller
   rclcpp
   Eigen3
   sd_interfaces
+  sd_drone_controller
 )
 
 install(

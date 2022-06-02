@@ -22,15 +22,16 @@
 
 namespace sd {
 
-enum class DroneMode { FLYING = 0, READY = 1, NOTREADY = 2, MAX = 3 };
+enum class DroneMode { NOTREADY = 0, READY = 1, FLYING = 2, MAX = 3 };
 
 enum class FlightMode {
 	LANDED = 0,
 	STARTING = 1,
-	LADNING = 2,
-	FLYING = 3,
-	RETURNING_HOME = 4,
-	MAX = 5
+	START_PREP = 2,
+	LADNING = 3,
+	FLYING = 4,
+	RETURNING_HOME = 5,
+	MAX = 6
 };
 
 class DroneController : public rclcpp::Node
@@ -39,57 +40,92 @@ class DroneController : public rclcpp::Node
 	DroneController();
 
   private:
-	// functions
+	// callback function of timer, called each 0.5s
 	void timer_callback();
 
 	void detect_threats();
 	void filter_detected_threats();
 	void calculate_pso_velocity();
-	void set_target();
-	void set_target(const Eigen::Vector3d& pos);
+	void publish_target();
+	void publish_target(const Eigen::Vector3d& pos);
 	void flight_to_base_station();
 	void send_message_to_swarm();
+	void check_swarm_information();
+	void drone_start();
+	void drone_start_prep();
+	void drone_landing();
+	void drone_landed();
 
-	// helper
+	bool has_to_start() const;
 
-	// ros subscriber
-	// sub world objects
-	rclcpp::Subscription<sd_interfaces::msg::WorldObjects>::SharedPtr
-		sub_world_objects_;
+	void check_drone_landed();
+
+	void turn_motors_off();
+
+	// callback function for subcsriber to world objects list
 	void callback_world_objects(
 		const sd_interfaces::msg::WorldObjects::SharedPtr msg);
 
-	// sub communication receive
-	rclcpp::Subscription<sd_interfaces::msg::SwarmInfo>::SharedPtr
-		sub_comm_receive_;
-	void
-	callback_comm_receive(const sd_interfaces::msg::SwarmInfo::SharedPtr msg);
+	// callback for subscriber to receiving communication
+	void callback_comm_receive(const sd_interfaces::msg::SwarmInfo& msg);
 
-	// sub position
-	rclcpp::Subscription<sd_interfaces::msg::PositionStamped>::SharedPtr
-		sub_position_;
+	// callback function for subscriber to drone position
 	void
 	callback_position(const sd_interfaces::msg::PositionStamped::SharedPtr msg);
 
-	// ros publisher
+	// ros
+
+	// timer fo callback
+	rclcpp::TimerBase ::SharedPtr timer_;
+
+	// ros subscriber
+
+	// subscriber to world objects
+	rclcpp::Subscription<sd_interfaces::msg::WorldObjects>::SharedPtr
+		sub_world_objects_;
+
+	// subscriber to communication receive
+	rclcpp::Subscription<sd_interfaces::msg::SwarmInfo>::SharedPtr
+		sub_comm_receive_;
+
+	// subscriber to position
+	rclcpp::Subscription<sd_interfaces::msg::PositionStamped>::SharedPtr
+		sub_position_;
+
+	// publisher to drone target
 	rclcpp::Publisher<sd_interfaces::msg::FlightTarget>::SharedPtr pub_target_;
+
+	// publisher to communication send
 	rclcpp::Publisher<sd_interfaces::msg::DroneMsgOut>::SharedPtr
 		pub_comm_send_;
 
-	// parameters
-	// ros
-	rclcpp::TimerBase ::SharedPtr timer_;
-	// rclcpp::Publisher<sd_interfaces::msg::Position>::SharedPtr publisher_;
-
-	// drone
+	// id of drone, e.g. 1
 	uint8_t id_;
+
+	// name of drone, e.g. drone_1
 	std::string name_;
+
+	// current drone mode
 	DroneMode drone_mode_ = DroneMode::READY;
+
+	// current flight mode
 	FlightMode flight_mode_ = FlightMode::LANDED;
 
+	// current position of drone
 	Eigen::Vector3d position_;
+
+	// target of drone
 	Eigen::Vector3d target_;
+
+	// position of base station of drone
 	Eigen::Vector3d base_station_pos_;
+
+	// received information about swarm
+	sd_interfaces::msg::SwarmInfo swarm_info_;
+
+	double start_prep_duration;
+
+	rclcpp::Time last_time_;
 };
 
 } // namespace sd

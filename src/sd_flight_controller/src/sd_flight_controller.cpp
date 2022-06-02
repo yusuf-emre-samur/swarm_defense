@@ -42,6 +42,7 @@ FlightController::FlightController() : rclcpp::Node("FlightController")
 
 void FlightController::timer_callback()
 {
+
 	if ( this->target_set_ ) {
 		this->set_target();
 	}
@@ -94,22 +95,19 @@ void FlightController::callback_target(
 void FlightController::callback_comm_receive(
 	const sd_interfaces::msg::SwarmInfo::SharedPtr msg)
 {
-	// this->drone_msgs_ = msg;
+	this->swarm_positions_ = msg->swarm_positions;
 }
 
 void FlightController::check_collision()
 {
-	// for ( const auto& drone_msg : this->drone_msgs_.drone_msgs ) {
-	// 	auto eigen_pos = Eigen::Vector3d(drone_msg.drone_header.pos.x,
-	// 									 drone_msg.drone_header.pos.y,
-	// 									 drone_msg.drone_header.pos.z);
-	// 	auto distance = (this->position_ - eigen_pos).cwiseAbs().norm();
-
-	// 	RCLCPP_INFO(this->get_logger(),
-	// 				std::to_string(this->drone_id_).c_str());
-
-	// 	RCLCPP_INFO(this->get_logger(), std::to_string(distance).c_str());
-	// }
+	for ( const auto& drone : this->swarm_positions_.drones ) {
+		if ( static_cast<DroneMode>(drone.drone_mode) == DroneMode::FLYING ) {
+			auto pos_other_drone =
+				Eigen::Vector3d(drone.pos.x, drone.pos.y, drone.pos.z);
+			auto distance =
+				(this->position_ - pos_other_drone).cwiseAbs().norm();
+		}
+	}
 }
 
 void FlightController::callback_position(
@@ -119,6 +117,7 @@ void FlightController::callback_position(
 	this->position_.y() = msg->position.y;
 	this->position_.z() = msg->position.z;
 }
+
 } // namespace sd
 
 int main(int argc, char* argv[])

@@ -34,10 +34,25 @@ ament_target_dependencies(
   sd_interfaces
 )
 
+ament_export_include_directories(include)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
+
+# install(TARGETS
+#   sd_drone_controller
+#   LIBRARY DESTINATION lib
+#   ARCHIVE DESTINATION lib
+#   RUNTIME DESTINATION bin
+#   INCLUDES DESTINATION include
+# )
 install(
   TARGETS
   sd_drone_controller
   DESTINATION lib/${PROJECT_NAME}
 )
+
 
 ament_package()
