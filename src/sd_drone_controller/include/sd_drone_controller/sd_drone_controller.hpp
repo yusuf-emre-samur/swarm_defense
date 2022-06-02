@@ -126,6 +126,8 @@ class DroneController : public rclcpp::Node
 	double start_prep_duration;
 
 	rclcpp::Time last_time_;
+
+	double battery_;
 };
 
 } // namespace sd

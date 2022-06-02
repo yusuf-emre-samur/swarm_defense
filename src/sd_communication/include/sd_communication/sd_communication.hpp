@@ -10,7 +10,6 @@
 #include <rclcpp/rclcpp.hpp>
 
 // interfaces
-#include <sd_interfaces/msg/drone_msg.hpp>
 #include <sd_interfaces/msg/drone_msg_out.hpp>
 #include <sd_interfaces/msg/position.hpp>
 #include <sd_interfaces/msg/swarm_info.hpp>

@@ -16,9 +16,6 @@
 #include <string>
 #include <vector>
 // interfaces
-#include <sd_interfaces/action/walk.hpp>
-#include <sd_interfaces/msg/positions_vector.hpp>
-#include <sd_interfaces/msg/walking_type.hpp>
 
 namespace sd {
 

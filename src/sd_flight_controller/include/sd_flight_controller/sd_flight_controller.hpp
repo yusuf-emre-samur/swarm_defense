@@ -45,8 +45,7 @@ class FlightController : public rclcpp::Node
 	void callback_target(const sd_interfaces::msg::FlightTarget& msg);
 
 	// callback function to subscriber comm. receive
-	void
-	callback_comm_receive(const sd_interfaces::msg::SwarmInfo::SharedPtr msg);
+	void callback_comm_receive(const sd_interfaces::msg::SwarmInfo& msg);
 
 	// callback function to subscriber to drone position
 	void
@@ -55,7 +54,7 @@ class FlightController : public rclcpp::Node
 	// ros
 
 	// callback timer
-	rclcpp::TimerBase ::SharedPtr timer_;
+	rclcpp::TimerBase::SharedPtr timer_;
 
 	// ros subscriber
 

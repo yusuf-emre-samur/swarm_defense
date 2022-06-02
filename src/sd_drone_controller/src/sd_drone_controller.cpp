@@ -22,6 +22,8 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 	this->drone_mode_ = DroneMode::READY;
 	this->flight_mode_ = FlightMode::LANDED;
 
+	this->battery_ = 100.0;
+
 	using namespace std::chrono_literals;
 	this->timer_ =
 		rclcpp::create_timer(this, this->get_clock(), 250ms,
@@ -56,6 +58,9 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 
 void DroneController::timer_callback()
 {
+
+	this->battery_ = this->battery_ - (1.0 / 60.0); // (1 / 4) * (1 / 15);
+	RCLCPP_INFO(this->get_logger(), std::to_string(this->battery_).c_str());
 	this->check_swarm_information();
 
 	// this->detect_threats();
@@ -63,7 +68,7 @@ void DroneController::timer_callback()
 	// this->calculate_pso_velocity();
 	switch ( this->flight_mode_ ) {
 	case FlightMode::FLYING:
-
+		this->publish_target();
 		break;
 
 	case FlightMode::LANDED:
@@ -95,6 +100,8 @@ void DroneController::timer_callback()
 	}
 
 	this->send_message_to_swarm();
+
+	this->last_time_ = this->now();
 }
 
 void DroneController::check_swarm_information()
@@ -146,7 +153,15 @@ bool DroneController::has_to_start() const
 
 void DroneController::drone_start()
 {
-	this->target_ = this->base_station_pos_ + Eigen::Vector3d(0, 0, 10);
+
+	auto target = this->base_station_pos_ + Eigen::Vector3d(0, 0, 10);
+	auto dist = (this->position_ - target).cwiseAbs().norm();
+	if ( dist < 0.05 ) {
+		this->flight_mode_ = FlightMode::FLYING;
+		this->drone_mode_ = DroneMode::FLYING;
+	} else {
+		this->target_ = target;
+	}
 }
 
 void DroneController::drone_start_prep()

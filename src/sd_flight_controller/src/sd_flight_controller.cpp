@@ -42,17 +42,17 @@ FlightController::FlightController() : rclcpp::Node("FlightController")
 
 void FlightController::timer_callback()
 {
-
+	this->check_collision();
 	if ( this->target_set_ ) {
 		this->set_target();
 	}
-	this->check_collision();
 }
 
 void FlightController::set_target()
 {
 	auto request =
 		std::make_shared<sd_interfaces::srv::SetDroneTarget::Request>();
+
 	request->target.pos.x = this->target_.x();
 	request->target.pos.y = this->target_.y();
 	request->target.pos.z = this->target_.z();
@@ -85,7 +85,6 @@ void FlightController::callback_target(
 	this->target_.y() = msg.pos.y;
 	this->target_.z() = msg.pos.z;
 	this->motors_on_ = msg.motors_on;
-
 	{
 		std::lock_guard<std::mutex> lock(this->target_set_m);
 		this->target_set_ = true;
@@ -93,19 +92,24 @@ void FlightController::callback_target(
 }
 
 void FlightController::callback_comm_receive(
-	const sd_interfaces::msg::SwarmInfo::SharedPtr msg)
+	const sd_interfaces::msg::SwarmInfo& msg)
 {
-	this->swarm_positions_ = msg->swarm_positions;
+	this->swarm_positions_ = msg.swarm_positions;
 }
 
 void FlightController::check_collision()
 {
 	for ( const auto& drone : this->swarm_positions_.drones ) {
-		if ( static_cast<DroneMode>(drone.drone_mode) == DroneMode::FLYING ) {
+		if ( static_cast<FlightMode>(drone.flight_mode) !=
+			 FlightMode::LANDED ) {
 			auto pos_other_drone =
 				Eigen::Vector3d(drone.pos.x, drone.pos.y, drone.pos.z);
 			auto distance =
 				(this->position_ - pos_other_drone).cwiseAbs().norm();
+			// if distance is smaller than 3m and drone has lower id
+			if ( distance < 1.5 ) {
+				this->target_ = this->position_;
+			}
 		}
 	}
 }
