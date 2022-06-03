@@ -108,7 +108,11 @@ void FlightController::check_collision()
 				(this->position_ - pos_other_drone).cwiseAbs().norm();
 			// if distance is smaller than 3m and drone has lower id
 			if ( distance < 1.5 ) {
-				this->target_ = this->position_;
+				// if ( drone.drone_id < this->drone_id_ ) {
+				// 	this->target_ = this->target_ + Eigen::Vector3d(0, 0, 1);
+				// } else {
+				// 	this->target_ = this->target_ - Eigen::Vector3d(0, 0, 1);
+				// }
 			}
 		}
 	}
