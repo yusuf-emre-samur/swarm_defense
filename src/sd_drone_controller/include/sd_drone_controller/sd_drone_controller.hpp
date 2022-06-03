@@ -27,11 +27,10 @@ enum class DroneMode { NOTREADY = 0, READY = 1, FLYING = 2, MAX = 3 };
 enum class FlightMode {
 	LANDED = 0,
 	STARTING = 1,
-	START_PREP = 2,
-	LADNING = 3,
-	FLYING = 4,
-	RETURNING_HOME = 5,
-	MAX = 6
+	LANDING = 2,
+	FLYING = 3,
+	RETURNING_HOME = 4,
+	MAX = 5
 };
 
 class DroneController : public rclcpp::Node
@@ -52,9 +51,13 @@ class DroneController : public rclcpp::Node
 	void send_message_to_swarm();
 	void check_swarm_information();
 	void drone_start();
-	void drone_start_prep();
+	void drone_flying();
 	void drone_landing();
 	void drone_landed();
+	void set_drone_mode();
+	void flight();
+
+	void simulate_battery();
 
 	bool has_to_start() const;
 
