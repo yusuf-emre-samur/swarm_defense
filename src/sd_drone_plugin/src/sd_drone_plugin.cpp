@@ -99,7 +99,7 @@ void DronePlugin::flight_model()
 		auto rpy = rot.Euler();
 
 		auto pos_dif = this->target_pos_ - pos;
-		auto rpy_diff = ignition::math::Vector3d(0, 0, 0) - rpy;
+		auto rpy_diff = (ignition::math::Vector3d(0, 0, 0) - rpy);
 
 		// target reached when dist < 0.1
 		auto dist_vec = pos_dif;
@@ -149,7 +149,7 @@ ignition::math::Pose3d DronePlugin::getGaussianNoise() const
 // adds fake rotation to drone rotors
 void DronePlugin::fakeRotation()
 {
-	constexpr double thrust = 5;
+	constexpr double thrust = 0.5;
 	int sign = 1;
 	gazebo::physics::LinkPtr link;
 	// apply fake rotation for each link
