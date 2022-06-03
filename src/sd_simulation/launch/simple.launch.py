@@ -46,13 +46,16 @@ def generate_launch_description():
     ###############################################################
     # drones
     ###############################################################
-    num_drones = 2
+
     base_station_positions = [
-        [0, 0, 0.1],
-        [2, 2, 0.1]
+        [0, 0, 0.075],
+        [0, 2, 0.075],
+        [0, 4, 0.075],
+        [0, 6, 0.075]
 
     ]
-
+    battery = [10.0, 90.0, 70.0, 100.0]
+    num_drones = len(base_station_positions)
     for i in range(num_drones):
 
         # sd drone controller
@@ -64,7 +67,8 @@ def generate_launch_description():
                 parameters=[
                     {"use_sim_time": True},
                     {"drone_id": i},
-                    {"base_station_pos": base_station_positions[i]}
+                    {"base_station_pos": base_station_positions[i]},
+                    {"battery": battery[i]}
                 ],
                 arguments=[
 
@@ -114,4 +118,21 @@ def generate_launch_description():
                 ]
             )
         )
+    ld.add_action(
+        Node(
+            package="sd_visualiser",
+            executable="sd_visualiser",
+            name="sd_visualiser",
+            parameters=[
+                    {"num_drones": num_drones}
+            ],
+            arguments=[
+
+            ],
+            remappings=[
+                ("__ns", f"/drones/visualiser"),
+                ("__node", f"visualiser")
+            ]
+        )
+    )
     return ld
