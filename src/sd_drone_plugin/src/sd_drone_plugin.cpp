@@ -112,8 +112,8 @@ void DronePlugin::flight_model()
 
 		// normalize the direction vector and multiply with max. velocity
 		auto vel = pos_dif.Normalize() * this->max_vel_;
-		if ( distance < 3 ) {
-			vel *= distance / 3;
+		if ( distance < 2 ) {
+			vel *= distance / 2;
 		}
 
 		// compute the yaw orientation to target

@@ -20,6 +20,10 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 	this->base_station_pos_.z() = tmp[2];
 
 	// starting battery percentage
+	this->declare_parameter<uint8_t>("min_flying_drones", 2);
+	this->get_parameter("min_flying_drones", this->min_flying_drones_);
+
+	// starting battery percentage
 	this->declare_parameter<double>("battery", 100.0);
 	this->get_parameter("battery", this->battery_);
 
@@ -73,8 +77,6 @@ void DroneController::timer_callback()
 	// this->detect_threats();
 	// this->filter_detected_threats();
 	// this->calculate_pso_velocity();
-
-	this->last_time_ = this->now();
 }
 
 void DroneController::simulate_battery()
@@ -153,7 +155,7 @@ void DroneController::check_swarm_information()
 
 bool DroneController::has_to_start() const
 {
-	const uint8_t num_drones_needed = 2;
+	const uint8_t num_drones_needed = this->min_flying_drones_;
 	RCLCPP_INFO(this->get_logger(), "abcd");
 	// check how many drones are in flying mode
 	uint8_t num_drones_landed_ready = 0;

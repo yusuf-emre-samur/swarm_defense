@@ -68,6 +68,7 @@ def generate_launch_description():
                     {"use_sim_time": True},
                     {"drone_id": i},
                     {"base_station_pos": base_station_positions[i]},
+                    {"min_flying_drones": 3},
                     {"battery": battery[i]}
                 ],
                 arguments=[

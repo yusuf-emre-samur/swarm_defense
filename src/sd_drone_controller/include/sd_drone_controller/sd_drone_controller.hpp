@@ -126,11 +126,11 @@ class DroneController : public rclcpp::Node
 	// received information about swarm
 	sd_interfaces::msg::SwarmInfo swarm_info_;
 
-	double start_prep_duration;
-
-	rclcpp::Time last_time_;
-
+	// percentage of drone battery
 	double battery_;
+
+	// minimum number of drones which have to fly durin sim
+	uint8_t min_flying_drones_;
 };
 
 } // namespace sd
