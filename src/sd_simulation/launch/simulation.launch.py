@@ -48,16 +48,20 @@ def generate_launch_description():
     ###############################################################
     num_drones = 8
     base_station_positions = [
-        [-200, -100, 11.4],
-        [-200, -102, 11.4],
-        [-200, -104, 11.4],
-        [-200, -106, 11.4],
-        [-202, -100, 11.4],
-        [-202, -102, 11.4],
-        [-202, -104, 11.4],
-        [-202, -106, 11.4],
+        [-100, -100, 0.175],
+        [-100, -102, 0.175],
+        [-100, -104, 0.175],
+        [-100, -106, 0.175],
+        [-102, -100, 0.175],
+        [-102, -102, 0.175],
+        [-102, -104, 0.175],
+        [-102, -106, 0.175],
 
     ]
+    min_fly = 3
+    battery = [100.0 for i in range(min_fly)] + \
+        [10.0 * i for i in range(num_drones-min_fly)]
+
 
     for i in range(num_drones):
 
@@ -70,7 +74,9 @@ def generate_launch_description():
                 parameters=[
                     {"use_sim_time": True},
                     {"drone_id": i},
-                    {"base_station_pos": base_station_positions[i]}
+                    {"base_station_pos": base_station_positions[i]},
+                    {"min_flying_drones": min_fly},
+                    {"battery": battery[i]}
                 ],
                 arguments=[
 
@@ -100,4 +106,41 @@ def generate_launch_description():
                 ]
             )
         )
+        # sd  communication
+        ld.add_action(
+            Node(
+                package="sd_communication",
+                executable="sd_communication",
+                name="sd_communication",
+                parameters=[
+                    {"use_sim_time": True},
+                    {"drone_id": i},
+                    {"old_after": 10}
+                ],
+                arguments=[
+
+                ],
+                remappings=[
+                    ("__ns", f"/drones/drone_{i}"),
+                    ("__node", f"drone_{i}")
+                ]
+            )
+        )
+    ld.add_action(
+        Node(
+            package="sd_visualiser",
+            executable="sd_visualiser",
+            name="sd_visualiser",
+            parameters=[
+                    {"num_drones": num_drones}
+            ],
+            arguments=[
+
+            ],
+            remappings=[
+                ("__ns", f"/drones/visualiser"),
+                ("__node", f"visualiser")
+            ]
+        )
+    )
     return ld
