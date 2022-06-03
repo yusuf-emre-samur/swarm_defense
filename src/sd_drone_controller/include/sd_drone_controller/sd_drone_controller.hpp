@@ -42,22 +42,31 @@ class DroneController : public rclcpp::Node
 	// callback function of timer, called each 0.5s
 	void timer_callback();
 
+	// share the knowledge of the drone to the swarm
+	void share_knowledge_to_swarm();
+
+	// process the information received from other swarms
+	void process_swarm_information();
+
+	// simulate the battery capacity and usage of the drone
+	void simulate_battery();
+
+	// process information with si algorithms and set new target
+	void si_algorithms();
+
 	void detect_threats();
 	void filter_detected_threats();
 	void calculate_pso_velocity();
 	void publish_target();
 	void publish_target(const Eigen::Vector3d& pos);
 	void flight_to_base_station();
-	void send_message_to_swarm();
-	void check_swarm_information();
+
 	void drone_start();
 	void drone_flying();
 	void drone_landing();
 	void drone_landed();
 	void set_drone_mode();
 	void flight();
-
-	void simulate_battery();
 
 	bool has_to_start() const;
 

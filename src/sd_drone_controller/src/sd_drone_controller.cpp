@@ -70,13 +70,51 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 
 void DroneController::timer_callback()
 {
-	this->send_message_to_swarm();
-	this->check_swarm_information();
+	this->share_knowledge_to_swarm();
+	this->process_swarm_information();
 	this->simulate_battery();
+	this->detect_threats();
+	this->si_algorithms();
 	this->flight();
-	// this->detect_threats();
 	// this->filter_detected_threats();
-	// this->calculate_pso_velocity();
+}
+
+void DroneController::si_algorithms()
+{
+}
+
+void DroneController::share_knowledge_to_swarm()
+{
+	sd_interfaces::msg::DroneMsgOut msg;
+	// header
+	msg.drone_header.drone_id = this->id_;
+	msg.drone_header.drone_mode = static_cast<uint8_t>(this->drone_mode_);
+	msg.drone_header.flight_mode = static_cast<uint8_t>(this->flight_mode_);
+	msg.drone_header.stamp = this->now();
+	// pos
+	msg.drone_header.pos.x = this->position_.x();
+	msg.drone_header.pos.y = this->position_.y();
+	msg.drone_header.pos.z = this->position_.z();
+	// battery
+	msg.drone_header.battery = this->battery_;
+
+	this->pub_comm_send_->publish(msg);
+}
+
+void DroneController::process_swarm_information()
+{
+	if ( this->drone_mode_ != DroneMode::NOTREADY ) {
+		// if on a
+		if ( this->has_to_start() ) {
+			// switch from a to b
+			this->flight_mode_ = FlightMode::STARTING;
+		} else {
+			// // back from b to a if it should not start
+			// if ( this->flight_mode_ == FlightMode::STARTING ) {
+			// }
+			// 	this->flight_mode_ = FlightMode::LANDING;
+		}
+	}
 }
 
 void DroneController::simulate_battery()
@@ -105,8 +143,6 @@ void DroneController::simulate_battery()
 			this->flight_mode_ = FlightMode::LANDING;
 		}
 	}
-
-	RCLCPP_INFO(this->get_logger(), std::to_string(this->battery_).c_str());
 }
 
 void DroneController::flight()
@@ -140,23 +176,9 @@ void DroneController::flight()
 	}
 }
 
-void DroneController::check_swarm_information()
-{
-	if ( this->drone_mode_ != DroneMode::NOTREADY ) {
-		// if on a
-		if ( this->has_to_start() ) {
-			// switch from a to b
-			RCLCPP_INFO(this->get_logger(), "drone is starting");
-
-			this->flight_mode_ = FlightMode::STARTING;
-		}
-	}
-}
-
 bool DroneController::has_to_start() const
 {
 	const uint8_t num_drones_needed = this->min_flying_drones_;
-	RCLCPP_INFO(this->get_logger(), "abcd");
 	// check how many drones are in flying mode
 	uint8_t num_drones_landed_ready = 0;
 	uint8_t num_drones_flying_or_starting = 0;
@@ -168,13 +190,9 @@ bool DroneController::has_to_start() const
 
 		drone_mode = static_cast<DroneMode>(drone.drone_mode);
 		flight_mode = static_cast<FlightMode>(drone.flight_mode);
-		RCLCPP_INFO(
-			this->get_logger(),
-			std::string("drone_id: " + std::to_string(drone.drone_id)).c_str());
 
 		if ( drone_mode != DroneMode::NOTREADY ) {
 			// not ready
-			RCLCPP_INFO(this->get_logger(), "Drone not read");
 			if ( (flight_mode == FlightMode::LANDED) &&
 				 (drone_mode == DroneMode::READY) ) {
 				// ready and landed
@@ -185,16 +203,31 @@ bool DroneController::has_to_start() const
 				 (flight_mode == FlightMode::STARTING) ) {
 				++num_drones_flying_or_starting;
 			}
-			if ( drone.drone_id < this->id_ ) {
-				++num_drones_lower_id;
+			if ( drone_mode == DroneMode::READY &&
+				 flight_mode == FlightMode::STARTING ) {
+				if ( drone.drone_id < this->id_ ) {
+					++num_drones_lower_id;
+				}
 			}
 		}
+	}
+
+	if ( (this->flight_mode_ == FlightMode::FLYING) ||
+		 (this->flight_mode_ == FlightMode::STARTING) ) {
+		++num_drones_flying_or_starting;
 	}
 
 	const uint8_t num_new_drones =
 		num_drones_needed - num_drones_flying_or_starting;
 
-	if ( num_new_drones > 0 ) {
+	if ( static_cast<int>(num_new_drones) > 0 ) {
+		RCLCPP_INFO(this->get_logger(), "Drone needed");
+		RCLCPP_INFO(this->get_logger(),
+					std::to_string(num_drones_needed).c_str());
+		RCLCPP_INFO(this->get_logger(),
+					std::to_string(num_drones_lower_id).c_str());
+		RCLCPP_INFO(this->get_logger(), std::to_string(num_new_drones).c_str());
+
 		if ( num_drones_lower_id <= num_new_drones ) {
 			return true;
 		} else {
@@ -279,24 +312,6 @@ void DroneController::publish_target(const Eigen::Vector3d& pos)
 void DroneController::flight_to_base_station()
 {
 	this->publish_target(this->base_station_pos_);
-}
-
-void DroneController::send_message_to_swarm()
-{
-	sd_interfaces::msg::DroneMsgOut msg;
-	// header
-	msg.drone_header.drone_id = this->id_;
-	msg.drone_header.drone_mode = static_cast<uint8_t>(this->drone_mode_);
-	msg.drone_header.flight_mode = static_cast<uint8_t>(this->flight_mode_);
-	msg.drone_header.stamp = this->now();
-	// pos
-	msg.drone_header.pos.x = this->position_.x();
-	msg.drone_header.pos.y = this->position_.y();
-	msg.drone_header.pos.z = this->position_.z();
-	// battery
-	msg.drone_header.battery = this->battery_;
-
-	this->pub_comm_send_->publish(msg);
 }
 
 // subscirber world objects
