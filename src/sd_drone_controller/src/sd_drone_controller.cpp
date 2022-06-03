@@ -301,6 +301,8 @@ void DroneController::send_message_to_swarm()
 	msg.drone_header.pos.x = this->position_.x();
 	msg.drone_header.pos.y = this->position_.y();
 	msg.drone_header.pos.z = this->position_.z();
+	// battery
+	msg.drone_header.battery = this->battery_;
 
 	this->pub_comm_send_->publish(msg);
 }
