@@ -16,7 +16,7 @@ DroneCommunication::DroneCommunication() : rclcpp::Node("DroneCommunication")
 	// timer
 	using namespace std::chrono_literals;
 	this->timer_ = rclcpp::create_timer(
-		this, this->get_clock(), 250ms,
+		this, this->get_clock(), 100ms,
 		std::bind(&DroneCommunication::timer_callback, this));
 
 	// subscriber send
