@@ -38,7 +38,7 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 
 	using namespace std::chrono_literals;
 	this->timer_ =
-		rclcpp::create_timer(this, this->get_clock(), 250ms,
+		rclcpp::create_timer(this, this->get_clock(), 100ms,
 							 std::bind(&DroneController::timer_callback, this));
 
 	// ros subscriber
@@ -104,16 +104,7 @@ void DroneController::share_knowledge_to_swarm()
 void DroneController::process_swarm_information()
 {
 	if ( this->drone_mode_ != DroneMode::NOTREADY ) {
-		// if on a
-		if ( this->has_to_start() ) {
-			// switch from a to b
-			this->flight_mode_ = FlightMode::STARTING;
-		} else {
-			// // back from b to a if it should not start
-			// if ( this->flight_mode_ == FlightMode::STARTING ) {
-			// }
-			// 	this->flight_mode_ = FlightMode::LANDING;
-		}
+		this->check_start();
 	}
 }
 
@@ -149,24 +140,20 @@ void DroneController::flight()
 {
 	switch ( this->flight_mode_ ) {
 	case FlightMode::LANDED:
-		RCLCPP_INFO(this->get_logger(), "Landed");
 		this->drone_landed();
 		break;
 
 	case FlightMode::STARTING:
-		RCLCPP_INFO(this->get_logger(), "Starting");
 		this->drone_start();
 		this->publish_target();
 		break;
 
 	case FlightMode::LANDING:
-		RCLCPP_INFO(this->get_logger(), "Landing");
 		this->drone_landing();
 		this->publish_target();
 		break;
 
 	case FlightMode::FLYING:
-		RCLCPP_INFO(this->get_logger(), "Flying");
 		this->drone_flying();
 		this->publish_target();
 		break;
@@ -176,13 +163,13 @@ void DroneController::flight()
 	}
 }
 
-bool DroneController::has_to_start() const
+void DroneController::check_start()
 {
-	const uint8_t num_drones_needed = this->min_flying_drones_;
+	const int8_t num_drones_needed = this->min_flying_drones_;
 	// check how many drones are in flying mode
-	uint8_t num_drones_landed_ready = 0;
-	uint8_t num_drones_flying_or_starting = 0;
-	uint8_t num_drones_lower_id = 0;
+	int8_t num_drones_landed_ready = 0;
+	int8_t num_drones_flying_or_starting = 0;
+	int8_t num_drones_lower_id = 0;
 
 	DroneMode drone_mode;
 	FlightMode flight_mode;
@@ -201,6 +188,7 @@ bool DroneController::has_to_start() const
 
 			if ( (flight_mode == FlightMode::FLYING) ||
 				 (flight_mode == FlightMode::STARTING) ) {
+
 				++num_drones_flying_or_starting;
 			}
 			if ( drone_mode == DroneMode::READY &&
@@ -210,31 +198,56 @@ bool DroneController::has_to_start() const
 				}
 			}
 		}
+
+		// if ( num_drones_flying_or_starting >= num_drones_needed ) {
+		// 	return false;
+		// }
 	}
 
 	if ( (this->flight_mode_ == FlightMode::FLYING) ||
 		 (this->flight_mode_ == FlightMode::STARTING) ) {
 		++num_drones_flying_or_starting;
 	}
+	if ( (this->flight_mode_ == FlightMode::LANDED) &&
+		 (this->drone_mode_ == DroneMode::READY) ) {
+		++num_drones_landed_ready;
+	}
 
-	const uint8_t num_new_drones =
+	const int8_t num_new_drones =
 		num_drones_needed - num_drones_flying_or_starting;
 
-	if ( static_cast<int>(num_new_drones) > 0 ) {
-		RCLCPP_INFO(this->get_logger(), "Drone needed");
-		RCLCPP_INFO(this->get_logger(),
-					std::to_string(num_drones_needed).c_str());
-		RCLCPP_INFO(this->get_logger(),
-					std::to_string(num_drones_lower_id).c_str());
-		RCLCPP_INFO(this->get_logger(), std::to_string(num_new_drones).c_str());
+	const int8_t num_too_much_drones =
+		num_drones_flying_or_starting - num_drones_needed;
 
-		if ( num_drones_lower_id <= num_new_drones ) {
-			return true;
-		} else {
-			return false;
+	RCLCPP_INFO(this->get_logger(),
+				std::string("flying/starting: " +
+							std::to_string(num_drones_flying_or_starting))
+					.c_str());
+	RCLCPP_INFO(
+		this->get_logger(),
+		std::string("landed&ready: " + std::to_string(num_drones_landed_ready))
+			.c_str());
+
+	RCLCPP_INFO(this->get_logger(), std::string("new drones needed: " +
+												std::to_string(num_new_drones))
+										.c_str());
+
+	RCLCPP_INFO(this->get_logger(),
+				std::string("lower ids: " + std::to_string(num_drones_lower_id))
+					.c_str());
+
+	if ( num_new_drones > 0 ) {
+		// new drones needed
+		if ( num_drones_lower_id < num_new_drones ) {
+			this->flight_mode_ = FlightMode::STARTING;
 		}
-	} else {
-		return false;
+	} else if ( num_too_much_drones > 0 ) {
+		// too much drones
+		if ( num_too_much_drones <= num_drones_lower_id ) {
+			if ( this->flight_mode_ == FlightMode::STARTING ) {
+				this->flight_mode_ = FlightMode::LANDING;
+			}
+		}
 	}
 }
 

@@ -68,7 +68,7 @@ class DroneController : public rclcpp::Node
 	void set_drone_mode();
 	void flight();
 
-	bool has_to_start() const;
+	void check_start();
 
 	void check_drone_landed();
 
