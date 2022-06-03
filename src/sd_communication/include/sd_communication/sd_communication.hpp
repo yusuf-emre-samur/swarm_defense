@@ -43,8 +43,7 @@ class DroneCommunication : public rclcpp::Node
 	// sub communication send
 	rclcpp::Subscription<sd_interfaces::msg::DroneMsgOut>::SharedPtr
 		sub_comm_send_;
-	void
-	callback_comm_send(const sd_interfaces::msg::DroneMsgOut::SharedPtr msg);
+	void callback_comm_send(const sd_interfaces::msg::DroneMsgOut& msg);
 
 	// publisher communication receive
 	rclcpp::Publisher<sd_interfaces::msg::SwarmInfo>::SharedPtr

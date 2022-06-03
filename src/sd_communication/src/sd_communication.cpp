@@ -54,9 +54,9 @@ void DroneCommunication::timer_callback()
 }
 
 void DroneCommunication::callback_comm_send(
-	const sd_interfaces::msg::DroneMsgOut::SharedPtr msg)
+	const sd_interfaces::msg::DroneMsgOut& msg)
 {
-	this->pub_comm_outgoing_->publish(*msg.get());
+	this->pub_comm_outgoing_->publish(msg);
 }
 
 void DroneCommunication::callback_comm_incoming(
@@ -74,6 +74,7 @@ void DroneCommunication::callback_comm_incoming(
 			if ( it->drone_id == msg->drone_header.drone_id ) {
 				not_found_flag = false;
 				it->drone_mode = msg->drone_header.drone_mode;
+				it->flight_mode = msg->drone_header.flight_mode;
 				it->pos = msg->drone_header.pos;
 				it->stamp = msg->drone_header.stamp;
 			}

@@ -28,7 +28,7 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 		this->drone_mode_ = DroneMode::NOTREADY;
 	} else {
 		// start at a
-		this->drone_mode_ == DroneMode::READY;
+		this->drone_mode_ = DroneMode::READY;
 	}
 	this->flight_mode_ = FlightMode::LANDED;
 
@@ -67,8 +67,8 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 void DroneController::timer_callback()
 {
 	this->send_message_to_swarm();
-	this->simulate_battery();
 	this->check_swarm_information();
+	this->simulate_battery();
 	this->flight();
 	// this->detect_threats();
 	// this->filter_detected_threats();
@@ -93,7 +93,7 @@ void DroneController::simulate_battery()
 		}
 
 	} else {
-		this->battery_ -= 1.0; //(1.0 / 60.0); // (1 / 4) * (1 / 15);
+		this->battery_ -= 0.5; //(1.0 / 60.0); // (1 / 4) * (1 / 15);
 	}
 
 	// from c to d if battery < 20%
@@ -121,17 +121,16 @@ void DroneController::flight()
 		this->publish_target();
 		break;
 
-	case FlightMode::FLYING:
-		RCLCPP_INFO(this->get_logger(), "Flying");
-		this->drone_flying();
-		this->publish_target();
-		break;
-
 	case FlightMode::LANDING:
 		RCLCPP_INFO(this->get_logger(), "Landing");
 		this->drone_landing();
 		this->publish_target();
+		break;
 
+	case FlightMode::FLYING:
+		RCLCPP_INFO(this->get_logger(), "Flying");
+		this->drone_flying();
+		this->publish_target();
 		break;
 
 	default:
@@ -143,12 +142,11 @@ void DroneController::check_swarm_information()
 {
 	if ( this->drone_mode_ != DroneMode::NOTREADY ) {
 		// if on a
-		if ( this->drone_mode_ == DroneMode::READY &&
-			 this->flight_mode_ == FlightMode::LANDED ) {
-			if ( this->has_to_start() ) {
-				// switch from a to b
-				this->flight_mode_ = FlightMode::STARTING;
-			}
+		if ( this->has_to_start() ) {
+			// switch from a to b
+			RCLCPP_INFO(this->get_logger(), "drone is starting");
+
+			this->flight_mode_ = FlightMode::STARTING;
 		}
 	}
 }
@@ -168,42 +166,34 @@ bool DroneController::has_to_start() const
 
 		drone_mode = static_cast<DroneMode>(drone.drone_mode);
 		flight_mode = static_cast<FlightMode>(drone.flight_mode);
+		RCLCPP_INFO(
+			this->get_logger(),
+			std::string("drone_id: " + std::to_string(drone.drone_id)).c_str());
 
-		if ( drone_mode == DroneMode::READY &&
-			 flight_mode == FlightMode::LANDED ) {
-			++num_drones_landed_ready;
+		if ( drone_mode != DroneMode::NOTREADY ) {
+			// not ready
+			RCLCPP_INFO(this->get_logger(), "Drone not read");
+			if ( (flight_mode == FlightMode::LANDED) &&
+				 (drone_mode == DroneMode::READY) ) {
+				// ready and landed
+				num_drones_landed_ready++;
+			}
+
+			if ( (flight_mode == FlightMode::FLYING) ||
+				 (flight_mode == FlightMode::STARTING) ) {
+				++num_drones_flying_or_starting;
+			}
 			if ( drone.drone_id < this->id_ ) {
 				++num_drones_lower_id;
 			}
 		}
-		if ( drone_mode == DroneMode::FLYING ||
-			 flight_mode == FlightMode::STARTING ) {
-			++num_drones_flying_or_starting;
-		}
 	}
 
-	const auto num_new_drones =
+	const uint8_t num_new_drones =
 		num_drones_needed - num_drones_flying_or_starting;
 
-	RCLCPP_INFO(
-		this->get_logger(),
-		std::string("landed ready: " + std::to_string(num_drones_landed_ready))
-			.c_str());
-	RCLCPP_INFO(this->get_logger(),
-				std::string("flying/starting: " +
-							std::to_string(num_drones_flying_or_starting))
-					.c_str());
-
-	RCLCPP_INFO(
-		this->get_logger(),
-		std::string("new drones: " + std::to_string(num_new_drones)).c_str());
-
-	RCLCPP_INFO(this->get_logger(),
-				std::string("lower id: " + std::to_string(num_drones_lower_id))
-					.c_str());
-
 	if ( num_new_drones > 0 ) {
-		if ( num_drones_lower_id < num_new_drones ) {
+		if ( num_drones_lower_id <= num_new_drones ) {
 			return true;
 		} else {
 			return false;

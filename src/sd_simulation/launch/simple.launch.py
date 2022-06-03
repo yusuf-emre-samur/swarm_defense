@@ -54,7 +54,7 @@ def generate_launch_description():
         [0, 6, 0.075]
 
     ]
-    battery = [10.0, 90.0, 70.0, 100.0]
+    battery = [60.0, 90.0, 70.0, 30.0]
     num_drones = len(base_station_positions)
     for i in range(num_drones):
 
