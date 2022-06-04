@@ -92,14 +92,21 @@ void DronePlugin::OnUpdate(const gazebo::common::UpdateInfo& _info)
 
 void DronePlugin::flight_model()
 {
+
 	{
 		auto pose = this->model_->WorldPose();
 		auto pos = pose.Pos();
 		auto rot = pose.Rot();
 		auto rpy = rot.Euler();
 
+		rpy.X() = 0;
+		rpy.Y() = 0;
+		auto q = ignition::math::Quaterniond::EulerToQuaternion(rpy);
+		pose.Rot() = q;
+		this->model_->SetWorldPose(pose);
+
 		auto pos_dif = this->target_pos_ - pos;
-		auto rpy_diff = (ignition::math::Vector3d(0, 0, 0) - rpy);
+		auto rpy_diff = (ignition::math::Vector3d(0, 0, 0) - rpy) * 0.1;
 
 		// target reached when dist < 0.1
 		auto dist_vec = pos_dif;
@@ -121,20 +128,32 @@ void DronePlugin::flight_model()
 		yaw.Normalize();
 
 		// first lift up and rotate
-		if ( z_dist > 0.3 || std::abs(yaw.Radian()) > IGN_DTOR(30) ) {
+		if ( z_dist > 0.3 || std::abs(yaw.Radian()) > IGN_DTOR(15) ) {
 			// lif
 			vel.X() = 0;
 			vel.Y() = 0;
 			this->model_->SetLinearVel(vel);
 
+			RCLCPP_INFO(ros2node_->get_logger(),
+						std::string("r: " + std::to_string(rpy.X())).c_str());
+
+			RCLCPP_INFO(ros2node_->get_logger(),
+						std::string("p: " + std::to_string(rpy.Y())).c_str());
+
+			RCLCPP_INFO(ros2node_->get_logger(),
+						std::string("y: " + std::to_string(rpy.Z())).c_str());
+			rpy_diff.Z() = yaw.Radian();
+			// rpy_diff = rpy_diff.Normalize();
+			this->model_->SetAngularVel(rpy_diff);
 			// rotate
 			if ( xy_dist > 0.1 ) {
-				rpy_diff.Z() = yaw.Radian();
-				this->model_->SetAngularVel(rpy_diff);
 			}
 
 		} else {
 			this->model_->SetLinearVel(vel);
+			rpy_diff.Z() = yaw.Radian();
+			// rpy_diff = rpy_diff.Normalize();
+			this->model_->SetAngularVel(rpy_diff);
 		}
 	}
 }
