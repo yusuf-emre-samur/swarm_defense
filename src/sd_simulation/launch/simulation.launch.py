@@ -58,9 +58,15 @@ def generate_launch_description():
         [-102, -106, 0.175],
 
     ]
-    min_fly = 3
+    min_fly = 5
     battery = [100.0 for i in range(min_fly)] + \
         [10.0 * i for i in range(num_drones-min_fly)]
+
+    # pso
+    pso_max_vel = [5.0, 5.0, 0.0]
+    pso_w = 0.9
+    pso_c1 = 1.49
+    pso_c2 = 1.49
 
 
     for i in range(num_drones):
@@ -76,7 +82,11 @@ def generate_launch_description():
                     {"drone_id": i},
                     {"base_station_pos": base_station_positions[i]},
                     {"min_flying_drones": min_fly},
-                    {"battery": battery[i]}
+                    {"battery": battery[i]},
+                    {"pso_w": pso_w},
+                    {"pso_c1": pso_c1},
+                    {"pso_c2": pso_c2},
+                    {"max_velocity": pso_max_vel}
                 ],
                 arguments=[
 
