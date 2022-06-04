@@ -11,9 +11,12 @@
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
+
   <depend>rcl</depend>
   <depend>rclcpp</depend>
   <depend>sd_interfaces</depend>
+  <depend>Eigen3</depend>
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>

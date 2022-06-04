@@ -22,15 +22,16 @@
 
 namespace sd {
 
+// drone mode
 enum class DroneMode { NOTREADY = 0, READY = 1, FLYING = 2, MAX = 3 };
 
+// flight mode of drone
 enum class FlightMode {
 	LANDED = 0,
 	STARTING = 1,
 	LANDING = 2,
 	FLYING = 3,
-	RETURNING_HOME = 4,
-	MAX = 5
+	MAX = 4
 };
 
 class DroneController : public rclcpp::Node
@@ -41,6 +42,9 @@ class DroneController : public rclcpp::Node
   private:
 	// callback function of timer, called each 0.5s
 	void timer_callback();
+
+	//
+	// main loop functions
 
 	// share the knowledge of the drone to the swarm
 	void share_knowledge_to_swarm();
@@ -54,25 +58,59 @@ class DroneController : public rclcpp::Node
 	// process information with si algorithms and set new target
 	void si_algorithms();
 
+	// threat detection
 	void detect_threats();
-	void filter_detected_threats();
+
+	//
+	// PSO functions
+
+	// calculate PSO velocity
 	void calculate_pso_velocity();
+
+	// calculate PSO fitness function
+	void calculate_pso_fitness();
+
+	// checks new positions score and set to pg if score is better
+	void pso_update_pg(const double& score, const Eigen::Vector3d& pos);
+
+	// checks new positions score and set to pb if score is better
+	void pso_update_pb();
+
+	// process information regarding pso algorithm
+	void process_pso_information();
+
+	// publish current target to flight controller
 	void publish_target();
+
+	// publish target to flight controller
 	void publish_target(const Eigen::Vector3d& pos);
+
+	// publish position of base station to flight controller
 	void flight_to_base_station();
 
-	void drone_start();
-	void drone_flying();
-	void drone_landing();
-	void drone_landed();
-	void set_drone_mode();
+	//
+	// functions for drone flying logic
+
+	// flight logic of drone
 	void flight();
 
+	// called when drone is landed
+	void drone_landed();
+
+	// called when drone is starting
+	void drone_starting();
+
+	// called when drone is flying
+	void drone_flying();
+
+	// called when drone is landing
+	void drone_landing();
+
+	// checks if drone has to start
 	void check_start();
 
-	void check_drone_landed();
-
-	void turn_motors_off();
+	//
+	// ROS subscriber callback functions
 
 	// callback function for subcsriber to world objects list
 	void callback_world_objects(const sd_interfaces::msg::WorldObjects& msg);
@@ -84,11 +122,13 @@ class DroneController : public rclcpp::Node
 	void
 	callback_position(const sd_interfaces::msg::PositionStamped::SharedPtr msg);
 
-	// ros
+	//
+	// Class members
 
-	// timer fo callback
+	// ROS timer for callback function
 	rclcpp::TimerBase ::SharedPtr timer_;
 
+	//
 	// ros subscriber
 
 	// subscriber to world objects
@@ -103,12 +143,18 @@ class DroneController : public rclcpp::Node
 	rclcpp::Subscription<sd_interfaces::msg::PositionStamped>::SharedPtr
 		sub_position_;
 
+	//
+	// ROS publisher
+
 	// publisher to drone target
 	rclcpp::Publisher<sd_interfaces::msg::FlightTarget>::SharedPtr pub_target_;
 
 	// publisher to communication send
 	rclcpp::Publisher<sd_interfaces::msg::DroneMsgOut>::SharedPtr
 		pub_comm_send_;
+
+	//
+	// Drone Information
 
 	// id of drone, e.g. 1
 	uint8_t id_;
@@ -146,22 +192,46 @@ class DroneController : public rclcpp::Node
 	// minimum number of drones which have to fly durin sim
 	uint8_t min_flying_drones_;
 
+	// used for drone to check if it has to start
 	uint start_counter_ = 0;
 
+	// operation height of drone
 	double drone_op_height_;
 
-	// pso
+	//
+	// PSO parameters
+
+	// PSO coefficients
 	double w_;
 	double c1_;
 	double c2_;
 
+	// current score
+	double pso_score_;
+
+	// personal best position
 	Eigen::Vector3d pb_;
+
+	// personal best score
 	double pb_score_;
+
+	// swarm best position
 	Eigen::Vector3d pg_;
+
+	// swarm best score
 	double pg_score_;
 
+	// current velocity of drone
 	Eigen::Vector3d velocity_;
+
+	// max velocity of drone
 	Eigen::Array3d max_velocity_;
+
+	//
+	// threats
+	std::vector<sd_interfaces::msg::Threat> swarm_threats_;
+
+	bool following_threat_ = false;
 };
 
 } // namespace sd

@@ -1,5 +1,8 @@
 #include "sd_drone_controller/sd_drone_controller.hpp"
+#include <sd_drone_controller/sd_utils.hpp>
+
 #include <random>
+
 std::default_random_engine generator;
 std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
@@ -51,9 +54,11 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 	this->max_velocity_.z() = tmp2[2];
 
 	// set pb and pg to max
-	this->pb_score_ = std::numeric_limits<double>::max();
-	this->pg_score_ = std::numeric_limits<double>::max();
+	this->pb_score_ = std::numeric_limits<double>::min();
+	this->pg_score_ = std::numeric_limits<double>::min();
+	this->pso_score_ = std::numeric_limits<double>::min();
 
+	// set drone mode dependent of batter capacity
 	if ( this->battery_ < 80.0 ) {
 		// start at e
 		this->drone_mode_ = DroneMode::NOTREADY;
@@ -61,42 +66,53 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 		// start at a
 		this->drone_mode_ = DroneMode::READY;
 	}
+	// all drones are starting landend
 	this->flight_mode_ = FlightMode::LANDED;
 
+	// set unique operating height for each drone,  depending on id
 	this->drone_op_height_ = static_cast<double>(this->id_) * 1.5 + 15;
 
+	// main loop timer
 	using namespace std::chrono_literals;
 	this->timer_ =
 		rclcpp::create_timer(this, this->get_clock(), 100ms,
 							 std::bind(&DroneController::timer_callback, this));
+	//
+	// ROS subscriber
 
-	// ros subscriber
+	// sub world objects
 	this->sub_world_objects_ =
 		this->create_subscription<sd_interfaces::msg::WorldObjects>(
 			"/world/objects", 1,
 			std::bind(&DroneController::callback_world_objects, this,
 					  std::placeholders::_1));
-
+	// comm. receive
 	this->sub_comm_receive_ =
 		this->create_subscription<sd_interfaces::msg::SwarmInfo>(
 			"communication_receive", 1,
 			std::bind(&DroneController::callback_comm_receive, this,
 					  std::placeholders::_1));
 
+	// sub drone position
 	this->sub_position_ =
 		this->create_subscription<sd_interfaces::msg::PositionStamped>(
 			"position", 1,
 			std::bind(&DroneController::callback_position, this,
 					  std::placeholders::_1));
 
+	//
+	// ROS publisher
+
+	// pub comm. send
 	this->pub_comm_send_ = create_publisher<sd_interfaces::msg::DroneMsgOut>(
 		"communication_send", 1);
 
-	// ros publisher
+	// pub drone target
 	this->pub_target_ =
 		this->create_publisher<sd_interfaces::msg::FlightTarget>("target", 1);
 }
 
+// main loop
 void DroneController::timer_callback()
 {
 	this->share_knowledge_to_swarm();
@@ -104,12 +120,6 @@ void DroneController::timer_callback()
 	this->simulate_battery();
 	this->detect_threats();
 	this->flight();
-	// this->filter_detected_threats();
-}
-
-void DroneController::si_algorithms()
-{
-	this->calculate_pso_velocity();
 }
 
 void DroneController::share_knowledge_to_swarm()
@@ -126,6 +136,13 @@ void DroneController::share_knowledge_to_swarm()
 	msg.drone_header.pos.z = this->position_.z();
 	// battery
 	msg.drone_header.battery = this->battery_;
+
+	// pso
+	msg.pb = eigen_to_sd_pos(this->pb_);
+	msg.pb_score = this->pb_score_;
+
+	//  threats
+	msg.detected_threats = this->swarm_threats_;
 
 	this->pub_comm_send_->publish(msg);
 }
@@ -176,7 +193,7 @@ void DroneController::flight()
 		break;
 
 	case FlightMode::STARTING:
-		this->drone_start();
+		this->drone_starting();
 		this->publish_target();
 		break;
 
@@ -195,6 +212,109 @@ void DroneController::flight()
 	}
 }
 
+void DroneController::si_algorithms()
+{
+	//
+	// PSO algorithm
+	//
+	// update pg from received pg and score
+	this->pso_update_pg(this->swarm_info_.pg_score,
+						sd_pos_to_eigen(this->swarm_info_.pg));
+
+	// calculate current fitness
+	this->calculate_pso_fitness();
+
+	// update pb score
+	this->pso_update_pb();
+
+	// calculate velocity
+	this->calculate_pso_velocity();
+}
+
+void DroneController::calculate_pso_velocity()
+{
+	auto r1 = distribution(generator);
+	auto r2 = distribution(generator);
+
+	this->velocity_ = (this->w_ * this->velocity_ +
+					   r1 * this->c1_ * (this->pb_ - this->position_) +
+					   r2 * this->c2_ * (this->pg_ - this->position_))
+						  .normalized();
+
+	this->velocity_ = this->velocity_.array() * this->max_velocity_;
+}
+
+void DroneController::calculate_pso_fitness()
+{
+
+	this->pso_score_ = this->swarm_threats_.size();
+}
+
+void DroneController::process_pso_information()
+{
+}
+
+void DroneController::pso_update_pg(const double& score,
+									const Eigen::Vector3d& pos)
+{
+	if ( score > this->pg_score_ ) {
+		this->pg_score_ = score;
+		this->pg_ = pos;
+	}
+}
+
+void DroneController::pso_update_pb()
+{
+	if ( this->pso_score_ > this->pb_score_ ) {
+		this->pb_score_ = this->pso_score_;
+		this->pb_ = this->position_;
+	}
+}
+
+void DroneController::detect_threats()
+{
+	// go through world objects
+	for ( const auto& object : this->world_objects_.objects ) {
+		sd_interfaces::msg::Threat t;
+		t.pos = object.bbox.center;
+		t.following_drones_id.push_back(this->id_);
+		t.time_detected = this->now();
+
+		auto t_pos = sd_pos_to_eigen(t.pos);
+		auto dist = (this->position_ - t_pos).segment(0, 1).cwiseAbs().norm();
+
+		bool threat_not_found = true;
+		if ( dist < this->perception_radius_ ) {
+			// check if threat already exists
+			if ( this->swarm_threats_.size() > 0 ) {
+
+				// iterate over existing threats
+				for ( const auto& existing_threat : this->swarm_threats_ ) {
+
+					// check distance between threats
+					auto threats_dist =
+						(sd_pos_to_eigen(existing_threat.pos) - t_pos)
+							.segment(0, 1)
+							.cwiseAbs()
+							.norm();
+
+					// if distance between threats is small, then threat is the
+					// same
+					if ( threats_dist < 2.0 ) {
+
+						threat_not_found = false;
+					}
+				}
+				if ( threat_not_found ) {
+					this->swarm_threats_.push_back(t);
+				}
+			} else {
+				this->swarm_threats_.push_back(t);
+			}
+		}
+	}
+}
+
 void DroneController::check_start()
 {
 	const int8_t num_drones_needed = this->min_flying_drones_;
@@ -205,7 +325,7 @@ void DroneController::check_start()
 
 	DroneMode drone_mode;
 	FlightMode flight_mode;
-	for ( const auto& drone : this->swarm_info_.swarm_positions.drones ) {
+	for ( const auto& drone : this->swarm_info_.swarm_drones ) {
 
 		drone_mode = static_cast<DroneMode>(drone.drone_mode);
 		flight_mode = static_cast<FlightMode>(drone.flight_mode);
@@ -265,7 +385,16 @@ void DroneController::check_start()
 	}
 }
 
-void DroneController::drone_start()
+void DroneController::drone_landed()
+{
+	// turn motors off
+	sd_interfaces::msg::FlightTarget target;
+	target.motors_on = false;
+	this->pub_target_->publish(target);
+	this->start_counter_ = 0;
+}
+
+void DroneController::drone_starting()
 {
 	auto target =
 		this->base_station_pos_ + Eigen::Vector3d(0, 0, this->drone_op_height_);
@@ -290,25 +419,12 @@ void DroneController::drone_flying()
 	this->target_.z() = this->drone_op_height_;
 }
 
-void DroneController::drone_landed()
-{
-	// turn motors off
-	sd_interfaces::msg::FlightTarget target;
-	target.motors_on = false;
-	this->pub_target_->publish(target);
-	this->start_counter_ = 0;
-}
-
 void DroneController::drone_landing()
 {
-
-	auto pos_wo_z = this->position_;
-	pos_wo_z.z() = 0;
-
-	auto pos_bs_wo_z = this->base_station_pos_;
-	pos_bs_wo_z.z() = 0;
-
-	auto xy_distance = (pos_wo_z - pos_bs_wo_z).cwiseAbs().norm();
+	auto xy_distance = (this->position_ - this->base_station_pos_)
+						   .segment(0, 1)
+						   .cwiseAbs()
+						   .norm();
 
 	if ( xy_distance < 0.05 ) {
 		this->target_ = this->base_station_pos_;
@@ -326,44 +442,6 @@ void DroneController::drone_landing()
 	}
 }
 
-void DroneController::turn_motors_off()
-{
-	sd_interfaces::msg::FlightTarget target;
-	target.motors_on = false;
-
-	this->pub_target_->publish(target);
-}
-
-void DroneController::detect_threats()
-{
-	for ( const auto& object : this->world_objects_.objects ) {
-		auto obj_pos = Eigen::Vector3d(
-			object.bbox.center.x, object.bbox.center.y, object.bbox.center.z);
-
-		auto dist = (this->position_ - obj_pos).cwiseAbs().norm();
-
-		if ( dist < this->perception_radius_ ) {
-		}
-	}
-}
-
-void DroneController::filter_detected_threats()
-{
-}
-
-void DroneController::calculate_pso_velocity()
-{
-	auto r1 = distribution(generator);
-	auto r2 = distribution(generator);
-
-	this->velocity_ = (this->w_ * this->velocity_ +
-					   r1 * this->c1_ * (this->pb_ - this->position_) +
-					   r2 * this->c2_ * (this->pg_ - this->position_))
-						  .normalized();
-
-	this->velocity_ = this->velocity_.array() * this->max_velocity_;
-}
-
 void DroneController::publish_target()
 {
 	this->publish_target(this->target_);
@@ -372,9 +450,7 @@ void DroneController::publish_target()
 void DroneController::publish_target(const Eigen::Vector3d& pos)
 {
 	sd_interfaces::msg::FlightTarget target;
-	target.pos.x = pos.x();
-	target.pos.y = pos.y();
-	target.pos.z = pos.z();
+	target.pos = eigen_to_sd_pos(pos);
 	target.motors_on = true;
 
 	this->pub_target_->publish(target);
@@ -392,20 +468,17 @@ void DroneController::callback_world_objects(
 	this->world_objects_ = msg;
 }
 
-// subscriber communincation receive
 void DroneController::callback_comm_receive(
 	const sd_interfaces::msg::SwarmInfo& msg)
 {
 	this->swarm_info_ = msg;
+	this->swarm_threats_ = msg.swarm_threats;
 }
 
-// subscriber position
 void DroneController::callback_position(
 	const sd_interfaces::msg::PositionStamped::SharedPtr msg)
 {
-	this->position_.x() = msg->position.x;
-	this->position_.y() = msg->position.y;
-	this->position_.z() = msg->position.z;
+	this->position_ = sd_pos_to_eigen(msg->position);
 }
 
 } // namespace sd

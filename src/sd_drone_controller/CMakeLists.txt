@@ -9,6 +9,8 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sd_interfaces REQUIRED)
+find_package(Eigen3 REQUIRED)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -32,6 +34,7 @@ ament_target_dependencies(
   sd_drone_controller
   rclcpp
   sd_interfaces
+  Eigen3
 )
 
 ament_export_include_directories(include)
