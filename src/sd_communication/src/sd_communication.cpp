@@ -116,7 +116,7 @@ void DroneCommunication::callback_comm_incoming(
 
 	//
 	// PSO pg check, if drones pb > pg, update pg score and position
-	if ( msg->pb_score > this->swarm_info_.pg_score ) {
+	if ( msg->pb_score < this->swarm_info_.pg_score ) {
 		this->swarm_info_.pg_score = msg->pb_score;
 		this->swarm_info_.pg = msg->pb;
 	}
