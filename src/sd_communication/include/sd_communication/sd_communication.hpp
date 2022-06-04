@@ -4,8 +4,8 @@
 #include <chrono>
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <string>
-
 // rclcpp
 #include <rclcpp/rclcpp.hpp>
 
@@ -14,6 +14,8 @@
 #include <sd_interfaces/msg/position.hpp>
 #include <sd_interfaces/msg/swarm_info.hpp>
 #include <sd_interfaces/msg/world_objects.hpp>
+// other
+#include <eigen3/Eigen/Dense>
 
 namespace sd {
 
@@ -64,7 +66,8 @@ class DroneCommunication : public rclcpp::Node
 	std::string name_;
 
 	sd_interfaces::msg::DroneMsgOut::SharedPtr msg_send_;
-	sd_interfaces::msg::SwarmPositions swarm_positions_;
+
+	std::mutex swarm_info_mutex_;
 	sd_interfaces::msg::SwarmInfo swarm_info_;
 
 	rclcpp::Time last_time_;
