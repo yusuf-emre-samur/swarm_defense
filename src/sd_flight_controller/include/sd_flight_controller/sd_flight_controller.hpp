@@ -94,7 +94,7 @@ class FlightController : public rclcpp::Node
 	std::mutex target_set_m;
 
 	// positions of drones in swarm
-	sd_interfaces::msg::SwarmPositions swarm_positions_;
+	sd_interfaces::msg::SwarmInfo swarm_info_;
 };
 
 } // namespace sd

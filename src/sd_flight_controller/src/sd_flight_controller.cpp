@@ -94,12 +94,12 @@ void FlightController::callback_target(
 void FlightController::callback_comm_receive(
 	const sd_interfaces::msg::SwarmInfo& msg)
 {
-	this->swarm_positions_ = msg.swarm_positions;
+	this->swarm_info_ = msg;
 }
 
 void FlightController::check_collision()
 {
-	for ( const auto& drone : this->swarm_positions_.drones ) {
+	for ( const auto& drone : this->swarm_info_.swarm_drones ) {
 		if ( static_cast<FlightMode>(drone.flight_mode) !=
 			 FlightMode::LANDED ) {
 			auto pos_other_drone =
