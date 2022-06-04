@@ -2,9 +2,16 @@
 #include <sd_drone_controller/sd_utils.hpp>
 
 #include <random>
+#include <stdio.h>	/* printf, NULL */
+#include <stdlib.h> /* srand, rand */
+#include <sys/types.h>
+#include <time.h>
+#include <unistd.h>
 
-std::default_random_engine generator;
+std::random_device rd;
+std::mt19937 generator(rd());
 std::uniform_real_distribution<double> distribution(0.0, 1.0);
+std::uniform_real_distribution<double> distribution2(-50.0, 50.0);
 
 namespace sd {
 DroneController::DroneController() : rclcpp::Node("DroneController")
@@ -54,9 +61,12 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 	this->max_velocity_.z() = tmp2[2];
 
 	// set pb and pg to max
-	this->pb_score_ = std::numeric_limits<double>::min();
-	this->pg_score_ = std::numeric_limits<double>::min();
-	this->pso_score_ = std::numeric_limits<double>::min();
+	this->pb_score_ = distribution2(generator);
+	this->pg_score_ = distribution2(generator);
+	this->pso_score_ = distribution2(generator);
+
+	this->pg_ = 50 * Eigen::Vector3d::Random();
+	this->pb_ = 50 * Eigen::Vector3d::Random();
 
 	// set drone mode dependent of batter capacity
 	if ( this->battery_ < 80.0 ) {
@@ -238,26 +248,42 @@ void DroneController::calculate_pso_velocity()
 
 	this->velocity_ = (this->w_ * this->velocity_ +
 					   r1 * this->c1_ * (this->pb_ - this->position_) +
-					   r2 * this->c2_ * (this->pg_ - this->position_))
-						  .normalized();
+					   r2 * this->c2_ * (this->pg_ - this->position_));
 
-	this->velocity_ = this->velocity_.array() * this->max_velocity_;
+	this->velocity_ = this->velocity_.array(); // * this->max_velocity_;
 }
 
 void DroneController::calculate_pso_fitness()
 {
+	// sum distance to detected threats
+	double dist_threats_sum = 0;
+	for ( const auto& threat : this->swarm_threats_ ) {
+		dist_threats_sum += (this->position_ - sd_pos_to_eigen(threat.pos))
+								.segment(0, 1)
+								.cwiseAbs()
+								.norm();
+	}
 
-	this->pso_score_ = this->swarm_threats_.size();
-}
-
-void DroneController::process_pso_information()
-{
+	// sum distance to other drones
+	double dist_drones_sum = 0;
+	for ( const auto& drone : this->swarm_info_.swarm_drones ) {
+		if ( static_cast<FlightMode>(drone.flight_mode) ==
+			 FlightMode::FLYING ) {
+			dist_drones_sum += (this->position_ - sd_pos_to_eigen(drone.pos))
+								   .segment(0, 1)
+								   .cwiseAbs()
+								   .norm();
+		}
+	}
+	this->pso_score_ = -(this->swarm_threats_.size() * 10.0) -
+					   dist_threats_sum + dist_drones_sum -
+					   distribution(generator) * 10.0;
 }
 
 void DroneController::pso_update_pg(const double& score,
 									const Eigen::Vector3d& pos)
 {
-	if ( score > this->pg_score_ ) {
+	if ( score < this->pg_score_ ) {
 		this->pg_score_ = score;
 		this->pg_ = pos;
 	}
@@ -265,7 +291,7 @@ void DroneController::pso_update_pg(const double& score,
 
 void DroneController::pso_update_pb()
 {
-	if ( this->pso_score_ > this->pb_score_ ) {
+	if ( this->pso_score_ < this->pb_score_ ) {
 		this->pb_score_ = this->pso_score_;
 		this->pb_ = this->position_;
 	}
@@ -472,7 +498,7 @@ void DroneController::callback_comm_receive(
 	const sd_interfaces::msg::SwarmInfo& msg)
 {
 	this->swarm_info_ = msg;
-	this->swarm_threats_ = msg.swarm_threats;
+	// this->swarm_threats_ = msg.swarm_threats;
 }
 
 void DroneController::callback_position(
@@ -485,6 +511,7 @@ void DroneController::callback_position(
 
 int main(int argc, char* argv[])
 {
+	srand(getpid());
 	rclcpp::init(argc, argv);
 	rclcpp::spin(std::make_shared<sd::DroneController>());
 	rclcpp::shutdown();

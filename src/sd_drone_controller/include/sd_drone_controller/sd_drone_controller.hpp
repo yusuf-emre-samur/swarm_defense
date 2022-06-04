@@ -76,9 +76,6 @@ class DroneController : public rclcpp::Node
 	// checks new positions score and set to pb if score is better
 	void pso_update_pb();
 
-	// process information regarding pso algorithm
-	void process_pso_information();
-
 	// publish current target to flight controller
 	void publish_target();
 
