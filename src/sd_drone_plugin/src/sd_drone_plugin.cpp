@@ -133,15 +133,6 @@ void DronePlugin::flight_model()
 			vel.X() = 0;
 			vel.Y() = 0;
 			this->model_->SetLinearVel(vel);
-
-			RCLCPP_INFO(ros2node_->get_logger(),
-						std::string("r: " + std::to_string(rpy.X())).c_str());
-
-			RCLCPP_INFO(ros2node_->get_logger(),
-						std::string("p: " + std::to_string(rpy.Y())).c_str());
-
-			RCLCPP_INFO(ros2node_->get_logger(),
-						std::string("y: " + std::to_string(rpy.Z())).c_str());
 			rpy_diff.Z() = yaw.Radian();
 			// rpy_diff = rpy_diff.Normalize();
 			this->model_->SetAngularVel(rpy_diff);
