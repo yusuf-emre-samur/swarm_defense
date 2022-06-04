@@ -54,9 +54,9 @@ void WorldPlugin::OnUpdate()
 		sd_interfaces::msg::Object obj;
 		obj.id = object;
 		// center
-		obj.bbox.center.x = bbox.Center().X();
-		obj.bbox.center.y = bbox.Center().Y();
-		obj.bbox.center.z = bbox.Center().Z();
+		obj.bbox.center.x = model->WorldPose().Pos().X();
+		obj.bbox.center.y = model->WorldPose().Pos().Y();
+		obj.bbox.center.z = model->WorldPose().Pos().Z();
 		// min
 		obj.bbox.pmin.x = bbox.Min().X();
 		obj.bbox.pmin.y = bbox.Min().Y();
