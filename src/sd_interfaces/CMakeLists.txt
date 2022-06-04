@@ -39,6 +39,9 @@ set(msg_files
   "msg/DroneHeader.msg"
 
   "msg/DroneMsgOut.msg"
+
+  "msg/Threat.msg"
+
   "msg/DroneMsgs.msg"
   "msg/FlightTarget.msg"
 

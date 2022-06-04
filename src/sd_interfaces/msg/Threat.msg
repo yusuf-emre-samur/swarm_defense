@@ -1,4 +1,5 @@
 uint8 threat_id
+builtin_interfaces/Time time_detected
 sd_interfaces/Position pos
-uint8 identified_from_drone
-uint8 num_threats
+bool is_followed
+uint8 following_drone
