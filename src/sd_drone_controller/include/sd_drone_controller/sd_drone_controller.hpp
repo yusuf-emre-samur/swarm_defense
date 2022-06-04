@@ -75,8 +75,7 @@ class DroneController : public rclcpp::Node
 	void turn_motors_off();
 
 	// callback function for subcsriber to world objects list
-	void callback_world_objects(
-		const sd_interfaces::msg::WorldObjects::SharedPtr msg);
+	void callback_world_objects(const sd_interfaces::msg::WorldObjects& msg);
 
 	// callback for subscriber to receiving communication
 	void callback_comm_receive(const sd_interfaces::msg::SwarmInfo& msg);
@@ -135,11 +134,34 @@ class DroneController : public rclcpp::Node
 	// received information about swarm
 	sd_interfaces::msg::SwarmInfo swarm_info_;
 
+	// list of world objetcs
+	sd_interfaces::msg::WorldObjects world_objects_;
+
+	// radius where drone can detect objects
+	double perception_radius_ = 5.0;
+
 	// percentage of drone battery
 	double battery_;
 
 	// minimum number of drones which have to fly durin sim
 	uint8_t min_flying_drones_;
+
+	uint start_counter_ = 0;
+
+	double drone_op_height_;
+
+	// pso
+	double w_;
+	double c1_;
+	double c2_;
+
+	Eigen::Vector3d pb_;
+	double pb_score_;
+	Eigen::Vector3d pg_;
+	double pg_score_;
+
+	Eigen::Vector3d velocity_;
+	Eigen::Array3d max_velocity_;
 };
 
 } // namespace sd

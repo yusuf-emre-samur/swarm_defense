@@ -1,4 +1,7 @@
 #include "sd_drone_controller/sd_drone_controller.hpp"
+#include <random>
+std::default_random_engine generator;
+std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
 namespace sd {
 DroneController::DroneController() : rclcpp::Node("DroneController")
@@ -27,6 +30,30 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 	this->declare_parameter<double>("battery", 100.0);
 	this->get_parameter("battery", this->battery_);
 
+	// pso parameters
+	this->declare_parameter<double>("pso_w", 0.9);
+	this->get_parameter("pso_c1", this->w_);
+
+	this->declare_parameter<double>("pso_c1", 1.49);
+	this->get_parameter("pso_c1", this->c1_);
+
+	this->declare_parameter<double>("pso_c2", 1.49);
+	this->get_parameter("pso_c2", this->c2_);
+
+	// max velocity
+	this->declare_parameter<std::vector<double>>("max_velocity");
+	rclcpp::Parameter pso_max_vel("max_velocity",
+								  std::vector<double>({5.0, 5.0, 0.0}));
+	this->get_parameter("max_velocity", pso_max_vel);
+	auto tmp2 = pso_max_vel.as_double_array();
+	this->max_velocity_.x() = tmp2[0];
+	this->max_velocity_.y() = tmp2[1];
+	this->max_velocity_.z() = tmp2[2];
+
+	// set pb and pg to max
+	this->pb_score_ = std::numeric_limits<double>::max();
+	this->pg_score_ = std::numeric_limits<double>::max();
+
 	if ( this->battery_ < 80.0 ) {
 		// start at e
 		this->drone_mode_ = DroneMode::NOTREADY;
@@ -35,6 +62,8 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 		this->drone_mode_ = DroneMode::READY;
 	}
 	this->flight_mode_ = FlightMode::LANDED;
+
+	this->drone_op_height_ = static_cast<double>(this->id_) * 1.5 + 15;
 
 	using namespace std::chrono_literals;
 	this->timer_ =
@@ -74,13 +103,13 @@ void DroneController::timer_callback()
 	this->process_swarm_information();
 	this->simulate_battery();
 	this->detect_threats();
-	this->si_algorithms();
 	this->flight();
 	// this->filter_detected_threats();
 }
 
 void DroneController::si_algorithms()
 {
+	this->calculate_pso_velocity();
 }
 
 void DroneController::share_knowledge_to_swarm()
@@ -114,7 +143,9 @@ void DroneController::simulate_battery()
 	if ( this->flight_mode_ == FlightMode::LANDED ) {
 		// limit loading to 100% battery capcaity
 		if ( this->battery_ < 100.0 ) {
-			this->battery_ += 1.0; //(1.0 / 15.0); // 1 percent per minute
+			this->battery_ += (1.0 / 15.0); // 1 percent per minute
+		} else {
+			this->battery_ = 100.0;
 		}
 
 		// from e to a if battery > 80%
@@ -124,7 +155,8 @@ void DroneController::simulate_battery()
 		}
 
 	} else {
-		this->battery_ -= 0.5; //(1.0 / 60.0); // (1 / 4) * (1 / 15);
+		this->battery_ -= (1.0 / 60.0);
+		// (1.0 / 60.0); // (1 / 4) * (1 / 15); // 4 percent per minute
 	}
 
 	// from c to d if battery < 20%
@@ -191,8 +223,7 @@ void DroneController::check_start()
 
 				++num_drones_flying_or_starting;
 			}
-			if ( drone_mode == DroneMode::READY &&
-				 flight_mode == FlightMode::STARTING ) {
+			if ( drone_mode == DroneMode::READY ) { //
 				if ( drone.drone_id < this->id_ ) {
 					++num_drones_lower_id;
 				}
@@ -208,8 +239,7 @@ void DroneController::check_start()
 		 (this->flight_mode_ == FlightMode::STARTING) ) {
 		++num_drones_flying_or_starting;
 	}
-	if ( (this->flight_mode_ == FlightMode::LANDED) &&
-		 (this->drone_mode_ == DroneMode::READY) ) {
+	if ( (this->drone_mode_ == DroneMode::READY) ) {
 		++num_drones_landed_ready;
 	}
 
@@ -219,31 +249,15 @@ void DroneController::check_start()
 	const int8_t num_too_much_drones =
 		num_drones_flying_or_starting - num_drones_needed;
 
-	RCLCPP_INFO(this->get_logger(),
-				std::string("flying/starting: " +
-							std::to_string(num_drones_flying_or_starting))
-					.c_str());
-	RCLCPP_INFO(
-		this->get_logger(),
-		std::string("landed&ready: " + std::to_string(num_drones_landed_ready))
-			.c_str());
-
-	RCLCPP_INFO(this->get_logger(), std::string("new drones needed: " +
-												std::to_string(num_new_drones))
-										.c_str());
-
-	RCLCPP_INFO(this->get_logger(),
-				std::string("lower ids: " + std::to_string(num_drones_lower_id))
-					.c_str());
-
 	if ( num_new_drones > 0 ) {
 		// new drones needed
-		if ( num_drones_lower_id < num_new_drones ) {
+		if ( num_drones_lower_id <= num_new_drones ) { //
 			this->flight_mode_ = FlightMode::STARTING;
 		}
 	} else if ( num_too_much_drones > 0 ) {
 		// too much drones
 		if ( num_too_much_drones <= num_drones_lower_id ) {
+			// have to land
 			if ( this->flight_mode_ == FlightMode::STARTING ) {
 				this->flight_mode_ = FlightMode::LANDING;
 			}
@@ -253,19 +267,27 @@ void DroneController::check_start()
 
 void DroneController::drone_start()
 {
-
-	auto target = this->base_station_pos_ + Eigen::Vector3d(0, 0, 10);
+	auto target =
+		this->base_station_pos_ + Eigen::Vector3d(0, 0, this->drone_op_height_);
 	auto dist = (this->position_ - target).cwiseAbs().norm();
 	if ( dist < 0.05 ) {
 		this->flight_mode_ = FlightMode::FLYING;
 		this->drone_mode_ = DroneMode::FLYING;
+		this->start_counter_ = 0;
 	} else {
-		this->target_ = target;
+		++this->start_counter_;
+		if ( this->start_counter_ > 10 ) {
+			this->target_ = target;
+		}
 	}
 }
 
 void DroneController::drone_flying()
 {
+	this->si_algorithms();
+
+	this->target_ = this->position_ + this->velocity_;
+	this->target_.z() = this->drone_op_height_;
 }
 
 void DroneController::drone_landed()
@@ -274,15 +296,33 @@ void DroneController::drone_landed()
 	sd_interfaces::msg::FlightTarget target;
 	target.motors_on = false;
 	this->pub_target_->publish(target);
+	this->start_counter_ = 0;
 }
 
 void DroneController::drone_landing()
 {
-	auto dist = (this->position_ - this->base_station_pos_).cwiseAbs().norm();
-	if ( dist < 0.05 ) {
-		this->flight_mode_ = FlightMode::LANDED;
-	} else {
+
+	auto pos_wo_z = this->position_;
+	pos_wo_z.z() = 0;
+
+	auto pos_bs_wo_z = this->base_station_pos_;
+	pos_bs_wo_z.z() = 0;
+
+	auto xy_distance = (pos_wo_z - pos_bs_wo_z).cwiseAbs().norm();
+
+	if ( xy_distance < 0.05 ) {
 		this->target_ = this->base_station_pos_;
+		auto dist =
+			(this->position_ - this->base_station_pos_).cwiseAbs().norm();
+		if ( dist < 0.05 ) {
+			this->flight_mode_ = FlightMode::LANDED;
+			this->start_counter_ = 0;
+		}
+	} else {
+		auto over_base_station_pos =
+			this->base_station_pos_ +
+			Eigen::Vector3d(0, 0, this->drone_op_height_);
+		this->target_ = over_base_station_pos;
 	}
 }
 
@@ -296,6 +336,15 @@ void DroneController::turn_motors_off()
 
 void DroneController::detect_threats()
 {
+	for ( const auto& object : this->world_objects_.objects ) {
+		auto obj_pos = Eigen::Vector3d(
+			object.bbox.center.x, object.bbox.center.y, object.bbox.center.z);
+
+		auto dist = (this->position_ - obj_pos).cwiseAbs().norm();
+
+		if ( dist < this->perception_radius_ ) {
+		}
+	}
 }
 
 void DroneController::filter_detected_threats()
@@ -304,6 +353,15 @@ void DroneController::filter_detected_threats()
 
 void DroneController::calculate_pso_velocity()
 {
+	auto r1 = distribution(generator);
+	auto r2 = distribution(generator);
+
+	this->velocity_ = (this->w_ * this->velocity_ +
+					   r1 * this->c1_ * (this->pb_ - this->position_) +
+					   r2 * this->c2_ * (this->pg_ - this->position_))
+						  .normalized();
+
+	this->velocity_ = this->velocity_.array() * this->max_velocity_;
 }
 
 void DroneController::publish_target()
@@ -329,8 +387,9 @@ void DroneController::flight_to_base_station()
 
 // subscirber world objects
 void DroneController::callback_world_objects(
-	const sd_interfaces::msg::WorldObjects::SharedPtr msg)
+	const sd_interfaces::msg::WorldObjects& msg)
 {
+	this->world_objects_ = msg;
 }
 
 // subscriber communincation receive
