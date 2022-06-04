@@ -28,6 +28,9 @@ class MinimalSubscriber(Node):
         self.drone_battery = []
         self.drone_mode = []
         self.drone_flight_mode = []
+        self.drone_pb = []
+        self.drone_pb_score = []
+        self.drone_pg = []
 
         self.rect = []
 
@@ -63,6 +66,15 @@ class MinimalSubscriber(Node):
 
             self.drone_flight_mode.append(self.canvas.create_text(
                 (self.s + 150 + i*(self.w+self.a), self.s+260), text=f"Flight Mode: ", font=('Helvetica', 9, )))
+
+            self.drone_pb.append(self.canvas.create_text(
+                (self.s + 150 + i*(self.w+self.a), self.s+300), text=f"pb: ", font=('Helvetica', 9, )))
+
+            self.drone_pb_score.append(self.canvas.create_text(
+                (self.s + 150 + i*(self.w+self.a), self.s+340), text=f"pb score: ", font=('Helvetica', 9, )))
+
+            self.drone_pg.append(self.canvas.create_text(
+                (self.s + 150 + i*(self.w+self.a), self.s+380), text=f"pg: ", font=('Helvetica', 9, )))
 
         self.subscription = self.create_subscription(
             DroneMsgOut,
@@ -127,6 +139,12 @@ class MinimalSubscriber(Node):
 
                 self.canvas.itemconfigure(
                     self.drone_flight_mode[i], text=f"Flight Mode: {fmode_text}")
+
+                self.canvas.itemconfigure(
+                    self.drone_pb[i], text=f"pb: {round(self.msg[i].pb.x, 1)},  {round(self.msg[i].pb.y, 1)}")
+
+                self.canvas.itemconfigure(
+                    self.drone_pb_score[i], text=f"pb score: {round(self.msg[i].pb_score, 2)}")
 
         self.root.update()
 
