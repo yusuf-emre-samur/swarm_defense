@@ -49,24 +49,30 @@ void WorldPlugin::OnUpdate()
 	sd_interfaces::msg::WorldObjects object_list;
 	for ( const auto& object : this->track_objects_ ) {
 		auto model = this->world_->ModelByName(object);
-		auto bbox = model->BoundingBox();
+		if ( model ) {
+			auto bbox = model->BoundingBox();
 
-		sd_interfaces::msg::Object obj;
-		obj.id = object;
-		// center
-		obj.bbox.center.x = model->WorldPose().Pos().X();
-		obj.bbox.center.y = model->WorldPose().Pos().Y();
-		obj.bbox.center.z = model->WorldPose().Pos().Z();
-		// min
-		obj.bbox.pmin.x = bbox.Min().X();
-		obj.bbox.pmin.y = bbox.Min().Y();
-		obj.bbox.pmin.z = bbox.Min().Z();
-		// max
-		obj.bbox.pmax.x = bbox.Max().X();
-		obj.bbox.pmax.y = bbox.Max().Y();
-		obj.bbox.pmax.z = bbox.Max().Z();
+			sd_interfaces::msg::Object obj;
+			obj.id = object;
+			// center
+			obj.bbox.center.x = model->WorldPose().Pos().X();
+			obj.bbox.center.y = model->WorldPose().Pos().Y();
+			obj.bbox.center.z = model->WorldPose().Pos().Z();
+			// min
+			obj.bbox.pmin.x = bbox.Min().X();
+			obj.bbox.pmin.y = bbox.Min().Y();
+			obj.bbox.pmin.z = bbox.Min().Z();
+			// max
+			obj.bbox.pmax.x = bbox.Max().X();
+			obj.bbox.pmax.y = bbox.Max().Y();
+			obj.bbox.pmax.z = bbox.Max().Z();
 
-		object_list.objects.push_back(obj);
+			object_list.objects.push_back(obj);
+		} else {
+			RCLCPP_ERROR_ONCE(
+				this->ros2node_->get_logger(),
+				std::string("Model " + object + " not found!").c_str());
+		}
 	}
 	// publish
 	object_list.header.frame_id = "world";
