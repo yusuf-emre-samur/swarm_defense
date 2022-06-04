@@ -121,7 +121,7 @@ void DronePlugin::flight_model()
 		yaw.Normalize();
 
 		// first lift up and rotate
-		if ( z_dist > 0.3 || std::abs(yaw.Radian()) > IGN_DTOR(5) ) {
+		if ( z_dist > 0.3 || std::abs(yaw.Radian()) > IGN_DTOR(30) ) {
 			// lif
 			vel.X() = 0;
 			vel.Y() = 0;
