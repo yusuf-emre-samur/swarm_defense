@@ -37,30 +37,34 @@ void ActorPlugin::Load(gazebo::physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
 	// object to track
 	if ( _sdf->HasElement("points") ) {
-		auto point = _sdf->GetElement("points")->GetElement("point");
-		while ( point ) {
-			WalkingPoint wp;
-			if ( point->HasAttribute("type") ) {
-				auto walking_type = point->GetAttribute("type")->GetAsString();
-				if ( walking_type == "run" ) {
-					wp.walking_type = ANIMATION_ENUM::RUNNING;
-				}
-				if ( walking_type == "walk" ) {
+		auto points = _sdf->GetElement("points");
+		if ( points->HasElement("point") ) {
+			auto point = points->GetElement("point");
+			while ( point ) {
+				WalkingPoint wp;
+				if ( point->HasAttribute("type") ) {
+					auto walking_type =
+						point->GetAttribute("type")->GetAsString();
+					if ( walking_type == "run" ) {
+						wp.walking_type = ANIMATION_ENUM::RUNNING;
+					}
+					if ( walking_type == "walk" ) {
+						wp.walking_type = ANIMATION_ENUM::WALKING;
+					}
+				} else {
 					wp.walking_type = ANIMATION_ENUM::WALKING;
 				}
-			} else {
-				wp.walking_type = ANIMATION_ENUM::WALKING;
+				if ( point->HasAttribute("wait_after") ) {
+					auto wait_after =
+						point->GetAttribute("wait_after")->GetAsString();
+					wp.wait_after = std::stod(wait_after);
+				}
+				auto p = point->Get<ignition::math::Vector2d>();
+				wp.x = p.X();
+				wp.y = p.Y();
+				this->points_.push(wp);
+				point = point->GetNextElement("point");
 			}
-			if ( point->HasAttribute("wait_after") ) {
-				auto wait_after =
-					point->GetAttribute("wait_after")->GetAsString();
-				wp.wait_after = std::stod(wait_after);
-			}
-			auto p = point->Get<ignition::math::Vector2d>();
-			wp.x = p.X();
-			wp.y = p.Y();
-			this->points_.push(wp);
-			point = point->GetNextElement("point");
 		}
 	}
 
