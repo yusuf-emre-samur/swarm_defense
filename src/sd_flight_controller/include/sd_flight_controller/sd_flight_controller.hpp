@@ -12,7 +12,6 @@
 
 // interfaces
 
-#include <sd_interfaces/msg/drone_msgs.hpp>
 #include <sd_interfaces/msg/flight_target.hpp>
 #include <sd_interfaces/msg/position_stamped.hpp>
 #include <sd_interfaces/msg/swarm_info.hpp>
