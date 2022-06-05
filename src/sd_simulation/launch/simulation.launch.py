@@ -63,10 +63,13 @@ def generate_launch_description():
         [10.0 * i for i in range(num_drones-min_fly)]
 
     # pso
-    pso_max_vel = [5.0, 5.0, 0.0]
-    pso_w = 0.9
+    pso_max_vel = [10.0, 10.0, 0.0]
+    pso_w = 1.9
     pso_c1 = 1.49
     pso_c2 = 1.49
+
+    bbox_min = [-160.0, -160.0]
+    bbox_max = [80.0, 80.0]
 
 
     for i in range(num_drones):
@@ -86,7 +89,10 @@ def generate_launch_description():
                     {"pso_w": pso_w},
                     {"pso_c1": pso_c1},
                     {"pso_c2": pso_c2},
-                    {"max_velocity": pso_max_vel}
+                    {"max_velocity": pso_max_vel},
+                    {"bbox_min": bbox_min},
+                    {"bbox_max": bbox_max}
+
                 ],
                 arguments=[
 
