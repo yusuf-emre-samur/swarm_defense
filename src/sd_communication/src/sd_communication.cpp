@@ -112,7 +112,7 @@ void DroneCommunication::callback_comm_incoming(
 								 sd_pos_to_eigen(threat.pos))
 									.cwiseAbs()
 									.norm();
-					if ( dist < 2.0 ) {
+					if ( dist < 4.0 ) {
 						// received threat is same like existing
 						// add following ids to existing threat, if not already
 						// in list
