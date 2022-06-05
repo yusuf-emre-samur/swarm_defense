@@ -31,28 +31,21 @@ endif()
 set(msg_files
   "msg/BoundingBox.msg"
 
-  "msg/Object.msg"
-  "msg/ObjectStamped.msg"
-
-  "msg/WorldObjects.msg"
-
   "msg/DroneHeader.msg"
-
   "msg/DroneMsgOut.msg"
+
+  "msg/FlightTarget.msg"
+
+  "msg/Object.msg"
+
+  "msg/Position.msg"
+  "msg/PositionStamped.msg"
 
   "msg/Threat.msg"
 
-  "msg/DroneMsgs.msg"
-  "msg/FlightTarget.msg"
-
-  "msg/SwarmPositions.msg"
   "msg/SwarmInfo.msg"
-  
-  "msg/Position.msg"
-  "msg/PositionStamped.msg"
-  "msg/PositionsVector.msg"
-  
-  "msg/WalkingType.msg"
+
+  "msg/WorldObjects.msg"
 )
 
 set(service_files
