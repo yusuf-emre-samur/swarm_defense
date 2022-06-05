@@ -54,8 +54,8 @@ class DroneController : public rclcpp::Node
 	// simulate the battery capacity and usage of the drone
 	void simulate_battery();
 
-	// process information with si algorithms and set new target
-	void si_algorithms();
+	// process information with pso algorithm
+	void pso_algorithm(const bool& set_velocity);
 
 	// threat detection
 	void detect_threats();
