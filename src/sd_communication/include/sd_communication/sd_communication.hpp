@@ -29,7 +29,7 @@ class DroneCommunication : public rclcpp::Node
 	void timer_callback();
 
 	void update_knowledge();
-	uint8_t old_after_;
+	double old_after__seconds_;
 
 	// sent msg from drone controller to drones
 	void sent_messages_outgoing();
@@ -69,6 +69,8 @@ class DroneCommunication : public rclcpp::Node
 
 	std::mutex swarm_info_mutex_;
 	sd_interfaces::msg::SwarmInfo swarm_info_;
+
+	std::vector<sd_interfaces::msg::Threat> swarm_threats_;
 
 	rclcpp::Time last_time_;
 };
