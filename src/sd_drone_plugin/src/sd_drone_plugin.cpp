@@ -133,11 +133,12 @@ void DronePlugin::flight_model()
 			vel.X() = 0;
 			vel.Y() = 0;
 			this->model_->SetLinearVel(vel);
-			rpy_diff.Z() = yaw.Radian();
-			// rpy_diff = rpy_diff.Normalize();
-			this->model_->SetAngularVel(rpy_diff);
+
 			// rotate
 			if ( xy_dist > 0.1 ) {
+				rpy_diff.Z() = yaw.Radian();
+				// rpy_diff = rpy_diff.Normalize();
+				this->model_->SetAngularVel(rpy_diff);
 			}
 
 		} else {
