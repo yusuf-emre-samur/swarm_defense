@@ -11,7 +11,6 @@
 
 // interfaces
 #include <sd_interfaces/msg/drone_msg_out.hpp>
-#include <sd_interfaces/msg/drone_msgs.hpp>
 #include <sd_interfaces/msg/flight_target.hpp>
 #include <sd_interfaces/msg/position_stamped.hpp>
 #include <sd_interfaces/msg/swarm_info.hpp>
@@ -131,6 +130,10 @@ class DroneController : public rclcpp::Node
 	// ROS timer for callback function
 	rclcpp::TimerBase ::SharedPtr timer_;
 
+	static constexpr double callback_period_d_ = 0.1;
+	rclcpp::Duration callback_period_ =
+		rclcpp::Duration::from_seconds(callback_period_d_);
+
 	//
 	// ros subscriber
 
@@ -187,7 +190,7 @@ class DroneController : public rclcpp::Node
 	sd_interfaces::msg::WorldObjects world_objects_;
 
 	// radius where drone can detect objects
-	double perception_radius_ = 10.0;
+	double perception_radius_ = 20.0;
 
 	// percentage of drone battery
 	double battery_;
@@ -235,9 +238,7 @@ class DroneController : public rclcpp::Node
 	std::vector<sd_interfaces::msg::Threat> swarm_threats_;
 
 	bool following_threat_ = false;
-
-	std::vector<sd_interfaces::msg::Position> ignore_regions_;
-	double ignore_radius_ = 10.0;
+	Eigen::Vector3d following_pos_;
 
 	Eigen::Vector2d bbox_max_;
 	Eigen::Vector2d bbox_min_;

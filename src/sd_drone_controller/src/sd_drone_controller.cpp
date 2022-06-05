@@ -101,7 +101,7 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 	// main loop timer
 	using namespace std::chrono_literals;
 	this->timer_ =
-		rclcpp::create_timer(this, this->get_clock(), 100ms,
+		rclcpp::create_timer(this, this->get_clock(), this->callback_period_,
 							 std::bind(&DroneController::timer_callback, this));
 	//
 	// ROS subscriber
@@ -178,26 +178,20 @@ void DroneController::process_swarm_information()
 	if ( this->drone_mode_ != DroneMode::NOTREADY ) {
 		this->check_start();
 	}
-
-	// create ignore regions
-	for ( const auto& drone : this->swarm_info_.swarm_drones ) {
-		auto dist = (this->position_ - sd_pos_to_eigen(drone.pos))
-						.segment(0, 2)
-						.cwiseAbs()
-						.norm();
-		if ( dist < this->ignore_radius_ ) {
-			this->ignore_regions_.push_back(drone.pos);
-		}
-	}
 }
 
 void DroneController::simulate_battery()
 {
+	constexpr double battery_up =
+		(1.0 / 60.0) * this->callback_period_d_; // 1 percent per minute
+	constexpr double battery_down =
+		(5.0 / 60.0) * this->callback_period_d_; // 5 percent per minute
+
 	// if landed (e and a)
 	if ( this->flight_mode_ == FlightMode::LANDED ) {
 		// limit loading to 100% battery capcaity
 		if ( this->battery_ < 100.0 ) {
-			this->battery_ += (1.0 / 15.0); // 1 percent per minute
+			this->battery_ += battery_up;
 		} else {
 			this->battery_ = 100.0;
 		}
@@ -207,10 +201,8 @@ void DroneController::simulate_battery()
 			 this->battery_ > 80.0 ) {
 			this->drone_mode_ = DroneMode::READY;
 		}
-
 	} else {
-		this->battery_ -= (1.0 / 60.0);
-		// (1.0 / 60.0); // (1 / 4) * (1 / 15); // 4 percent per minute
+		this->battery_ -= battery_down;
 	}
 
 	// from c to d if battery < 20%
@@ -266,6 +258,8 @@ void DroneController::si_algorithms()
 
 	// calculate velocity
 	this->calculate_pso_velocity();
+
+	this->target_ = this->position_ + this->velocity_;
 }
 
 void DroneController::calculate_pso_velocity()
@@ -282,23 +276,6 @@ void DroneController::calculate_pso_velocity()
 
 	this->velocity_ =
 		this->velocity_.normalized().array() * this->max_velocity_;
-
-	//
-	// vector from other flying drones
-	auto vector_out = Eigen::Vector3d();
-	uint8_t num_flying_drones = 0;
-	for ( const auto& drone : this->swarm_info_.swarm_drones ) {
-		if ( static_cast<DroneMode>(drone.drone_mode) == DroneMode::FLYING ) {
-
-			vector_out += (sd_pos_to_eigen(drone.pos) - this->position_);
-			++num_flying_drones;
-		}
-	}
-	vector_out /= static_cast<double>(num_flying_drones);
-
-	if ( vector_out.normalized().cwiseAbs().norm() > 5.0 ) {
-		this->velocity_ = vector_out.normalized().array() * this->max_velocity_;
-	}
 }
 
 void DroneController::calculate_pso_fitness()
@@ -325,27 +302,8 @@ void DroneController::calculate_pso_fitness()
 		}
 	}
 
-	// for ( const auto& threat : this->swarm_threats_ ) {
-	// 	for ( const auto& drone : this->swarm_info_.swarm_drones ) {
-	// 		if ( static_cast<DroneMode>(drone.drone_mode) ==
-	// 			 DroneMode::FLYING ) {
-	// 			auto dist =
-	// 				(sd_pos_to_eigen(threat.pos) - sd_pos_to_eigen(drone.pos))
-	// 					.segment(0, 2)
-	// 					.cwiseAbs()
-	// 					.norm();
-	// 			if ( dist < this->perception_radius_ ) {
-	// 				RCLCPP_INFO(this->get_logger(), "another drone in near");
-	// 				// negative feedback
-	// 				z_val -= 0.00001 * (std::pow((x_pos - threat.pos.x), 2) +
-	// 									std::pow(y_pos - threat.pos.y, 2));
-	// 			}
-	// 		}
-	// 	}
-	// }
-
-	//
-	// check ignore regions:
+	// offset to trains
+	z_val += 0.01 * (std::pow(y_pos + 20, 2)) - 10;
 
 	this->pso_score_ = z_val;
 
@@ -380,7 +338,7 @@ void DroneController::detect_threats()
 	for ( const auto& object : this->world_objects_.objects ) {
 		sd_interfaces::msg::Threat t;
 		t.pos = object.bbox.center;
-		t.following_drones_id.push_back(this->id_);
+		t.detected_drone_id = this->id_;
 		t.time_detected = this->now();
 
 		auto t_pos = sd_pos_to_eigen(t.pos);
@@ -430,28 +388,70 @@ void DroneController::detect_threats()
 					this->swarm_threats_.push_back(t);
 				}
 			} else {
-				RCLCPP_INFO(
-					this->get_logger(),
-					std::string("detected threat: " + object.id).c_str());
-				RCLCPP_INFO(
-					this->get_logger(),
-					std::string("threat distance : " + std::to_string(dist))
-						.c_str());
-				RCLCPP_INFO(this->get_logger(),
-							std::string("t dist x: " + std::to_string(abcd.x()))
-								.c_str());
-				RCLCPP_INFO(this->get_logger(),
-							std::string("t dist y: " + std::to_string(abcd.y()))
-								.c_str());
 				this->swarm_threats_.push_back(t);
 			}
 		}
 	}
+
+	// check detected threats with received threats from other drones
+	// iterate over threats from other drones
+	for ( auto& o_threat : this->swarm_info_.swarm_threats ) {
+		// remove all threats, where other drones with lower ids detected them
+		this->swarm_threats_.erase(
+			std::remove_if(
+				this->swarm_threats_.begin(), this->swarm_threats_.end(),
+				[&](const sd_interfaces::msg::Threat& threat) {
+					// first check if threats are the same
+					if ( ((sd_pos_to_eigen(threat.pos) -
+						   sd_pos_to_eigen(o_threat.pos))
+							  .cwiseAbs()
+							  .norm()) < 2.0 ) {
+						// if so, check if lower ids exist
+						uint8_t lower_ids = 0;
+						for ( const auto& id : o_threat.following_drones_id ) {
+							if ( id < threat.detected_drone_id ) {
+								++lower_ids;
+							}
+						}
+						return lower_ids != 0;
+					} else {
+						return false;
+					}
+				}),
+			this->swarm_threats_.end());
+	}
+
+	//
+	// check if threats are detected
+	if ( this->following_threat_ ) {
+		// false following
+		if ( this->swarm_threats_.size() == 0 ) {
+			this->following_threat_ = false;
+		} else {
+			// set correct threat position
+			auto threat = this->swarm_threats_.front();
+			this->following_pos_ = sd_pos_to_eigen(threat.pos);
+		}
+
+	} else {
+		// if not, chose threat to follow
+		if ( this->swarm_threats_.size() > 0 ) {
+			this->following_threat_ = true;
+		}
+	}
+
+	//
+	// check if drone should follow threat
 }
 
 void DroneController::check_start()
 {
-	const int8_t num_drones_needed = this->min_flying_drones_;
+	// count number detected threats
+	// const int8_t
+
+	const int8_t num_drones_needed =
+		this->min_flying_drones_ +
+		static_cast<int8_t>(this->swarm_info_.swarm_threats.size());
 	// check how many drones are in flying mode
 	int8_t num_drones_landed_ready = 0;
 	int8_t num_drones_flying_or_starting = 0;
@@ -547,9 +547,11 @@ void DroneController::drone_starting()
 
 void DroneController::drone_flying()
 {
-	this->si_algorithms();
-
-	this->target_ = this->position_ + this->velocity_;
+	if ( this->following_threat_ ) {
+		this->target_ = this->following_pos_;
+	} else {
+		this->si_algorithms();
+	}
 
 	// check if target is in bbox
 	if ( !this->in_bbox() ) {
@@ -612,7 +614,6 @@ void DroneController::callback_comm_receive(
 	const sd_interfaces::msg::SwarmInfo& msg)
 {
 	this->swarm_info_ = msg;
-	// this->swarm_threats_ = msg.swarm_threats;
 }
 
 void DroneController::callback_position(
