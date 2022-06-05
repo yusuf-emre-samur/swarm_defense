@@ -106,6 +106,12 @@ class DroneController : public rclcpp::Node
 	// checks if drone has to start
 	void check_start();
 
+	// helper function to check if target position is in bounding box
+	bool in_bbox();
+
+	// helper function to check if position is in bounding box
+	bool in_bbox(const Eigen::Vector3d& pos);
+
 	//
 	// ROS subscriber callback functions
 
@@ -181,7 +187,7 @@ class DroneController : public rclcpp::Node
 	sd_interfaces::msg::WorldObjects world_objects_;
 
 	// radius where drone can detect objects
-	double perception_radius_ = 5.0;
+	double perception_radius_ = 10.0;
 
 	// percentage of drone battery
 	double battery_;
@@ -229,6 +235,12 @@ class DroneController : public rclcpp::Node
 	std::vector<sd_interfaces::msg::Threat> swarm_threats_;
 
 	bool following_threat_ = false;
+
+	std::vector<sd_interfaces::msg::Position> ignore_regions_;
+	double ignore_radius_ = 10.0;
+
+	Eigen::Vector2d bbox_max_;
+	Eigen::Vector2d bbox_min_;
 };
 
 } // namespace sd
