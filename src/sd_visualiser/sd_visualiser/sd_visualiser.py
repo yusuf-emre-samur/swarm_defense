@@ -80,7 +80,7 @@ class MinimalSubscriber(Node):
                 (self.s + 150 + i*(self.w+self.a), self.s+380), text=f"pg: ", font=('Helvetica', 9, )))
 
             self.drone_num_threats.append(self.canvas.create_text(
-                (self.s + 150 + i*(self.w+self.a), self.s+420), text=f"num threats: ", font=('Helvetica', 9, )))
+                (self.s + 150 + i*(self.w+self.a), self.s+420), text=f"detected threats: ", font=('Helvetica', 9, )))
 
 
 
@@ -113,26 +113,22 @@ class MinimalSubscriber(Node):
                 self.canvas.itemconfigure(
                     self.drone_z[i], text=f"Z: {round(self.msg[i].drone_header.pos.z, 1)}")
                 self.canvas.itemconfigure(
-                    self.drone_battery[i], text=f"battery: {round(self.msg[i].drone_header.battery, 1)}")
+                    self.drone_battery[i], text=f"battery: {round(self.msg[i].drone_header.battery, 1)} % ")
 
                 mode = self.msg[i].drone_header.drone_mode
                 mode_text = None
-                color = None
+
                 if mode == 0:
                     mode_text = "Not Ready"
-                    color = "red"
                 elif mode == 1:
                     mode_text = "Ready"
-                    color = "yellow"
                 elif mode == 2:
                     mode_text = "Flying"
-                    color = "green"
 
                 self.canvas.itemconfigure(
                     self.drone_mode[i], text=f"Drone Mode: {mode_text}")
 
-                self.canvas.itemconfigure(
-                    self.rect[i], fill=color)
+
 
                 fmode = self.msg[i].drone_header.flight_mode
                 fmode_text = None
@@ -151,11 +147,31 @@ class MinimalSubscriber(Node):
                 self.canvas.itemconfigure(
                     self.drone_pb[i], text=f"pb: {round(self.msg[i].pb.x, 1)},  {round(self.msg[i].pb.y, 1)}")
 
-                self.canvas.itemconfigure(
-                    self.drone_pb_score[i], text=f"pb score: {round(self.msg[i].pb_score, 2)}")
+                pb_score = round(self.msg[i].pb_score, 2)
+                if pb_score > 100000.0:
+                    pb_score = None
 
                 self.canvas.itemconfigure(
-                    self.drone_num_threats[i], text=f"num threats: {len(self.msg[i].detected_threats)}")
+                    self.drone_pb_score[i], text=f"pb score: {pb_score}")
+
+                self.canvas.itemconfigure(
+                    self.drone_num_threats[i], text=f"detected threats: {len(self.msg[i].detected_threats)}")
+
+                color = None
+
+                if fmode_text == "Starting":
+                    color = "lightgreen"
+                elif fmode_text == "Flying":
+                    color = "green"
+                elif fmode_text == "Landing":
+                    color = "orange"
+                elif fmode_text == "Landed" and mode_text == "Not Ready":
+                    color = "red"
+                elif fmode_text == "Landed" and mode_text == "Ready":
+                    color = "yellow"
+
+                self.canvas.itemconfigure(
+                    self.rect[i], fill=color)
 
         self.root.update()
 
