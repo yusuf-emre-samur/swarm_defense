@@ -86,5 +86,13 @@
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
     "editor.wordWrap": "off",
-    "editor.formatOnSaveMode": "modifications"
+    "editor.formatOnSaveMode": "modifications",
+    "LineCount.includes": [
+        "src/**"
+    ],
+    "LineCount.excludes": [
+        "src/common_interfaces/**",
+        "src/gazebo_ros_pkgs/**",
+        "src/rclcpp/**",
+    ]
 }
