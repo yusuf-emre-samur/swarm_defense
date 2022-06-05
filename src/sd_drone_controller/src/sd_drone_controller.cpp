@@ -241,7 +241,7 @@ void DroneController::flight()
 	}
 }
 
-void DroneController::si_algorithms()
+void DroneController::pso_algorithm(const bool& set_velocity)
 {
 	//
 	// PSO algorithm
@@ -256,10 +256,12 @@ void DroneController::si_algorithms()
 	// update pb score
 	this->pso_update_pb();
 
-	// calculate velocity
-	this->calculate_pso_velocity();
+	if ( set_velocity ) {
+		// calculate velocity
+		this->calculate_pso_velocity();
 
-	this->target_ = this->position_ + this->velocity_;
+		this->target_ = this->position_ + this->velocity_;
+	}
 }
 
 void DroneController::calculate_pso_velocity()
@@ -362,7 +364,7 @@ void DroneController::detect_threats()
 
 					// if distance between threats is small, then threat is the
 					// same
-					if ( threats_dist < 2.0 ) {
+					if ( threats_dist < 4.0 ) {
 						RCLCPP_INFO(this->get_logger(),
 									std::string("detected threat: " + object.id)
 										.c_str());
@@ -405,7 +407,7 @@ void DroneController::detect_threats()
 					if ( ((sd_pos_to_eigen(threat.pos) -
 						   sd_pos_to_eigen(o_threat.pos))
 							  .cwiseAbs()
-							  .norm()) < 2.0 ) {
+							  .norm()) < 4.0 ) {
 						// if so, check if lower ids exist
 						uint8_t lower_ids = 0;
 						for ( const auto& id : o_threat.following_drones_id ) {
@@ -505,7 +507,8 @@ void DroneController::check_start()
 
 	if ( num_new_drones > 0 ) {
 		// new drones needed
-		if ( num_drones_lower_id <= num_new_drones ) { //
+		if ( num_drones_lower_id <= num_new_drones &&
+			 this->drone_mode_ == DroneMode::READY ) { //
 			this->flight_mode_ = FlightMode::STARTING;
 		}
 	} else if ( num_too_much_drones > 0 ) {
@@ -547,10 +550,11 @@ void DroneController::drone_starting()
 
 void DroneController::drone_flying()
 {
+	bool set_pso_velocity = true;
 	if ( this->following_threat_ ) {
 		this->target_ = this->following_pos_;
 	} else {
-		this->si_algorithms();
+		this->pso_algorithm(set_pso_velocity);
 	}
 
 	// check if target is in bbox
