@@ -31,6 +31,9 @@ class MinimalSubscriber(Node):
         self.drone_pb = []
         self.drone_pb_score = []
         self.drone_pg = []
+        self.drone_num_threats = []
+
+
 
         self.rect = []
 
@@ -75,6 +78,11 @@ class MinimalSubscriber(Node):
 
             self.drone_pg.append(self.canvas.create_text(
                 (self.s + 150 + i*(self.w+self.a), self.s+380), text=f"pg: ", font=('Helvetica', 9, )))
+
+            self.drone_num_threats.append(self.canvas.create_text(
+                (self.s + 150 + i*(self.w+self.a), self.s+420), text=f"num threats: ", font=('Helvetica', 9, )))
+
+
 
         self.subscription = self.create_subscription(
             DroneMsgOut,
@@ -145,6 +153,9 @@ class MinimalSubscriber(Node):
 
                 self.canvas.itemconfigure(
                     self.drone_pb_score[i], text=f"pb score: {round(self.msg[i].pb_score, 2)}")
+
+                self.canvas.itemconfigure(
+                    self.drone_num_threats[i], text=f"num threats: {len(self.msg[i].detected_threats)}")
 
         self.root.update()
 
