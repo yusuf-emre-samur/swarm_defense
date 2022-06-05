@@ -1,5 +1,7 @@
 #include "sd_communication/sd_communication.hpp"
 #include <sd_drone_controller/sd_utils.hpp>
+
+#include <algorithm>
 namespace sd {
 DroneCommunication::DroneCommunication() : rclcpp::Node("DroneCommunication")
 {
@@ -99,20 +101,53 @@ void DroneCommunication::callback_comm_incoming(
 
 	//
 	// threats
-	for ( const auto& threat : msg->detected_threats ) {
-		this->swarm_info_.swarm_threats.push_back(threat);
-	}
+	// bool new_threat_not_found = true;
+	// // iterate over new threats
+	// for ( const auto& threat : msg->detected_threats ) {
+	// 	// iterate over old threats
+
+	// 	auto it = this->swarm_info_.swarm_threats.begin();
+	// 	while ( it != this->swarm_info_.swarm_threats.end() ) {
+	// 		auto dist = (sd_pos_to_eigen(it->pos) - sd_pos_to_eigen(threat.pos))
+	// 						.segment(0, 2)
+	// 						.cwiseAbs()
+	// 						.norm();
+
+	// 		// if threats are the same
+	// 		if ( dist < 2.0 ) {
+	// 			RCLCPP_INFO(this->get_logger(), "same threat");
+	// 			new_threat_not_found = false;
+	// 			// if new threats following id is not in existing threats
+	// 			// following id, then add drones id
+	// 			if ( (std::find_if(
+	// 					  it->following_drones_id.begin(),
+	// 					  it->following_drones_id.end(),
+	// 					  [&](const sd_interfaces::msg::Threat::
+	// 							  _following_drones_id_type::value_type& id) {
+	// 						  return id == msg->drone_header.drone_id;
+	// 					  }) == it->following_drones_id.end()) ) {
+	// 				RCLCPP_INFO(this->get_logger(), "id does not exist");
+
+	// 				it->following_drones_id.push_back(
+	// 					msg->drone_header.drone_id);
+	// 			}
+	// 		}
+	// 	}
+	// 	if ( new_threat_not_found ) {
+	// 		this->swarm_info_.swarm_threats.push_back(threat);
+	// 	}
+	// }
 
 	// remove old information
-	auto threats = this->swarm_info_.swarm_threats;
-	threats.erase(
-		std::remove_if(threats.begin(), threats.end(),
-					   [&](const sd_interfaces::msg::Threat& threat) {
-						   return (this->now() -
-								   rclcpp::Time(threat.time_detected)) >
-								  rclcpp::Duration::from_seconds(5);
-					   }),
-		threats.end());
+	// auto threats = this->swarm_info_.swarm_threats;
+	// threats.erase(
+	// 	std::remove_if(threats.begin(), threats.end(),
+	// 				   [&](const sd_interfaces::msg::Threat& threat) {
+	// 					   return (this->now() -
+	// 							   rclcpp::Time(threat.time_detected)) >
+	// 							  rclcpp::Duration::from_seconds(5);
+	// 				   }),
+	// 	threats.end());
 
 	//
 	// PSO pg check, if drones pb > pg, update pg score and position
