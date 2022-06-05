@@ -7,3 +7,4 @@ src/gazebo_ros_pkgs
 src/geometry2
 src/rclcpp
 src/ros2_control
+src/sd_visualiser/sd_visualiser/__pycache__/sd_visualiser.cpython-38.pyc
