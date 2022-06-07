@@ -141,10 +141,12 @@ DroneController::DroneController() : rclcpp::Node("DroneController")
 // main loop
 void DroneController::timer_callback()
 {
-	this->share_knowledge_to_swarm();
-	this->process_swarm_information();
-	this->simulate_battery();
 	this->detect_threats();
+	this->process_swarm_information();
+
+	this->share_knowledge_to_swarm();
+	this->simulate_battery();
+
 	this->flight();
 }
 
