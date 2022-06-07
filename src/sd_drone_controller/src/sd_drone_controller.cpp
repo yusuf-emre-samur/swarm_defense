@@ -144,8 +144,9 @@ void DroneController::timer_callback()
 	this->detect_threats();
 	this->process_swarm_information();
 
-	this->share_knowledge_to_swarm();
 	this->simulate_battery();
+
+	this->share_knowledge_to_swarm();
 
 	this->flight();
 }
